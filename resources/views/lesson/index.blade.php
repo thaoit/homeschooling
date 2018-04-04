@@ -4,7 +4,75 @@
 @section('content')
 
 <div class="container">
-  <input type="button" name="creating_lesson" value="Create lesson" class="btn btn-default" data-toggle="modal" data-target="#lesson-modal">
+
+
+  <h3>Your journal</h3>
+  <div class="col-xs-12 form-group">
+    <form action="" method="get" class="col-xs-12 col-sm-10 search-container">
+      <div class="input-group">
+        <input class="form-control" type="text" name="search" placeholder="Search here">
+        <span class="input-group-addon">
+          <span class="glyphicon glyphicon-search"></span>
+        </span>
+      </div>
+    </form>
+
+    <div class="col-xs-12 col-sm-2 filter-create-container">
+      <button type="button" name="filter" title="Filter lesson" class="filter-btn" data-toggle="filter-container" data-target="#filter-lesson">
+        <span class="glyphicon glyphicon-filter"></span>
+      </button>
+      <button type="button" name="creating_lesson" title="Create new lesson" class="btn btn-default" data-toggle="modal" data-target="#lesson-modal">
+        <span class="glyphicon glyphicon-plus"></span>
+      </button>
+    </div>
+  </div>
+
+  <div id="filter-lesson" class="filter-container">
+    <div class="filter-group">
+      <p class="filter-name">Topics</p>
+      <div class="filter-options">
+        <label class="col-xs-12 col-sm-3 col-md-2 checkbox-option">
+          <input type="checkbox" name="" value="science">
+          <span class="checkmark"></span>
+          Science
+        </label>
+        <label class="col-xs-12 col-sm-3 col-md-2 checkbox-option">
+          <input type="checkbox" name="" value="art">
+          <span class="checkmark"></span>
+          Art
+        </label>
+        <label class="col-xs-12 col-sm-3 col-md-2 checkbox-option">
+          <input type="checkbox" name="" value="skill">
+          <span class="checkmark"></span>
+          Skill
+        </label>
+        <label class="col-xs-12 col-sm-3 col-md-2 checkbox-option">
+          <input type="checkbox" name="" value="ecosystem">
+          <span class="checkmark"></span>
+          Ecosystem
+        </label>
+      </div>
+    </div>
+    <div class="filter-group">
+      <p class="filter-name">Time</p>
+      <div class="filter-options">
+        <label class="col-xs-12 col-sm-3 col-md-2 radio-option">
+          <input type="radio" name="time" value="lastly">
+          <span class="checkmark"></span>
+          Lastly
+        </label>
+        <label class="col-xs-12 col-sm-3 col-md-2 radio-option">
+          <input type="radio" name="time" value="oldest">
+          <span class="checkmark"></span>
+          Oldest
+        </label>
+      </div>
+    </div>
+    <div class="filter-group">
+      <button class="filter-control" type="button" name="filter_ok" title="Start filter">OK</button>
+      <button class="filter-control" type="button" name="filter_cancel" title="Close filter pane" data-dismiss="filter-container">Cancel</button>
+    </div>
+  </div>
 
   <div class="lesson-road">
     <div>
@@ -430,6 +498,10 @@
 @endsection
 
 @section('styles')
+  <link rel="stylesheet" href="{{ asset('css/roadlist.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/search.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
+
   <style media="screen">
     #outline-container{
       border: 1px solid #ccc;
@@ -460,368 +532,33 @@
       box-shadow: none;
       border-bottom: 1px solid #ccc;
     }
-
-    /* lesson road */
-    .lesson-road{
+    /* search + others*/
+    .container{
       text-align: center;
     }
 
-    .lesson-road > div{
-      padding: 0;
-      width: 100%;
+    h3{
+      margin-bottom: 30px;
     }
 
-    .lesson-road .top{
-      padding-bottom: 5px;
+    .search-container{
+      margin-bottom: 10px;
     }
 
-    .lesson-road .top .viewed, .not-viewed{
-      height: 40px;
+    /* Add - Filter */
+    .filter-create-container{
+
     }
 
-    .lesson-road .top .viewed{
-      position: relative;
+    .filter-create-container button{
+      border: none;
     }
-
-    .lesson-road .top .viewed img{
-      position: absolute;
-      bottom: 0;
-      height: 20px;
-      margin-left: -5px;
-    }
-
-    .lesson-road .top .not-viewed p{
-      margin: 0;
-    }
-
-    .lesson-road .top .not-viewed img{
-      height: 20px;
-    }
-
-    .lesson-road .lesson-progress{
-      height: 16px;
-      padding-bottom: 5px;
-    }
-
-    .lesson-road .lesson-progress .one, .two, .three, .four{
-      height: 8px;
-    }
-
-    .lesson-road .lesson-progress .one{
-      border-bottom: 1px solid #000;
-      border-right: 2px solid #000;
-    }
-
-    .lesson-road .lesson-progress .two{
-      border-bottom: 1px solid #000;
-      border-left: 2px solid #000;
-    }
-
-    .lesson-road .lesson-progress .three{
-      border-top: 1px solid #000;
-      border-right: 2px solid #000;
-    }
-
-    .lesson-road .lesson-progress .four{
-      border-top: 1px solid #000;
-      border-left: 2px solid #000;
-    }
-
-    .lesson-road .bottom .control-view{
-      margin-bottom: 25px;
-    }
-
-    .lesson-road .bottom .flipper-container{
-      -webkit-perspective: 1000px;
-      -o-perspective: 1000px;
-      -moz-perspective: 1000px;
-      perspective: 1000px;
-    }
-
-    .lesson-road .bottom .flipper-container:hover .control-container{
-      -webkit-transform: rotateY(0deg);
-      -o-transform: rotateY(0deg);
-      -moz-transform: rotateY(0deg);
-      -ms-transform: rotateY(0deg);
-      transform: rotateY(0deg);
-    }
-
-    .lesson-road .bottom .flipper-container:hover .content{
-      -webkit-transform: rotateY(180deg);
-      -o-transform: rotateY(180deg);
-      -moz-transform: rotateY(180deg);
-      -ms-transform: rotateY(180deg);
-      transform: rotateY(180deg);
-    }
-
-    .lesson-road .bottom .flipper{
-      position: relative;
-    }
-
-    .lesson-road .bottom .flipper-container, .control-container, .content{
-      width: 100%;
-      height: 100px;
-    }
-
-    .lesson-road .bottom .flipper-container .control-container, .content{
-      position: absolute;
-      top: 0;
-      left: 0;
-
-      -webkit-backface-visibility: hidden;
-      -o-backface-visibility: hidden;
-      -moz-backface-visibility: hidden;
-      backface-visibility: hidden;
-
-      -webkit-transition: 0.5s;
-      -o-transition: 0.5s;
-      -moz-transition: 0.5s;
-      -ms-transition: 0.5s;
-      transition: 0.5s;
-
-      -webkit-transform-style: preserve-3d;
-      -o-transform-style: preserve-3d;
-      -moz-transform-style: preserve-3d;
-      -ms-transform-style: preserve-3d;
-      transform-style: preserve-3d;
-    }
-
-    .lesson-road .bottom .flipper-container .content{
-      z-index: 2;
-    }
-
-    .lesson-road .bottom .flipper-container .control-container{
-      -webkit-transform: rotateY(180deg);
-      -o-transform: rotateY(180deg);
-      -moz-transform: rotateY(180deg);
-      -ms-transform: rotateY(180deg);
-      transform: rotateY(180deg);
-    }
-
-    .lesson-road .bottom .content{
-      padding: 0 20px;
-    }
-
-    .lesson-road .bottom .content p{
-      overflow: hidden;
-      line-height: 1.2em;
-      max-height: 3.6em;
-      position: relative;
-      margin-right: -1em;
-      padding-right: 1em;
-      text-align: justify;
-      display: inline-block;
-    }
-
-    .lesson-road .bottom .content p:before{
-      content: '...';
-      position: absolute;
-      right: 0;
-      bottom: 0;
-    }
-
-    .lesson-road .bottom .content p:after{
-      content: '';
-      position: absolute;
-      right: 0;
-      width: 1em;
-      height: 1em;
-      margin-top: 0.2em;
-      background: white;
-    }
-
-
-    @media all and (min-width: 992px){
-      .lesson-road > div{
-        width: 25%;
-        float: left;
-      }
-
-      .lesson-road > div:nth-child(8n+5){
-        float: right;
-      }
-
-      .lesson-road > div:nth-child(8n+6){
-        float: right;
-      }
-
-      .lesson-road > div:nth-child(8n+7){
-        float: right;
-      }
-
-      .lesson-road > div:nth-child(8n+8){
-        float: right;
-      }
-
-      .lesson-road > div:nth-child(8n+4) .lesson-progress .four{
-        border-right: 2px solid #000;
-      }
-
-      .lesson-road > div:nth-child(8n+4) .bottom{
-        border-right: 2px solid #000;
-      }
-
-      .lesson-road > div:nth-child(8n+5) .lesson-progress .two{
-        border-right: 2px solid #000;
-      }
-
-      .lesson-road > div:nth-child(8n+5) .top{
-        border-right: 2px solid #000;
-      }
-
-      .lesson-road > div:nth-child(8n+8) .lesson-progress .three{
-        border-left: 2px solid #000;
-      }
-
-      .lesson-road > div:nth-child(8n+8) .bottom{
-        border-left: 2px solid #000;
-      }
-
-      .lesson-road > div:not(:nth-child(1)):nth-child(8n+1) .top{
-        border-left: 2px solid #000;
-      }
-
-      .lesson-road > div:not(:nth-child(1)):nth-child(8n+1) .lesson-progress .one{
-        border-left: 2px solid #000;
-      }
-    }
-
-      @media all and (min-width: 768px) and (max-width: 991px){
-        .lesson-road > div{
-          width: 33.3333%;
-          float: left;
-        }
-
-        .lesson-road > div:nth-child(6n+4){
-          float: right;
-        }
-
-        .lesson-road > div:nth-child(6n+5){
-          float: right;
-        }
-
-        .lesson-road > div:nth-child(6n+6){
-          float: right;
-        }
-
-        .lesson-road > div:nth-child(6n+3) .bottom{
-          border-right: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(6n+3) .lesson-progress .four{
-          border-right: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(6n+4) .top{
-          border-right: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(6n+4) .lesson-progress .two{
-          border-right: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(6n+6) .bottom{
-          border-left: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(6n+6) .lesson-progress .three{
-          border-left: 2px solid #000;
-        }
-
-        .lesson-road > div:not(:nth-child(1)):nth-child(6n+1) .top{
-          border-left: 2px solid #000;
-        }
-
-        .lesson-road > div:not(:nth-child(1)):nth-child(6n+1) .lesson-progress .one{
-          border-left: 2px solid #000;
-        }
-      }
-
-      @media all and (min-width: 400px) and (max-width: 767px){
-        .lesson-road > div{
-          width: 50%;
-          float: left;
-        }
-
-        .lesson-road > div:nth-child(4n+3){
-          float: right;
-        }
-
-        .lesson-road > div:nth-child(4n+4){
-          float: right;
-        }
-
-        .lesson-road > div:nth-child(4n+2) .bottom{
-          border-right: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(4n+2) .lesson-progress .four{
-          border-right: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(4n+3) .top{
-          border-right: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(4n+3) .lesson-progress .two{
-          border-right: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(4n+4) .bottom{
-          border-left: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(4n+4) .lesson-progress .three{
-          border-left: 2px solid #000;
-        }
-
-        .lesson-road > div:not(:nth-child(1)):nth-child(4n+1) .top{
-          border-left: 2px solid #000;
-        }
-
-        .lesson-road > div:not(:nth-child(1)):nth-child(4n+1) .lesson-progress .one{
-          border-left: 2px solid #000;
-        }
-      }
-
-      @media all and (max-width:399px) {
-        .lesson-road > div:nth-child(2n+1) .bottom{
-          border-right: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(2n+1) .lesson-progress .four{
-          border-right: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(2n+2) .top{
-          border-right: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(2n+2) .lesson-progress .two{
-          border-right: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(2n+2) .bottom{
-          border-left: 2px solid #000;
-        }
-
-        .lesson-road > div:nth-child(2n+2) .lesson-progress .three{
-          border-left: 2px solid #000;
-        }
-
-        .lesson-road > div:not(:nth-child(1)):nth-child(2n+1) .top{
-          border-left: 2px solid #000;
-        }
-
-        .lesson-road > div:not(:nth-child(1)):nth-child(2n+1) .lesson-progress .one{
-          border-left: 2px solid #000;
-        }
-      }
 
   </style>
 @endsection
 
 @section('scripts')
+  <script src="{{ asset('js/filter.js') }}"></script>
 
   <script>
     $(document).ready(function(){
@@ -874,10 +611,6 @@
 
           $(this).hide();
       })*/
-
-      var total_of_lessons = $('lesson-road > div').length;
-      var num_of_lessons_on_rows = 3;
-      $('.lesson-road .control-view:nth-child(2)').css('background', 'yellow');
 
     });
   </script>

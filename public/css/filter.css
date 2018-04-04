@@ -1,0 +1,124 @@
+.filter-btn{
+  border: none;
+  background-color: #fff;
+}
+
+.filter-container{
+  clear: both;
+  padding: 15px 30px;
+  display: none;
+}
+
+.filter-container .filter-group{
+  border-bottom: 1px solid #eee;
+  margin-bottom: 15px;
+}
+
+.filter-container .filter-group .filter-name{
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.filter-container .filter-group .filter-options{
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.filter-container .filter-group .filter-options label{
+  font-weight: normal;
+  text-align: left;
+}
+
+.filter-container .filter-group .filter-options .checkbox-option,
+.filter-container .filter-group .filter-options .radio-option{
+  position: relative;
+  cursor: pointer;
+}
+
+.filter-container .filter-group .filter-options input{
+  opacity: 0;
+}
+
+.filter-container .filter-group .filter-options .checkbox-option .checkmark{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 25px;
+  height: 25px;
+  background-color: #eee;
+}
+
+.filter-container .filter-group .filter-options .radio-option .checkmark{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 25px;
+  height: 25px;
+  border: 3px solid #eee;
+  border-radius: 50%;
+}
+
+.filter-container .filter-group .filter-options .checkbox-option:hover .checkmark{
+  background-color: #ccc;
+}
+
+.filter-container .filter-group .filter-options .radio-option:hover .checkmark{
+  border-color: #ccc;
+}
+
+.filter-container .filter-group .filter-options .checkbox-option .checkmark::after{
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 9px;
+  width: 7px;
+  height: 16px;
+  border-right: 3px solid #fff;
+  border-bottom: 3px solid #fff;
+
+  display: none;
+
+  -webkit-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.filter-container .filter-group .filter-options .radio-option .checkmark::after{
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: blue;
+
+  display: none;
+}
+
+.filter-container .filter-group .filter-options .checkbox-option input:checked ~ .checkmark{
+  background-color: blue;
+}
+
+.filter-container .filter-group .filter-options .radio-option input:checked ~ .checkmark{
+  border-color: blue;
+}
+
+.filter-container .filter-group .filter-options .checkbox-option input:checked ~ .checkmark::after{
+  display: inline-block;
+}
+
+.filter-container .filter-group .filter-options .radio-option input:checked ~ .checkmark::after{
+  display: inline-block;
+}
+
+.filter-container .filter-group .filter-control{
+  padding: 5px 10px;
+  margin-bottom: 15px;
+  margin-left: 5px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
