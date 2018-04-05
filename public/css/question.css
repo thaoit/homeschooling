@@ -1,0 +1,191 @@
+.add-container{
+  position: relative;
+  text-align: center;
+  clear: both;
+}
+
+.add-container .question-option button, .add-container #add-btn{
+  background-color: #fff;
+  border: none;
+}
+
+.add-container .question-option button{
+  position: absolute;
+}
+
+.add-container .question-option button{
+  border: 5px solid green;
+  width: 90px;
+  height: 90px;
+  display: none;
+}
+
+.add-container .question-option button:nth-child(1){
+  transform: rotate(45deg);
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
+.add-container .question-option button:nth-child(2){
+  transform: rotate(-45deg);
+  border-top-left-radius: 50%;
+  border-top-right-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
+.add-container .question-option button:nth-child(3){
+  transform: rotate(45deg);
+  border-top-left-radius: 50%;
+  border-top-right-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
+.add-container .question-option button:nth-child(4){
+  transform: rotate(-45deg);
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
+.question-container .question{
+  margin-bottom: 15px;
+}
+
+.question-container .question .content{
+  padding: 10px 15px;
+  border-left: 2px solid #000;
+  border-right: 2px solid #000;
+}
+
+.question-container .question .content{
+  text-align: center;
+}
+
+.question-container .question .content .head span{
+  float: right;
+  cursor: pointer;
+}
+
+.question-container .question .content .title{
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.question-container .question .content .title textarea{
+  width: 100%;
+  resize: vertical;
+  border: none;
+  text-align: center;
+}
+
+.question-container .question .content .foot{
+  font-size: 0.8em;
+}
+
+/*.question-container .question .bottom-convex-border div{
+  height: 40px;
+  margin: 0;
+  padding: 0;
+}
+
+.question-container .question .bottom-convex-border > div .out{
+
+  display: inline-block;
+}
+
+.question-container .question .bottom-convex-border > div .out > div{
+  width: 20px;
+}
+
+.question-container .question .bottom-convex-border > div:first-child .out:first-child > div,
+.question-container .question .bottom-convex-border > div:last-child .out:last-child > div:last-child{
+  border: 1px solid #ccc;
+  border-left: none;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.question-container .question .bottom-convex-border > div:first-child .out:last-child > div,
+.question-container .question .bottom-convex-border > div:last-child .out:first-child > div:last-child{
+  border: 1px solid #ccc;
+  border-right: none;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.question-container .question .bottom-convex-border > div .out:first-child > div{
+  float: right;
+}
+
+.question-container .question .bottom-convex-border > div .out:last-child > div{
+  float: left;
+}
+
+
+
+.question-container .question .bottom-convex-border div:last-child .in{
+  border-bottom: 1px solid #ccc;
+}
+
+.question-container .question .bottom-convex-border > div:last-child .out > .empty{
+  border-bottom: 1px solid #ccc;
+}*/
+
+.question-container .question .edge .svg-container{
+  width: 25px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media all and (min-width: 400px) {
+
+  .question-container .question .edge .svg-container{
+    width: 6%;
+  }
+
+  .question-container .question .content .title textarea{
+    width: 80%;
+  }
+}
+
+.content-border-top{
+  border-top: 2px solid #000;
+}
+
+.edge-bottom-convex{
+  border-top: 2px solid #000;
+}
+
+.svg-container-bottom-convex{
+  margin: -2px;
+}
+
+.svg-container-top-concave{
+  margin: -2px;
+}
+
+.edge-top-concave{
+  border: 2px solid #000;
+  border-bottom: none;
+}
+
+.edge-bottom-concave{
+  border: 2px solid #000;
+  border-top: none;
+}
+
+.svg-container-bottom-concave{
+  margin-bottom: -2px;
+  transform: rotate(180deg);
+}
+
+.edge-top-convex{
+  border-bottom: 2px solid #000;
+}
+
+.svg-container-top-convex{
+  margin-bottom: -3px;
+  transform: rotate(180deg);
+}

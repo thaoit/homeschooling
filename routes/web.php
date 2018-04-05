@@ -22,3 +22,7 @@ Route::get('/lessons', function(){
 Route::get('/lessons/create', function(){
     return view('lesson.create');
 });
+
+Route::get('/tests/create', function(){
+    return view('test.create');
+});
