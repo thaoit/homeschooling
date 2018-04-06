@@ -80,8 +80,51 @@
   text-align: center;
 }
 
+.question-container .question .content .title textarea{
+  outline: none;
+}
+
+.question-container .question .content .suggestion-container{
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.question-container .question .content .suggestion-container .suggestion{
+  border: none;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 5px;
+}
+
+.question-container .question .content .suggestion-container .suggestion:focus{
+  outline: none;
+}
+
 .question-container .question .content .foot{
   font-size: 0.8em;
+}
+
+.question-container .question .content .foot button{
+  border: none;
+  background-color: #fff;
+  margin-bottom: 5px;
+  width: 20px;
+  height: 20px;
+}
+
+.question-container .question .content .suggestion-container button{
+  border: none;
+  background-color: #fff;
+  color: #ccc;
+  font-size: 0.6em;
+}
+
+.question-container .question .content button:focus{
+  outline: none;
+}
+
+.question-container .question .content .foot button:hover{
+  border: 1px solid #000;
+  border-radius: 50%;
 }
 
 /*.question-container .question .bottom-convex-border div{
@@ -188,4 +231,60 @@
 .svg-container-top-convex{
   margin-bottom: -3px;
   transform: rotate(180deg);
+}
+
+.question-container .question-matching .content .suggestion-container .signal{
+  float: left;
+}
+
+.question-container .question-matching .content .suggestion-container .close-suggestion{
+  float: right;
+}
+
+.question-container .question-matching .content .suggestion-container .suggestion{
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  width: 100%;
+  resize: vertical;
+}
+
+.question-container .question-matching .content .suggestion-container .clearfix{
+  clear: both;
+}
+
+.question-container .question-matching .content .suggestion-container > div{
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.question-container .question-hidden-word .content .suggestion-container .shown .wrapper-letter{
+  display: inline-block;
+  width: 2em;
+  height: 2.2em;
+  font-size: 1.4em;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.question-container .question-hidden-word .content .suggestion-container .shown{
+  margin-bottom: 60px;
+}
+
+.question-container .question-hidden-word .content .suggestion-container .shown .word{
+  display: inline-block;
+}
+
+.question-container .question-hidden-word .content .suggestion-container .shown .word .wrapper-letter > span{
+  display: block;
+  margin-top: 0.4em;
+}
+
+.question-container .question-hidden-word .content .suggestion-container .shown .space{
+  visibility: hidden;
+}
+
+.question-container .question-hidden-word .content .suggestion-container .suggestion{
+  text-align: center;
+  width: 80%;
 }

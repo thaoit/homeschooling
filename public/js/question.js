@@ -1,5 +1,11 @@
 $(document).ready(function(){
 
+    var ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+    var HIDDEN_WORD = 'hidden-word';
+    var MULTICHOICE = 'multichoice';
+    var TRUE_FALSE = 'true-false';
+    var MATCHING = 'matching';
+
     $('.add-container #add-btn').on('mouseenter', function(){
 
         var display = $(this).parents('.add-container').find('.question-option button').css('display');
@@ -97,6 +103,60 @@ $(document).ready(function(){
         $('.question-container').append(new_question);
     })
 
+    $('.question-container').on('click', '.question-multichoice .content .foot .add-multichoice', function(){
+
+        var current_suggestion_container = $(this).parents('.content').children('.suggestion-container');
+        var new_signal = getNextSignal(current_suggestion_container);
+        var new_suggestion = generateMultichoiceSuggestion(new_signal);
+
+        current_suggestion_container.append(new_suggestion);
+    })
+
+    $('.question-container').on('click', '.question-multichoice .content .suggestion-container .close-suggestion', function(){
+
+        $(this).parent().parent().remove();
+
+        // update the signal of the rest
+        /*var the_rest = $(this).parents('.content').children('div');
+        for(int i = 0; i < the_rest.length; i++){
+            the_rest.find('.signal').innerContent = alphabet[i];
+        }*/
+    })
+
+    $('.question-container').on('click', '.question-true-false .content .foot .switch-true-false', function(){
+
+        var current_suggestion_container = $(this).parents('.content').children('.suggestion-container');
+        var suggestions = current_suggestion_container.find('.suggestion');
+
+        var tmp = suggestions[0].textContent;
+        suggestions[0].textContent = suggestions[1].textContent;
+        suggestions[1].textContent = tmp;
+    })
+
+    $('.question-container').on('click', ' .question-matching .content .foot .add-matching', function(){
+
+        var current_suggestion_container = $(this).parents('.content').children('.suggestion-container');
+        var new_signal = getNextSignal(current_suggestion_container);
+        var new_matching = generateMatchingSuggestion(new_signal);
+
+        current_suggestion_container.append(new_matching);
+
+    })
+
+    $('.question-container').on('click', ' .question-matching .content .suggestion-container .close-suggestion', function(){
+
+        $(this).parent().parent().remove();
+    })
+
+    $('.question-container').on('keyup', '.question-hidden-word .content .suggestion-container .suggestion', function(e){
+
+        var current_shown = $(this).siblings('.shown');
+        var text = $(this).val();
+
+        var shown_element = generateLetterShown(text);
+        current_shown.empty();
+        current_shown.append(shown_element);
+    })
 
     function generateQuestionPane(question_kind){
         // create question pane
@@ -137,6 +197,9 @@ $(document).ready(function(){
         }
 
         // add content
+        var suggestion_content = generateSuggestionSample(question_kind);
+        var foot_content = generateFootSample(question_kind);
+
         new_question += '<div class="content '+  content_border + '">' +
                           '<div class="head">' +
                             '<h4><strong>'+ (no_of_question + 1) + '</strong>' +
@@ -146,8 +209,8 @@ $(document).ready(function(){
                           '<div class="title">' +
                             '<textarea name="title" rows="3" placeholder="Question or guidelines here"></textarea>' +
                           '</div>' +
-                          '<div class="suggestion"></div>' +
-                          '<div class="foot"></div>' +
+                          '<div class="suggestion-container">' + suggestion_content + '</div>' +
+                          '<div class="foot">' + foot_content + '</div>' +
                         '</div>'
 
         // random: 0 - convex, 1 - cave
@@ -168,8 +231,179 @@ $(document).ready(function(){
                           '</div>';
         }
 
-        return '<div class="question">' + new_question + '</div>';
+        return '<div class="question question-' + question_kind + '">' + new_question + '</div>';
     }
 
-    
+    function generateSuggestionSample(question_kind){
+
+        var suggestion_content = '';
+
+        switch (question_kind) {
+          case HIDDEN_WORD:
+            suggestion_content = generateHiddenWordSuggestion();
+            break;
+          case MULTICHOICE:
+            suggestion_content = generateMultichoiceSuggestion(ALPHABET[0]) +
+                                 generateMultichoiceSuggestion(ALPHABET[1]);
+            break;
+          case TRUE_FALSE:
+            suggestion_content = generateTrueFalseSuggestion();
+            break;
+          case MATCHING:
+            suggestion_content = generateMatchingSuggestion(ALPHABET[0]);
+            break
+          default:
+            break;
+        }
+
+        return suggestion_content;
+    }
+
+    function generateFootSample(question_kind){
+
+        var foot_content = '';
+
+        switch (question_kind) {
+          case HIDDEN_WORD:
+            foot_content = generateHiddenWordFoot();
+            break;
+          case MULTICHOICE:
+            foot_content = generateMultichoiceFoot();
+            break;
+          case TRUE_FALSE:
+            foot_content = generateTrueFalseFoot();
+            break;
+          case MATCHING:
+            foot_content = generateMatchingFoot();
+            break;
+          default:
+            break;
+        }
+
+        return foot_content;
+    }
+
+    function getNextSignal(current_suggestion_container){
+
+        var no_of_suggestion = current_suggestion_container.children('div').length;
+
+        return ALPHABET[no_of_suggestion];
+    }
+
+    function generateMultichoiceSuggestion(new_signal){
+
+        var new_multichoice = '<div class="col-xs-12 col-sm-6">' +
+                                '<p>' +
+                                  '<span class="signal">' + new_signal + '.</span>' +
+                                  '<input class="suggestion" type="text" name="" value="">' +
+                                  '<button class="close-suggestion" title="Remove this" type="button" name="">' +
+                                    '<span class="glyphicon glyphicon-remove"></span>' +
+                                  '</button>' +
+                                '</p>' +
+                              '</div>';
+
+        return new_multichoice;
+    }
+
+    function generateMatchingSuggestion(new_signal){
+
+        var new_matching = '<div>' +
+                              '<div class="col-xs-12">' +
+                                '<span class="signal">' + new_signal + '. </span>' +
+                                '<button class="close-suggestion" title="Remove this matching" type="button" name="">' +
+                                  '<span class="glyphicon glyphicon-remove"></span>' +
+                                '</button>' +
+                                '<div class="clearfix"></div>' +
+                              '</div>' +
+                              '<div class="col-xs-6">' +
+                                '<textarea class="suggestion" name="" rows="3"></textarea>' +
+                              '</div>' +
+                              '<div class="col-xs-6">' +
+                                '<textarea class="suggestion" name="" rows="3"></textarea>' +
+                              '</div>' +
+                          '</div>';
+
+        return new_matching;
+    }
+
+    function generateHiddenWordSuggestion(){
+
+        return '<div class="shown"></div>' +
+               '<input class="suggestion" type="text" name="" placeholder="Answer here">';
+    }
+
+    function generateTrueFalseSuggestion(){
+
+        var option_a = '<div class="col-xs-12 col-sm-6">' +
+                          '<p>' +
+                            '<span>A. </span>' +
+                            '<span class="suggestion">True</span>' +
+                          '</p>' +
+                       '</div>';
+
+        var option_b = '<div class="col-xs-12 col-sm-6">' +
+                          '<p>' +
+                            '<span>B. </span>' +
+                            '<span class="suggestion">False</span>' +
+                          '</p>' +
+                        '</div>';
+
+        return option_a + option_b;
+    }
+
+    function generateLetterShown(text){
+
+        var shown = '';
+
+        for(var i = 0; i < text.length; i++){
+
+            if(text[i] === ' '){
+                // close tag of the latest word
+                if(i > 0 && text[i - 1] !== ' '){
+                    shown += '</div>';
+                }
+                // add space
+                shown += '<div class="wrapper-letter space"><span>_</span></div>';
+            }
+            else{
+                // open tag of the new word
+                if(i === 0 || text[i - 1] === ' '){
+                    shown += '<div class="word">';
+                }
+                // add letter
+                shown += '<div class="wrapper-letter"><span>' + text[i] + '</span></div>';
+            }
+        }
+
+        return shown;
+    }
+
+    function generateHiddenWordFoot(){
+
+        return '<p>Let your children have fun in guessing answer letter by letter.</p>';
+    }
+
+    function generateMultichoiceFoot(){
+
+        return '<button class="add-multichoice" type="button" name="" title="Add 1 more suggestion">' +
+                  '<span class="glyphicon glyphicon-plus"></span>' +
+                '</button>' +
+                '<p>Default correct answer is A. When test is shown, suggestion\'s positions will be changed randomly.</p>';
+    }
+
+    function generateTrueFalseFoot(){
+
+        return '<button class="switch-true-false" type="button" name="" title="Switch correct answer">' +
+                  '<span class="glyphicon glyphicon-refresh"></span>' +
+                '</button>' +
+                '<p>Default correct answer is A. When test is shown, suggestion\'s positions will be changed randomly.</p>';
+    }
+
+    function generateMatchingFoot(){
+
+        return '<button class="add-matching" type="button" name="" title="Add 1 more matching">' +
+                  '<span class="glyphicon glyphicon-plus"></span>' +
+                '</button>' +
+                '<p>Each row has 2 matched elements. When test is shown, suggestion\'s positions will be changed randomly.</p>';
+    }
 });
