@@ -7,6 +7,7 @@
 .add-container .question-option button, .add-container #add-btn{
   background-color: #fff;
   border: none;
+  outline: none;
 }
 
 .add-container .question-option button{
@@ -14,10 +15,20 @@
 }
 
 .add-container .question-option button{
-  border: 5px solid green;
+  /*border: 5px solid green;
   width: 90px;
-  height: 90px;
-  display: none;
+  height: 90px;*/
+  opacity: 0;
+  height: 0;
+  width: 0;
+  overflow: hidden;
+  transition: opacity 1s, height 0s 1s, width 0s 1s;
+}
+
+.add-container .question-option button:hover{
+  background-color: green;
+  color: white;
+  transition: background-color 1s;
 }
 
 .add-container .question-option button:nth-child(1){
@@ -46,6 +57,10 @@
   border-top-left-radius: 50%;
   border-bottom-left-radius: 50%;
   border-bottom-right-radius: 50%;
+}
+
+.question-container{
+  margin-bottom: 25px;
 }
 
 .question-container .question{

@@ -6,52 +6,16 @@ $(document).ready(function(){
     var TRUE_FALSE = 'true-false';
     var MATCHING = 'matching';
 
+    var saveShown = false;
+
     $('.add-container #add-btn').on('mouseenter', function(){
 
-        var display = $(this).parents('.add-container').find('.question-option button').css('display');
+        //var display = $(this).parents('.add-container').find('.question-option button').css('display');
+        var opacity = $(this).parents('.add-container').find('.question-option button').css('opacity');
 
-        if(display === 'none'){
-          var distance = 40;
-          var this_left = $(this).position().left;
-          var this_top = $(this).position().top;
-          var this_width = $(this).width();
-          var this_height = $(this).height();
+        if(opacity == 0){
 
-          var left_obj_x = this_left - distance;
-          var right_obj_x = this_left + this_width + distance;
-          var top_bottom_obj_x = this_left + this_width / 2;
-
-          var top_obj_y = this_top - distance;
-          var bottom_obj_y = this_top + this_height + distance;
-          var left_right_obj_y = this_top + this_height / 2;
-
-          var target = $(this).parents('.add-container').find('.question-option #hidden-word');
-          target.css({
-              'top': left_right_obj_y - target.height() / 2 + 'px',
-              'left': left_obj_x - target.width() + 'px'
-          });
-          target.show();
-
-          target = $(this).parents('.add-container').find('.question-option #multichoice');
-          target.css({
-              'top': top_obj_y - target.height() + 'px',
-              'left': top_bottom_obj_x - target.width() / 2 + 'px'
-          });
-          target.show();
-
-          target = $(this).parents('.add-container').find('.question-option #true-false');
-          target.css({
-              'top': left_right_obj_y - target.height() / 2 + 'px',
-              'left': right_obj_x + 'px'
-          });
-          target.show();
-
-          target = $(this).parents('.add-container').find('.question-option #matching');
-          target.css({
-              'top': bottom_obj_y + 'px',
-              'left': top_bottom_obj_x - target.width() / 2 + 'px'
-          });
-          target.show();
+          setPositionOfQuestionOftion($(this));
 
           // change appearance of this button
           $(this).attr('title', 'Cancel');
@@ -60,6 +24,8 @@ $(document).ready(function(){
           child_span.removeClass('glyphicon-plus');
           child_span.addClass('glyphicon-remove');
 
+          // show question option
+           showQuestionOption($(this).parents('.add-container').find('.question-option button'));
         }
         else{
 
@@ -67,12 +33,24 @@ $(document).ready(function(){
 
     });
 
+    $(window).on('resize', function(){
+        // reset the position of question option
+
+        var add_btn = $('.add-container #add-btn');
+        var opacity = add_btn.parents('.add-container').find('.question-option button').css('opacity');
+
+        if(opacity == 1){
+            setPositionOfQuestionOftion(add_btn);
+        }
+
+    })
+
     $('.add-container #add-btn').on('click', function(){
 
-        var display = $(this).parents('.add-container').find('.question-option button').css('display');
+        //var display = $(this).parents('.add-container').find('.question-option button').css('display');
+        var opacity = $(this).parents('.add-container').find('.question-option button').css('opacity');
 
-        if(display !== 'none'){
-          $(this).parents('.add-container').find('.question-option button').hide();
+        if(opacity == 1){
 
           // change appearance of this button
           $(this).attr('title', 'Choose kind of question');
@@ -80,14 +58,25 @@ $(document).ready(function(){
           var child_span = $(this).children('span');
           child_span.removeClass('glyphicon-remove');
           child_span.addClass('glyphicon-plus');
+
+          // hide question option
+          hideQuestionOption($(this).parents('.add-container').find('.question-option button'));
         }
     })
 
     $('.add-container .question-option button').on('click', function(){
 
-        $(this).siblings('button').hide();
-        $(this).hide();
+        // show save button
+        if(!saveShown){
 
+            saveShown = true;
+            $('.container #save').show();
+        }
+
+        // hide question option
+        hideQuestionOption($(this).parents('.add-container').find('.question-option button'));
+
+        // change appearance of add_btn
         var add_btn = $(this).parents('.add-container').find('#add-btn');
         add_btn.attr('title', 'Choose kind of question');
 
@@ -114,13 +103,11 @@ $(document).ready(function(){
 
     $('.question-container').on('click', '.question-multichoice .content .suggestion-container .close-suggestion', function(){
 
+        var current_suggestion_container = $(this).parents('.suggestion-container');
         $(this).parent().parent().remove();
 
-        // update the signal of the rest
-        /*var the_rest = $(this).parents('.content').children('div');
-        for(int i = 0; i < the_rest.length; i++){
-            the_rest.find('.signal').innerContent = alphabet[i];
-        }*/
+        // reassign signal for all suggestions
+        assignSignal(current_suggestion_container);
     })
 
     $('.question-container').on('click', '.question-true-false .content .foot .switch-true-false', function(){
@@ -145,7 +132,11 @@ $(document).ready(function(){
 
     $('.question-container').on('click', ' .question-matching .content .suggestion-container .close-suggestion', function(){
 
+        var current_suggestion_container = $(this).parents('.suggestion-container');
         $(this).parent().parent().remove();
+
+        // reassign signal for all suggestions
+        assignSignal(current_suggestion_container);
     })
 
     $('.question-container').on('keyup', '.question-hidden-word .content .suggestion-container .suggestion', function(e){
@@ -156,6 +147,29 @@ $(document).ready(function(){
         var shown_element = generateLetterShown(text);
         current_shown.empty();
         current_shown.append(shown_element);
+    })
+
+    $('.question-container').on('click', '.question .head .close-question', function(){
+
+        var question = $(this).parents('.question');
+        var current_index = question.index() + 1;
+        var following_siblings = question.nextAll();
+        var head_content = following_siblings.find('.head h4 strong');
+
+        question.remove();
+
+        // reassign index of questions
+        for(var i = 0; i < following_siblings.length; i++){
+
+            head_content[i].textContent = current_index++;
+        }
+
+        // hide save button when there aren't any question
+        if(following_siblings.length === 0){
+
+            saveShown = false;
+            $('.container #save').hide();
+        }
     })
 
     function generateQuestionPane(question_kind){
@@ -203,7 +217,7 @@ $(document).ready(function(){
         new_question += '<div class="content '+  content_border + '">' +
                           '<div class="head">' +
                             '<h4><strong>'+ (no_of_question + 1) + '</strong>' +
-                              '<span class="glyphicon glyphicon-remove"></span>' +
+                              '<span class="glyphicon glyphicon-remove close-question"></span>' +
                             '</h4>' +
                           '</div>' +
                           '<div class="title">' +
@@ -405,5 +419,85 @@ $(document).ready(function(){
                   '<span class="glyphicon glyphicon-plus"></span>' +
                 '</button>' +
                 '<p>Each row has 2 matched elements. When test is shown, suggestion\'s positions will be changed randomly.</p>';
+    }
+
+    function assignSignal(current_suggestion_container){
+
+        var signals = current_suggestion_container.find('.signal');
+
+        for(var i = 0; i < signals.length; i++){
+
+            signals[i].textContent = ALPHABET[i];
+        }
+    }
+
+    function hideQuestionOption(question_option){
+
+      question_option.css({
+          opacity: '0',
+          width: '0',
+          height: '0',
+          border: 'none',
+          transition: 'opacity 1s, width 0s 1s, height 0s 1s, border 0s 1s'
+      });
+    }
+
+    function showQuestionOption(question_option){
+
+      question_option.css({
+         opacity: '1',
+         width: '90px',
+         height: '90px',
+         border: '5px solid green',
+         transition: 'opacity 1s, width 0s, height 0s, border 0s, background-color 1s'
+      });
+    }
+
+    function setPositionOfQuestionOftion(add_btn){
+
+        var distance = 40;
+        var this_left = add_btn.position().left;
+        var this_top = add_btn.position().top;
+        var this_width = add_btn.width();
+        var this_height = add_btn.height();
+
+        var left_obj_x = this_left - distance;
+        var right_obj_x = this_left + this_width + distance;
+        var top_bottom_obj_x = this_left + this_width / 2;
+
+        var top_obj_y = this_top - distance;
+        var bottom_obj_y = this_top + this_height + distance;
+        var left_right_obj_y = this_top + this_height / 2;
+
+        var target_width = 90;
+        var target_height = 90;
+
+        // set to the left of add_btn
+        var target = add_btn.parents('.add-container').find('.question-option #hidden-word');
+        target.css({
+            'top': left_right_obj_y - target_height / 2 + 'px',
+            'left': left_obj_x - target_width + 'px'
+        });
+
+        // set to the top of add_btn
+        target = add_btn.parents('.add-container').find('.question-option #multichoice');
+        target.css({
+            'top': top_obj_y - target_height + 'px',
+            'left': top_bottom_obj_x - target_width / 2 + 'px'
+        });
+
+        // set to the right of addd_btn
+        target = add_btn.parents('.add-container').find('.question-option #true-false');
+        target.css({
+            'top': left_right_obj_y - target_height / 2 + 'px',
+            'left': right_obj_x + 'px'
+        });
+
+        // set to the bottom of add_btn
+        target = add_btn.parents('.add-container').find('.question-option #matching');
+        target.css({
+            'top': bottom_obj_y + 'px',
+            'left': top_bottom_obj_x - target_width / 2 + 'px'
+        });
     }
 });

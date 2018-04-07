@@ -8,7 +8,7 @@
     </div>
 
     <div class="col-xs-12 question-container">
-      <div class="question question-multichoice">
+      <!--<div class="question question-multichoice">
         <div class="content content-border-top">
           <div class="head">
             <h4><strong>1</strong>
@@ -233,7 +233,7 @@
             </svg>
           </div>
         </div>
-      </div>
+      </div>-->
 
     </div>
 
@@ -242,12 +242,14 @@
         <span class="glyphicon glyphicon-plus"></span>
       </button>
       <div class="question-option">
-        <button id="hidden-word" type="button" name="">Hidden Word</button>
-        <button id="multichoice" type="button" name="">Multichoice</button>
-        <button id="true-false" type="button" name="">True / False</button>
-        <button id="matching" type="button" name="">Matching</button>
+        <button id="hidden-word" type="button" name="" title="Add Hidden Word">Hidden Word</button>
+        <button id="multichoice" type="button" name="" title="Add Multichoice">Multichoice</button>
+        <button id="true-false" type="button" name="" title="Add True / False">True / False</button>
+        <button id="matching" type="button" name="" title="Add Matching">Matching</button>
       </div>
     </div>
+
+    <input class="btn btn-default" id="save" type="button" name="save" value="Save">
   </div>
 
 @endsection
@@ -258,13 +260,23 @@
 
   <style>
 
+  .container{
+    text-align: center;
+  }
+
   #title{
     font-size: 2em;
     font-weight: bold;
     border: none;
     box-shadow: none;
-    text-align: center;
     border-radius: 0;
+    text-align: center;
+    margin: 25px 0 45px 0;
+  }
+
+  #save{
+    margin-top: 25px;
+    display: none;
   }
 
 
