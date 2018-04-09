@@ -64,7 +64,9 @@
   <div id="my_resource" class="test-container">
     <h3>My resource</h3>
     <div class="col-xs-12 col-sm-4 col-md-3">
+      <div class="title-container">
       <p class="title"><a href=""><strong>Test discovery about the Earth</strong></a></p>
+      </div>
       <div class="content">
         <div class="col-xs-5">
           <p class="no-of-question">3</p>
@@ -72,7 +74,7 @@
         </div>
         <div class="col-xs-2 signal">x</div>
         <div class="col-xs-5">
-          <p class="duration">20</p>
+          <p class="duration">&#8734;</p>
           <p class="caption">Min(s)</p>
         </div>
       </div>
@@ -89,7 +91,9 @@
       </div>
     </div>
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <p class="title"><a href="" title="How do?"><strong>How do animals sleep in the winter? What is a greate question!</strong></a></p>
+      <div class="title-container">
+        <p class="title"><a href="" title="How do?"><strong>How do animals sleep in the winter? What is a greate question!</strong></a></p>
+      </div>
       <div class="content">
         <div class="col-xs-5">
           <p class="no-of-question">2</p>
@@ -114,7 +118,9 @@
       </div>
     </div>
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <p class="title"><a href=""><strong>Test discovery about the Earth</strong></a></p>
+      <div class="title-container">
+        <p class="title"><a href=""><strong>Test discovery about the Earth</strong></a></p>
+      </div>
       <div class="content">
         <div class="col-xs-5">
           <p class="no-of-question">3</p>
@@ -139,7 +145,9 @@
       </div>
     </div>
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <p class="title"><a href=""><strong>Test discovery about the Earth</strong></a></p>
+      <div class="title-container">
+        <p class="title"><a href=""><strong>Test discovery about the Earth</strong></a></p>
+      </div>
       <div class="content">
         <div class="col-xs-5">
           <p class="no-of-question">3</p>
@@ -168,7 +176,9 @@
   <div id="community" class="test-container">
     <h3>Community</h3>
     <div class="col-xs-12 col-sm-4 col-md-3">
+      <div class="title-container">
       <p class="title"><a href=""><strong>Test discovery about the Earth</strong></a></p>
+      </div>
       <div class="content">
         <div class="col-xs-5">
           <p class="no-of-question">3</p>
@@ -193,7 +203,9 @@
       </div>
     </div>
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <p class="title"><a href="" title="How do?"><strong>How do animals sleep in the winter? What is a greate question!</strong></a></p>
+      <div class="title-container">
+        <p class="title"><a href="" title="How do?"><strong>How do animals sleep in the winter? What is a greate question!</strong></a></p>
+      </div>
       <div class="content">
         <div class="col-xs-5">
           <p class="no-of-question">2</p>
@@ -218,7 +230,9 @@
       </div>
     </div>
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <p class="title"><a href=""><strong>Test discovery about the Earth</strong></a></p>
+      <div class="title-container">
+        <p class="title"><a href=""><strong>Test discovery about the Earth</strong></a></p>
+      </div>
       <div class="content">
         <div class="col-xs-5">
           <p class="no-of-question">3</p>
@@ -243,7 +257,9 @@
       </div>
     </div>
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <p class="title"><a href=""><strong>Test discovery about the Earth</strong></a></p>
+      <div class="title-container">
+        <p class="title"><a href=""><strong>Test discovery about the Earth</strong></a></p>
+      </div>
       <div class="content">
         <div class="col-xs-5">
           <p class="no-of-question">3</p>

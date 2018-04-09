@@ -4,10 +4,6 @@
   height: 245px;
 }
 
-.test-container .title{
-  margin-bottom: 40px;
-}
-
 .test-container .no-of-question,
 .test-container .signal,
 .test-container .duration{
@@ -32,6 +28,11 @@
 .test-container .content{
   margin-bottom: 15px;
   overflow: hidden;
+}
+
+.test-container .title-container{
+  height: 3.6em;
+  margin-bottom: 30px;
 }
 
 .test-container .title{
