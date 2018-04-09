@@ -33,16 +33,24 @@
       <p>Outline</p>
       <div class="input-group">
         <span class="input-group-addon step-index">Step 1 - </span>
-        <input class="form-control outline" type="text" value="Hi World">
-        <span class='input-group-addon close-outline'>&times;</span>
+        <input class="form-control outline" type="text" value="Hi World" data-id="1">
+        <span class='input-group-addon close-outline' data-toggle="modal" data-target="#confirmation-modal">&times;</span>
       </div>
     </div>
     <div class="form-group border" id="references-container">
       <p>References</p>
       <textarea name="references" rows="4"></textarea>
     </div>
-    <div class="form-group border" id="test-container">
+    <div class="form-group border test-container">
       <p>Attached Tests</p>
+      <div class="content">
+        <!--<li>Test discovery about the Earth
+          <span class="from"> - My resource</span>
+        </li>
+        <li>How do animals sleep in the winter? What is a greate question!
+          <span class="from"> - Community</span>
+        </li>-->
+      </div>
       <button class="test-modal-btn" type="button" name="" title="Add tests" data-toggle="modal" data-target="#test-modal">
         <span class="glyphicon glyphicon-plus"></span>
       </button>
@@ -95,7 +103,7 @@
   </div>
 
   <!-- Test Modal -->
-  <div id="test-modal" class="modal fade" role="dialog">
+  <div id="test-modal" class="modal fade test-modal" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -156,9 +164,28 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-default" type="button" name="ok" data-dismiss="modal">OK</button>
+          <button class="btn btn-default ok-tests" type="button" name="ok" data-dismiss="modal">OK</button>
           <button class="btn btn-default" type="button" name="cancel" data-dismiss="modal">Cancel</button>
       </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete confirmation -->
+  <div id="confirmation-modal" class="modal fade confirmation-modal" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>Delete Confirmation</h4>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure to delete this section?</p>
+          <p>All the content and attached tests will be also deleted?</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-default delete-btn" type="button" name="" data-dismiss="modal">OK</button>
+          <button class="btn btn-default" type="button" name="" data-dismiss="modal">Cancel</button>
         </div>
       </div>
     </div>
@@ -314,12 +341,16 @@
     padding: 10px;
   }
 
-  #test-container button{
+  .test-container button{
     background-color: #fff;
     border: none;
     margin: 0 auto;
     display: block;
     font-size: 0.8em;
+  }
+
+  .test-container .content{
+    margin-bottom: 15px;
   }
 
   /* tests */
