@@ -1,0 +1,63 @@
+.test-hints{
+  border: 1px solid #ccc;
+  max-height: 180px;
+}
+
+.test-hints > ul{
+  margin: 0;
+  padding: 10px 5px;
+  overflow: auto;
+  max-height: 170px;
+}
+
+.test-hints > ul >li{
+  list-style-type: none;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.test-hints > ul > li:hover{
+  background-color: #ccc;
+}
+
+.test-hints{
+  margin-bottom: 25px;
+  display: none;
+}
+
+.tests-chosen-container{
+  display: none;
+}
+
+.tests{
+  margin: 0;
+  padding: 0 0 10px 0;
+  overflow: auto;
+  max-height: 170px;
+}
+
+.tests li{
+  list-style-type: none;
+  padding: 15px 0 5px 0;
+  overflow: hidden;
+  border-bottom: 1px solid #ccc;
+}
+
+.tests li p{
+  padding-left: 0;
+}
+
+.tests li button{
+  background-color: #fff;
+  border: none;
+  font-size: 0.8em;
+}
+
+.tests li select{
+  border: none;
+  outline: none;
+}
+
+.from{
+  color: #ccc;
+}

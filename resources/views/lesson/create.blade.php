@@ -29,13 +29,23 @@
   </div>
 
   <div class="col-xs-12 col-md-3">
-    <div class="form-group" id="outline-container">
+    <div class="form-group border outline-container">
       <p>Outline</p>
       <div class="input-group">
         <span class="input-group-addon step-index">Step 1 - </span>
         <input class="form-control outline" type="text" value="Hi World">
         <span class='input-group-addon close-outline'>&times;</span>
       </div>
+    </div>
+    <div class="form-group border" id="references-container">
+      <p>References</p>
+      <textarea name="references" rows="4"></textarea>
+    </div>
+    <div class="form-group border" id="test-container">
+      <p>Attached Tests</p>
+      <button class="test-modal-btn" type="button" name="" title="Add tests" data-toggle="modal" data-target="#test-modal">
+        <span class="glyphicon glyphicon-plus"></span>
+      </button>
     </div>
   </div>
 
@@ -51,9 +61,14 @@
     <div id="summernote">
 
     </div>
+    <div class="form-group" id="func-buttons">
+      <button class="btn btn-default" type="submit" name="button">Preview</button>
+      <button class="btn btn-default" type="submit" name="save_as_draft">Save as Draft</button>
+      <button class="btn btn-default" type="submit" name="publish">Publish</button>
+    </div>
   </div>
 
-  <!-- Modal -->
+  <!-- Topic Modal -->
   <div id="topic-modal" class="modal fade" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -79,6 +94,76 @@
     </div>
   </div>
 
+  <!-- Test Modal -->
+  <div id="test-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>Tests</h4>
+        </div>
+        <div class="modal-body">
+          <div class="test-chosen">
+            <input class="form-control" type="text" name="" placeholder="Typing some tests here">
+          </div>
+          <div class="test-hints">
+            <ul>
+              <li data-id="1">
+                Test discovery about the Earth
+                <span class="from"> - Your resource</span>
+              </li>
+              <li data-id="2">
+                Test discovery about the Earth
+                <span class="from"> - Your resource</span>
+              </li>
+              <li data-id="3">
+                How do animals sleep in the winter? What is a greate question!
+                <span class="from"> - MBC. Key</span>
+              </li>
+              <li data-id="4">
+                How do animals sleep in the winter? What is a greate question!
+                <span class="from"> - MBC. Key</span>
+              </li>
+            </ul>
+          </div>
+          <div class="tests-chosen-container">
+            <h4>Your chosen</h4>
+            <ul class="tests">
+              <!--<li>
+                <p class="col-xs-12 col-sm-8">Test discovery about the Earth</p>
+                <select class="col-xs-6 col-sm-3" name="position" title="Choose position for this test in the lesson">
+                  <option value="before_1">Before step 1</option>
+                  <option value="after_1">After step 1</option>
+                  <option value="after_2">After step 2</option>
+                  <option value="after_3">After step 3</option>
+                </select>
+                <button class="col-xs-6 col-sm-1 close-test" type="button" name="" title="Remove this test">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </button>
+              </li>
+              <li>
+                <p class="col-xs-12 col-sm-8">How do animals sleep in the winter? What is a greate question!</p>
+                <select class="col-xs-6 col-sm-3" name="position" title="Choose position for this test in the lesson">
+                  <option value="before_1">Before step 1</option>
+                  <option value="after_1">After step 1</option>
+                  <option value="after_2">After step 2</option>
+                  <option value="after_3">After step 3</option>
+                </select>
+                <button class="col-xs-6 col-sm-1 close-test" type="button" name="" title="Remove this test">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </button>
+              </li>-->
+            </ul>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-default" type="button" name="ok" data-dismiss="modal">OK</button>
+          <button class="btn btn-default" type="button" name="cancel" data-dismiss="modal">Cancel</button>
+      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 @endsection
 
 
@@ -86,26 +171,17 @@
 
 <!-- summernotes: rich text editor-->
 <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('css/test-hint.css') }}">
 
 <style media="screen">
 
-  #outline-container{
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 10px;
-  }
-
-  #outline-container > p{
-
-  }
-
-  #outline-container > .input-group > .input-group-addon{
+  .outline-container > .input-group > .input-group-addon{
     color: #ccc;
     background-color: #fff;
     border: none;
   }
 
-  #outline-container > .input-group > input{
+  .outline-container > .input-group > input{
     border: none;
     box-shadow: none;
     border-bottom: 1px solid #ccc;
@@ -131,6 +207,7 @@
     text-align: center;
     border-radius: 0;
     margin-bottom: 30px;
+    resize: vertical;
   }
 
   #general .topics{
@@ -198,24 +275,55 @@
 
   .topic-hints{
     border: 1px solid #ccc;
-    max-height: 120px;
+    max-height: 180px;
   }
 
   .topic-hints > ul{
     margin: 0;
     padding: 10px 5px;
     overflow: auto;
-    max-height: 110px;
+    max-height: 170px;
   }
 
   .topic-hints > ul >li{
     list-style-type: none;
     padding: 5px;
+    cursor: pointer;
   }
 
   .topic-hints > ul > li:hover{
     background-color: #ccc;
   }
+
+  /* references */
+
+  #references-container > textarea{
+    border: none;
+    width: 100%;
+    resize: vertical;
+  }
+
+  /* */
+  #func-buttons{
+    float: right;
+  }
+
+  .border{
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+  }
+
+  #test-container button{
+    background-color: #fff;
+    border: none;
+    margin: 0 auto;
+    display: block;
+    font-size: 0.8em;
+  }
+
+  /* tests */
+
 
 </style>
 
@@ -224,64 +332,29 @@
 
 @section('scripts')
 
+<script src="{{ asset('js/outline.js') }}"></script>
+
 <script>
   $(document).ready(function(){
+    //outline
 
-    // Outline
-    var step = 2;
-
-    $('#outline-container').on('keypress', '.outline', function(e){
-
-      // pressing Enter or not
-      if(e.which == 13 || e.keyCode == 13){
-        e.preventDefault();
-
-        var new_outline = "<div class='input-group'>" +
-                            "<span class='input-group-addon step-index'>Step " + step + " - </span>" +
-                            "<input class='form-control outline' type='text' >" +
-                            "<span class='input-group-addon close-outline'>&times;</span>" +
-                          "</div>";
-
-        $('#outline-container').append(new_outline);
-        $('#outline-container .outline').last().focus();
-        step++;
-      }
-    });
-
-    $('#outline-container').on('click', '.close-outline', function(){
-        var num_of_outline = $('#outline-container .outline').length;
-
-        if(num_of_outline > 1){
-
-            var current_outline_index = $(this).parent().index();
-
-            // change name of steps following the current outline
-            for(var i = current_outline_index; i < num_of_outline; i++){
-              $('#outline-container .step-index')[i].textContent = 'Step ' + i + ' - ';
-            }
-
-            // remove the outline and decrease step
-            $(this).parent().remove();
-            step--;
-        }
-    })
 
     // Navigate to the first
 
     $('#step-nav').attr('data-outline-index', 0);
-    $('#step-nav > p > span')[0].textContent = $('#outline-container .outline')[0].value;
+    $('#step-nav > p > span')[0].textContent = $('.outline-container .outline')[0].value;
 
     // Navigate next step
 
     $('#nextstep').on('click', function(){
 
         var current_outline_index = parseInt($('#step-nav').attr('data-outline-index'));
-        var num_of_outline = parseInt($('#outline-container .outline').length);
+        var num_of_outline = parseInt($('.outline-container .outline').length);
 
         var next_index = (current_outline_index === num_of_outline - 1) ? 0 : current_outline_index + 1;
 
         $('#step-nav').attr('data-outline-index', next_index);
-        $('#step-nav > p > span')[0].textContent = $('#outline-container .outline')[next_index].value;
+        $('#step-nav > p > span')[0].textContent = $('.outline-container .outline')[next_index].value;
     });
 
     // Navigate back step
@@ -289,12 +362,12 @@
     $('#backstep').on('click', function(){
 
         var current_outline_index = parseInt($('#step-nav').attr('data-outline-index'));
-        var num_of_outline = parseInt($('#outline-container .outline').length);
+        var num_of_outline = parseInt($('.outline-container .outline').length);
 
         var next_index = (current_outline_index === 0) ? num_of_outline - 1 : current_outline_index - 1;
 
         $('#step-nav').attr('data-outline-index', next_index);
-        $('#step-nav > p > span')[0].textContent = $('#outline-container .outline')[next_index].value;
+        $('#step-nav > p > span')[0].textContent = $('.outline-container .outline')[next_index].value;
     });
 
     // Remove chosen topic
@@ -399,6 +472,7 @@
         topics.children().remove();
         $('#topic-modal .topic-chosen input')[0].value = "";
     });
+
 
   });
 </script>
