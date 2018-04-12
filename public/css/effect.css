@@ -1,0 +1,10 @@
+.slide-container{
+  position: relative;
+  max-height: 1000px;
+}
+
+.slide{
+  position: absolute;
+  width: 100%;
+  background-color: yellow;
+}

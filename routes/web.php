@@ -23,6 +23,10 @@ Route::get('/lessons/create', function(){
     return view('lesson.create');
 });
 
+Route::get('/lessons/view', function(){
+    return view('lesson.view');
+});
+
 Route::get('/tests', function(){
     return view('test.index');
 });
