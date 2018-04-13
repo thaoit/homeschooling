@@ -331,10 +331,10 @@ $(document).ready(function(){
         var container = current.parent();
 
         container.css({
-            'height': current.height(),
+            'height': current.outerHeight(),
             'transition': 'height ' + duration + 's'
         });
-
+        
         // set the ancestor container
         var ancestor_slide = container.parents('.slide');
 
@@ -345,7 +345,7 @@ $(document).ready(function(){
             for(var i = 0; i < ancestor_slide.length; i++){
 
                 ancestor_slide.eq(i).parent().css({
-                    'height': ancestor_slide.eq(i).height(),
+                    'height': ancestor_slide.eq(i).outerHeight(),
                     'transition': 'height 0.5s'
                 });
             }
