@@ -93,10 +93,11 @@
   resize: vertical;
   border: none;
   text-align: center;
+  outline: none;
 }
 
-.question-container .question .content .title textarea{
-  outline: none;
+.question-container .question .content .title p{
+  margin: 0 auto 50px auto;
 }
 
 .question-container .question .content .suggestion-container{
@@ -203,8 +204,9 @@
     width: 6%;
   }
 
-  .question-container .question .content .title textarea{
-    width: 80%;
+  .question-container .question .content .title textarea,
+  .question-container .question .content .title p{
+    width: 60%;
   }
 }
 
@@ -264,7 +266,13 @@
   resize: vertical;
 }
 
-.question-container .question-matching .content .suggestion-container .clearfix{
+.question-container .question-matching .content .suggestion-container .suggestion.clickable,
+.question-container .question-multichoice .content .suggestion-container .clickable,
+.question-container .question-true-false .content .suggestion-container .clickable{
+  cursor: pointer;
+}
+
+.clearfix{
   clear: both;
 }
 
@@ -302,4 +310,69 @@
 .question-container .question-hidden-word .content .suggestion-container .suggestion{
   text-align: center;
   width: 80%;
+}
+
+.question-container .alert{
+  display: none;
+}
+
+.chosen{
+  border-radius: 50%;
+  color: #fff;
+  background-color: #76B041;
+}
+
+.question-container .question-multichoice .content .suggestion-container,
+.question-container .question-true-false .content .suggestion-container{
+  text-align: left;
+}
+
+.question-container .question-multichoice .content .suggestion-container .signal,
+.question-container .question-true-false .content .suggestion-container .signal{
+  text-align: center;
+  padding: 3px;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+}
+
+.panel-container{
+  padding-bottom: 25px;
+}
+
+.panel-container-scroll{
+  position: fixed;
+  top: 0;
+  background-color: #17BEBB;
+  color: #fff;
+  z-index: 100;
+  padding: 5px 15px;
+}
+
+.panel-container .time{
+  display: inline-block;
+  font-size: 1.5em;
+}
+
+.panel-container .time img{
+  width: 30px;
+  vertical-align: text-bottom;
+}
+
+.panel-container .assign,
+.panel-container .start{
+  float: right;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 1.2em;
+  padding-top: 0.5em;
+}
+
+.panel-container .assign{
+  display: none;
+}
+
+.cover-question-container{
+  background-color: #2E282A;
 }

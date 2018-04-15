@@ -34,3 +34,11 @@ Route::get('/tests', function(){
 Route::get('/tests/create', function(){
     return view('test.create');
 });
+
+Route::get('/tests/view', function(){
+    return view('test.view');
+});
+
+Route::get('/resources', function(){
+    return view('community.resource');
+});

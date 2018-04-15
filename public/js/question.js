@@ -139,7 +139,7 @@ $(document).ready(function(){
         assignSignal(current_suggestion_container);
     })
 
-    $('.question-container').on('keyup', '.question-hidden-word .content .suggestion-container .suggestion', function(e){
+    $('.question-container.create-mode').on('keyup', '.question-hidden-word .content .suggestion-container .suggestion', function(e){
 
         var current_shown = $(this).siblings('.shown');
         var text = $(this).val();
@@ -147,6 +147,15 @@ $(document).ready(function(){
         var shown_element = generateLetterShown(text);
         current_shown.empty();
         current_shown.append(shown_element);
+    })
+
+    $('.question-container.view-mode .question-hidden-word .content .suggestion-container .suggestion').on('keyup', function(e){
+
+        var current_shown = $(this).siblings('.shown');
+        var alert = $(this).parents('.content').find('.alert');
+        var text = $(this).val();
+
+        showLetters(current_shown, text, alert);
     })
 
     $('.question-container').on('click', '.question .head .close-question', function(){
@@ -170,6 +179,71 @@ $(document).ready(function(){
             saveShown = false;
             $('.container #save').hide();
         }
+    })
+
+    $('.question-container .question-multichoice .suggestion-container .clickable').on('click', function(e){
+
+        var container = $(this).parents('.suggestion-container');
+        var signals = container.find('.signal');
+
+        signals.removeClass('chosen');
+        $(this).siblings('.signal').addClass('chosen');
+    })
+
+    $('.question-container .question-true-false .suggestion-container .clickable').on('click', function(e){
+
+        var container = $(this).parents('.suggestion-container');
+        var signals = container.find('.signal');
+
+        signals.removeClass('chosen');
+        $(this).siblings('.signal').addClass('chosen');
+    })
+
+    var panel_container = $('.panel-container');
+
+    if(panel_container.length > 0){
+      var panel_container_out = panel_container.position().top + panel_container.height();
+    }
+
+    $(window).on('scroll', function(){
+
+        if(typeof panel_container_out === 'undefined'){
+            return;
+        }
+
+        var current = $(this).pageYOffset || document.documentElement.scrollTop;
+
+        if(current > panel_container_out){
+
+            $('.panel-container').addClass('panel-container-scroll');
+        }
+        else{
+            $('.panel-container').removeClass('panel-container-scroll');
+        }
+    })
+
+    $(window).on('load', function(){
+
+        var cover = $('.cover-question-container');
+        var question_container = $('.question-container');
+
+        setCoverOnQuestionContainer(cover, question_container);
+    })
+
+    $(window).on('resize', function(){
+
+        var cover = $('.cover-question-container');
+        var question_container = $('.question-container');
+
+        setCoverOnQuestionContainer(cover, question_container);
+    })
+
+    $('.panel-container .start').on('click', function(){
+
+        $(this).hide();
+        $(this).parent('.panel-container').find('.assign').show();
+
+        $('.cover-question-container').hide();
     })
 
     function generateQuestionPane(question_kind){
@@ -498,6 +572,56 @@ $(document).ready(function(){
         target.css({
             'top': bottom_obj_y + 'px',
             'left': top_bottom_obj_x - target_width / 2 + 'px'
+        });
+    }
+
+    function deleteLetters(current_shown){
+
+        var letters = current_shown.find('.wrapper-letter > span');
+
+        for(var i = 0; i < letters.length; i++){
+
+            letters[i].innerText = ' ';
+        }
+    }
+
+    function showLetters(current_shown, text, alert){
+
+        var letters = current_shown.find('.wrapper-letter > span');
+
+        if(text.length > letters.length){
+
+            alert.find('.message')[0].innerText = 'Number of letters is larger than the answer\'s ';
+            alert.show();
+        }
+        else{
+
+            if(alert.css('display') !== 'none'){
+                alert.hide();
+            }
+
+            deleteLetters(current_shown);
+
+            for(var i = 0; i < text.length; i++){
+
+                letters[i].innerText = text[i];
+            }
+        }
+    }
+
+    function setCoverOnQuestionContainer(cover, question_container){
+
+        if(cover.length === 0 || question_container.length === 0){
+            return;
+        }
+
+        cover.css({
+
+            'position': 'absolute',
+            'top'     : question_container.position().top,
+            'left'    : question_container.position().left + question_container[0].offsetLeft,
+            'width'   : question_container.outerWidth(),
+            'height'  : question_container.outerHeight(),
         });
     }
 });

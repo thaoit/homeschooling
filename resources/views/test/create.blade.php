@@ -7,7 +7,7 @@
       <input class="form-control" id="title" type="text" name="title" placeholder="Test name here">
     </div>
 
-    <div class="col-xs-12 question-container">
+    <div class="col-xs-12 question-container create-mode">
       <!--<div class="question question-multichoice">
         <div class="content content-border-top">
           <div class="head">
