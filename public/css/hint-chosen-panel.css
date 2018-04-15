@@ -1,0 +1,58 @@
+.typing-hint{
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.typing-hint > input{
+  border: none;
+  box-shadow: none;
+}
+
+.hints{
+  border: 1px solid #ccc;
+  max-height: 180px;
+}
+
+.hints > ul{
+  margin: 0;
+  padding: 10px 5px;
+  overflow: auto;
+  max-height: 170px;
+}
+
+.hints > ul >li{
+  list-style-type: none;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.hints > ul > li:hover{
+  background-color: #ccc;
+}
+
+.chosen-hints{
+  margin: 15px 0;
+}
+
+.chosen-hints > span{
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  padding: 5px;
+  margin: 0 3px;
+}
+
+.chosen-hints .close-chosen-hint{
+  cursor: pointer;
+  padding-left: 5px;
+}
+
+select, input[type="number"]{
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  padding: 5px 12px;
+}
+
+input[type="number"]{
+  max-width: 75px;
+}

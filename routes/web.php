@@ -42,3 +42,7 @@ Route::get('/tests/view', function(){
 Route::get('/resources', function(){
     return view('community.resource');
 });
+
+Route::get('/groups', function(){
+    return view('community.group');
+});
