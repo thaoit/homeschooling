@@ -1,0 +1,67 @@
+.topics > span {
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin: 0 3px;
+}
+
+.clearfix{
+  clear: both;
+}
+
+.lesson-container{
+  margin-top: 45px;
+}
+
+.lesson{
+  background-color: #eee;
+  padding: 15px 25px;
+  margin-bottom: 15px;
+}
+
+.lesson .head{
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ccc;
+}
+
+.lesson .head .topics{
+  padding: 5px 0;
+}
+
+.lesson .head .likes{
+  float: right;
+}
+
+.lesson .head .likes .like-btn{
+  border: none;
+  outline: none;
+  background-color: #eee;
+}
+
+.lesson .head .likes .glyphicon{
+  color: red;
+}
+
+.lesson .content{
+  padding: 15px 15px 0 15px;
+}
+
+.lesson .outlines,
+.lesson .references{
+  list-style: none;
+}
+
+.outlines .index{
+  color: #E4572E;
+  padding-right: 10px;
+}
+
+.outlines > li,
+.references > li{
+  margin-bottom: 15px;
+  padding-left: 0;
+}
+
+.lesson .references{
+  overflow: auto;
+}
