@@ -19,9 +19,7 @@ Route::get('/lessons', function(){
     return view('lesson.index');
 });
 
-Route::get('/lessons/create', function(){
-    return view('lesson.create');
-});
+Route::get('/lessons/create', 'LessonController@create');
 
 Route::get('/lessons/view', function(){
     return view('lesson.view');
@@ -46,3 +44,9 @@ Route::get('/resources', function(){
 Route::get('/groups', function(){
     return view('community.group');
 });
+
+Route::get('/profile', function(){
+    return view('user.profile');
+});
+
+Route::get('/topics/search', 'TopicController@search');
