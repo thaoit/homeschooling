@@ -11,6 +11,7 @@
 .hints{
   border: 1px solid #ccc;
   max-height: 180px;
+  overflow-y: scroll;
 }
 
 .hints > ul{

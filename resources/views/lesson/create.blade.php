@@ -10,14 +10,14 @@
     <div class="form-group">
       <textarea id="intro" class="col-sm-6 col-sm-offset-3 col-xs-12" name="intro" rows="3" placeholder="Intro here"></textarea>
     </div>
-    <div class="topics">
+    <div class="chosen-hints">
       <span>
         Science
-        <span class="close-topic">&times</span>
+        <span class="close-chosen-hint">&times</span>
       </span>
       <span>
         Art
-        <span class="close-topic">&times</span>
+        <span class="close-chosen-hint">&times</span>
       </span>
 
       <span>
@@ -79,19 +79,24 @@
   <!-- Topic Modal -->
   <div id="topic-modal" class="modal fade" role="dialog">
     <div class="modal-dialog">
-      <div class="modal-content">
+      <div class="modal-content hint-chosen-panel">
         <div class="modal-header">
-            <div class="topics"></div>
+            <div class="chosen-hints"></div>
         </div>
 
         <div class="modal-body">
 
-          <div class="topic-chosen">
-            <input class="form-control" type="text" name="topics" placeholder="Typing some topics here">
+          <div class="typing-hint">
+            <input class="form-control" type="text" name="chosen-hints" placeholder="Typing some topics here">
           </div>
-          <div class="topic-hints">
+          <div class="hints">
 
           </div>
+
+          <p class="message">
+            <em>To be the first having lesson on this topic!
+            Press <strong>Enter</strong> to add the topic.</em>
+          </p>
         </div>
 
         <div class="modal-footer">
@@ -197,8 +202,10 @@
 @section('styles')
 
 <!-- summernotes: rich text editor-->
-<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.css" rel="stylesheet">
+<!--<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.css" rel="stylesheet">-->
+<link rel="stylesheet" href="{{ asset('css/summernote.css') }}">
 <link rel="stylesheet" href="{{ asset('css/test-hint.css') }}">
+<link rel="stylesheet" href="{{ asset('css/hint-chosen-panel.css') }}">
 
 <style media="screen">
 
@@ -237,24 +244,9 @@
     resize: vertical;
   }
 
-  #general .topics{
+  #general .chosen-hints{
     clear: both;
     margin-bottom: 30px;
-  }
-
-  .topics > span{
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    padding: 5px;
-    margin: 0 3px;
-  }
-
-  .topics > span > span{
-    cursor: pointer;
-  }
-
-  #outline-content{
-
   }
 
   /*step navigation*/
@@ -279,49 +271,19 @@
     float:right;
   }
 
-  /* topics */
-  .topics .close-topic{
-    margin-left: 3px;
-    color: #ccc;
-  }
-
-  .topics #add-topic{
+  .chosen-hints #add-topic{
     font-size: 10px;
     color: #ccc;
-  }
-
-  .topic-chosen{
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-
-  .topic-chosen > input{
-    border: none;
-    box-shadow: none;
-  }
-
-  .topic-hints{
-    border: 1px solid #ccc;
-    max-height: 180px;
-  }
-
-  .topic-hints > ul{
-    margin: 0;
-    padding: 10px 5px;
-    overflow: auto;
-    max-height: 170px;
-  }
-
-  .topic-hints > ul >li{
-    list-style-type: none;
-    padding: 5px;
     cursor: pointer;
   }
 
-  .topic-hints > ul > li:hover{
-    background-color: #ccc;
+  .message{
+    font-size: 0.85em;
+    margin-top: 20px;
+    padding-left: 5px;
+    font-style: italic;
+    display: none;
   }
-
   /* references */
 
   #references-container > textarea{
@@ -364,6 +326,7 @@
 @section('scripts')
 
 <script src="{{ asset('js/outline.js') }}"></script>
+<script src="{{ asset('js/hint-chosen-panel.js' )}}"></script>
 
 <script>
   $(document).ready(function(){
@@ -401,107 +364,123 @@
         $('#step-nav > p > span')[0].textContent = $('.outline-container .outline')[next_index].value;
     });
 
-    // Remove chosen topic
 
-    $('.topics').on('click', '.close-topic', function(){
-        console.log('remove');
-        $(this).parent().remove();
-    });
+    $('.typing-hint > input').on('keyup', function(e){
 
-    // Add new topic
-    $('.topic-hints').hide();
+      var hints = $(this).parent('.typing-hint').siblings('.hints');
+      var message = $('.message');
 
-    $('.topic-chosen > input').on('keyup', function(){
+      // check empty text input
       if( $(this).val().length === 0 ){
 
-        $('.topic-hints').hide();
+        hints.hide();
+        message.hide();
         return true;
       }
 
-        /*$.ajaxSetup({
+      if(e.key === "Enter" && hints.children().length === 0){
+
+          var hint = $(this).val();
+          var chosen_hints_container = $(this).parents('.hint-chosen-panel').find('.chosen-hints');
+
+          // check if this hint is existed in chosen, if not: inform user
+          if(isHintChosen(hint, chosen_hints_container)){
+              message[0].innerText = 'This topic has been chosen';
+              return true;
+          }
+
+          // create new topic
+          var new_topic = generateHint(hint, false);
+          chosen_hints_container.append(new_topic);
+
+          // hide message and empty the input after adding new chosen topic
+          message.hide();
+          $(this).val('');
+      }
+      else{
+          searchAndShowTopicsHints($(this).val(), hints, message);
+      }
+
+    });
+
+    function searchAndShowTopicsHints(search_text, hints_container, message){
+
+        $.ajaxSetup({
             headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
 
-        $.get('', function(data){
+        $.ajax({
+            type: 'get',
+            url: '{{ action('TopicController@search') }}',
+            data: {
+                  'name': search_text
+            },
+            success: function(data){
+                // remove the old hints
+                if(hints_container.children().length > 0){
+                    hints_container.children().remove();
+                }
 
-        });*/
+                // if has data returned, create and show data
+                // if not, hide hint container and inform user
+                if(data.length > 0){
+                  generateTopicHints(data, hints_container);
 
-        // data sample
-        var data = [
-          {
-            'id': 1,
-            'name': 'Science',
-            'num_of_lessons': 0
-          },
-          {
-            'id': 2,
-            'name': 'Art',
-            'num_of_lessons': 0
-          },
-          {
-            'id': 3,
-            'name': 'Film',
-            'num_of_lessons': 0
-          },
-          {
-            'id': 4,
-            'name': 'Life',
-            'num_of_lessons': 0
-          }
-        ]
+                  hints_container.show();
+                  message.hide();
+                }
+                else{
+                  hints_container.hide();
+                  message[0].innerText = 'To be the first having lesson on this topic! Press Enter to add the topic.';
+                  message.show();
+                }
+            }
+        });
+    }
 
-        // convert to html
-        var hints = "";
+    function generateTopicHints(data, hints_container){
+      // convert to html
+      var hints = "";
 
-        for(var i = 0; i < data.length; i++){
+      for(var i = 0; i < data.length; i++){
 
-            hints += "<li data-id=" + data[i].id + ">" + data[i].name + "</li>";
-        }
+          hints += "<li data-id=" + data[i].id + ">" + data[i].name + "</li>";
+      }
 
-        hints = "<ul>" + hints + "</ul>";
+      hints = "<ul>" + hints + "</ul>";
 
-        // remove the old and append new to topic topic-hints
-        var topic_hints = $('#topic-modal .topic-hints');
-
-        if(topic_hints.children().length > 0){
-            topic_hints.children().remove();
-        }
-
-        topic_hints.append(hints);
-
-        // show
-        $('.topic-hints').show();
-
-    });
-
-    // chosen topic-hints
-    $('.topic-hints').on('click', 'ul > li', function(){
-
-        var topic = "<span>" + $(this)[0].textContent +
-                    "<span class='close-topic'>&times</span>" +
-                    "</span>";
-
-        $('#topic-modal .topics').append(topic);
-        $('.topic-hints').hide();
-    });
+      hints_container.append(hints);
+    }
 
     // get data from modal
     $('#ok').on('click', function(){
 
-        var topics = $('#topic-modal .topics');
-        if(topics.children().length > 0){
+        var chosen_hints = $('#topic-modal .chosen-hints > span').filter(function(){
+            return $(this).css('display') !== 'none'
+        });
 
-          for(var i = 0; i < topics.children().length; i++){
-            var topic = topics[i].innerHTML;
+        // remove the old hints
+        //$('#add-topic').parent().siblings().remove();
+
+        if(chosen_hints.length > 0){
+
+          for(var i = 0; i < chosen_hints.length; i++){
+
+            var topic = chosen_hints[i].outerHTML;
+
+            // add the new hints
             $('#add-topic').parent().before(topic);
           }
 
         }
 
-        topics.children().remove();
-        $('#topic-modal .topic-chosen input')[0].value = "";
+        //chosen_hints.children().remove();
+        // hide all chosen hints after appeding
+        chosen_hints.hide();
+
+        $('#topic-modal .typing-hint input')[0].value = "";
     });
 
 
@@ -524,6 +503,9 @@
 </script>-->
 
 <!-- summernotes: rich text editor -->
+
+<!--<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.js"></script>-->
+<script src="{{ asset('js/summernote.js') }}"></script>
 <script>
   $(document).ready(function(){
 
@@ -533,7 +515,5 @@
       });
   });
 </script>
-
-<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.js"></script>
 
 @endsection
