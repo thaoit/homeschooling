@@ -11,11 +11,12 @@ class Media extends Model
 
     protected $fillable = [
       'name',
-      'path',
-      'media_type_id'
+      'origin_name',
+      'url',
+      'media_type'
     ];
 
-    public function media_type(){
-      return $this->belongsTo('App\MediaType', 'media_type_id');
+    public function lessons(){
+      return $this->belongsToMany('App\Lesson', 'references', 'media_id', 'lesson_id');
     }
 }

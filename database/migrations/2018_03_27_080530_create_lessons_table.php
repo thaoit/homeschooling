@@ -14,13 +14,15 @@ class CreateLessonsTable extends Migration
     public function up()
     {
         Schema::create('lessons', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('title');
             $table->text('intro')->nullable();
-            $table->text('outline');
-            $table->longText('content');
-            $table->string('status', 20);
+            $table->string('status', 50);
+            $table->bigInteger('no_of_love')->default(0);
+            $table->bigInteger('author_id')->unsigned();
             $table->timestamps();
+
+            $table->foreign('author_id')->references('id')->on('users');
         });
     }
 

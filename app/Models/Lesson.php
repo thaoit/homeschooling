@@ -11,13 +11,20 @@ class Lesson extends Model
     protected $fillable = [
       'title',
       'intro',
-      'outline',
-      'content',
       'status',
-      'topics_id'
+      'no_of_love',
+      'author_id'
     ];
 
     public function topics(){
       return $this->belongsToMany('App\Topic');
+    }
+
+    public function medias(){
+      return $this->belongsToMany('App\Media');
+    }
+
+    public function user(){
+      return $this->belongsTo('App\User', 'author_id');
     }
 }

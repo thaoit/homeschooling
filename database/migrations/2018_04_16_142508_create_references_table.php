@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLessonTopicsTable extends Migration
+class CreateReferencesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateLessonTopicsTable extends Migration
      */
     public function up()
     {
-        Schema::create('lesson_topics', function (Blueprint $table) {
+        Schema::create('references', function (Blueprint $table) {
             $table->bigInteger('lesson_id')->unsigned();
-            $table->bigInteger('topic_id')->unsigned();
+            $table->bigInteger('media_id')->unsigned();
 
             $table->foreign('lesson_id')->references('id')->on('lessons');
-            $table->foreign('topic_id')->references('id')->on('topics');
+            $table->foreign('media_id')->references('id')->on('medias');
         });
     }
 
@@ -29,6 +29,6 @@ class CreateLessonTopicsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lesson_topics');
+        Schema::dropIfExists('references');
     }
 }

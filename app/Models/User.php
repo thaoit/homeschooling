@@ -22,7 +22,8 @@ class User extends Authenticatable
       'gender',
       'address',
       'other_info',
-      'parent_id'
+      'parent_id',
+      'role'
   ];
 
   /**
@@ -33,4 +34,16 @@ class User extends Authenticatable
   protected $hidden = [
       'password', 'remember_token',
   ];
+
+  public function lessons(){
+    return $this->hasMany('App\Lesson');
+  }
+
+  public function parent(){
+    return $this->hasMany('App\User', 'parent_id');
+  }
+
+  public function children(){
+    return $this->belongsTo('App\User', 'parent_id');
+  }
 }

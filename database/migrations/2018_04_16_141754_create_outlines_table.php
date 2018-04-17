@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMediasTable extends Migration
+class CreateOutlinesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateMediasTable extends Migration
      */
     public function up()
     {
-        Schema::create('medias', function (Blueprint $table) {
+        Schema::create('outlines', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->string('origin_name')->nullable();
-            $table->string('url')->nullable();
-            $table->string('media_type');
-            $table->timestamps();
+            $table->longText('content');
+            $table->bigInteger('lesson_id')->unsigned();
+
+            $table->foreign('lesson_id')->references('id')->on('lessons');
         });
     }
 
@@ -30,6 +30,6 @@ class CreateMediasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('medias');
+        Schema::dropIfExists('outlines');
     }
 }
