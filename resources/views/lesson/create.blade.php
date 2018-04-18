@@ -39,7 +39,13 @@
     </div>
     <div class="form-group border" id="references-container">
       <p>References</p>
-      <textarea name="references" rows="4"></textarea>
+      <div class="content">
+        <!--<li data-path="" data-origin-name="" title="Close this reference">Zoom_in.png<span class="close-reference">&times;</span></li>
+        <li data-path="" data-origin-name="" title="Close this reference">wrox-professional-java-development-with-the-spring-framework.pdf<span class="close-reference">&times;</span></li>-->
+      </div>
+      <button class="references-modal-btn" type="button" name="" title="Add references" data-toggle="modal" data-target="#references-modal">
+        <span class="glyphicon glyphicon-plus"></span>
+      </button>
     </div>
     <div class="form-group border test-container">
       <p>Attached Tests</p>
@@ -196,6 +202,42 @@
     </div>
   </div>
 
+  <div id="references-modal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>Choose 1 kind to add new media reference</h4>
+        </div>
+        <ul class="modal-body option-container">
+          <li class="option">
+            <p class="option-name">URL</p>
+            <input class="form-control option-content" type="text" name="" placeholder="Paste URL here">
+
+          </li>
+          <li class="option">
+            <p class="option-name">Upload new reference</p>
+            <form class="option-content new-media-refs" method="post">
+              {{ csrf_field() }}
+              <input class="" type="file" multiple name="new-media-refs[]" value="Upload">
+            </form>
+          </li>
+          <li class="option">
+            <p class="option-name">Your existed uploaded references</p>
+            <ul class="option-content uploaded-references">
+              <li class="uploaded-ref">All in the Earth.doc</li>
+              <li class="uploaded-ref">Who change your life?.pdf</li>
+            </ul>
+
+          </li>
+        </ul>
+        <div class="modal-footer">
+          <button class="btn btn-default references-btn" type="button" name="" data-dismiss="modal">OK</button>
+          <button class="btn btn-default" type="button" name="" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 @endsection
 
 
@@ -285,12 +327,56 @@
     display: none;
   }
   /* references */
-
-  #references-container > textarea{
-    border: none;
-    width: 100%;
-    resize: vertical;
+  .option-container{
+    list-style: none;
   }
+
+  .option-container .option{
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .option-container .option .option-name{
+    cursor: pointer;
+    padding: 10px;
+    margin-bottom: 0;
+  }
+
+  .option-container .option .option-name:hover{
+    background-color: #ccc;
+    color: #fff;
+  }
+
+  .option-container .option .option-content{
+    display: none;
+    margin-top: 15px;
+  }
+
+  .uploaded-references .uploaded-ref{
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+
+  .option-name-clicked{
+    background-color: #ccc;
+    color: #fff;
+  }
+
+  .selected{
+    font-weight: bold;
+  }
+
+  .close-reference{
+    float: right;
+    padding: 0 12px;
+    color: #ccc;
+    cursor: pointer;
+  }
+
+  .content li{
+    margin-bottom: 10px;
+  }
+
 
   /* */
   #func-buttons{
@@ -303,7 +389,8 @@
     padding: 10px;
   }
 
-  .test-container button{
+  .test-container button,
+  #references-container button{
     background-color: #fff;
     border: none;
     margin: 0 auto;
@@ -364,7 +451,80 @@
         $('#step-nav > p > span')[0].textContent = $('.outline-container .outline')[next_index].value;
     });
 
+    // kind of adding references
+    $('.option-container .option .option-name').on('click', function(){
 
+        var parent = $(this).parent();
+
+        parent.children().show();
+        parent.siblings().children('.option-content').hide();
+
+        $(this).addClass('option-name-clicked');
+        parent.siblings().children('.option-name').removeClass('option-name-clicked');
+    })
+
+    $('.uploaded-references .uploaded-ref').on('click', function(){
+
+        $(this).toggleClass('selected');
+    })
+
+    $('#references-modal .references-btn').on('click', function(){
+
+        var new_media_refs = $(this).parents('#references-modal').find('.new-media-refs');
+        if(new_media_refs.css('display') !== "none" && new_media_refs.length > 0){
+
+            var references_container = $('#references-container .content');
+            storeAndAssignMediaReferences(new_media_refs[0], references_container);
+        }
+    })
+
+    function storeAndAssignMediaReferences(new_media_refs, references_container){
+
+        var formData = new FormData(new_media_refs);
+
+        $.ajax({
+            type: 'post',
+            url: '{{ action('MediaController@storeMediaReferences') }}',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(data){
+
+                var html_data = generateReferencesFromAjaxResponse(data);
+                references_container.append(html_data);
+
+            },
+            error: function(data){
+                console.log(data);
+            }
+        });
+    }
+
+    $('#references-container .content').on('click', '.close-reference', function(){
+
+        $(this).parent().remove();
+    })
+
+    function generateReferencesFromAjaxResponse(data){
+
+        var references = ''
+        for(var i = 0; i < data.length; i++){
+
+            references += generateReference(data[i].path, data[i].origin_name);
+        }
+
+        return references;
+    }
+
+    function generateReference(path, origin_name){
+
+        return '<li data-path="' + path + '" data-origin-name="' + origin_name + '" title="Close this reference">'+
+                  origin_name +
+                  '<span class="close-reference">&times;</span>' +
+                '</li>';
+    }
+
+    // topics
     $('.typing-hint > input').on('keyup', function(e){
 
       var hints = $(this).parent('.typing-hint').siblings('.hints');

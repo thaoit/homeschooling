@@ -50,3 +50,5 @@ Route::get('/profile', function(){
 });
 
 Route::get('/topics/search', 'TopicController@search');
+
+Route::post('/upload/media-references', 'MediaController@storeMediaReferences');
