@@ -17,9 +17,12 @@ class CreateMediasTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('origin_name')->nullable();
-            $table->string('url')->nullable();
+            $table->text('url');
             $table->string('media_type');
+            $table->bigInteger('user_id')->unsigned();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

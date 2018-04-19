@@ -12,6 +12,13 @@ return [
         'male'    => 'Male',
         'female'  => 'Female',
         'others'  => 'Others'
+    ],
+
+    'media_type' => [
+        'image'     => 'Image',
+        'video'     => 'Video',
+        'document'  => 'Document',
+        'undefined' => 'Undefined'
     ]
 ];
 

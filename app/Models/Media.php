@@ -13,10 +13,15 @@ class Media extends Model
       'name',
       'origin_name',
       'url',
-      'media_type'
+      'media_type',
+      'user_id'
     ];
 
     public function lessons(){
       return $this->belongsToMany('App\Lesson', 'references', 'media_id', 'lesson_id');
+    }
+
+    public function user(){
+      return $this->belongsTo('App\User', 'user_id');
     }
 }

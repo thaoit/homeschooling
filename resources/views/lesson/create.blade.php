@@ -481,6 +481,7 @@
     function storeAndAssignMediaReferences(new_media_refs, references_container){
 
         var formData = new FormData(new_media_refs);
+        formData.append('user_id', 1);
 
         $.ajax({
             type: 'post',
@@ -510,17 +511,17 @@
         var references = ''
         for(var i = 0; i < data.length; i++){
 
-            references += generateReference(data[i].path, data[i].origin_name);
+            references += generateReference(data[i].id, data[i].path, data[i].origin_name);
         }
 
         return references;
     }
 
-    function generateReference(path, origin_name){
+    function generateReference(id, path, origin_name){
 
-        return '<li data-path="' + path + '" data-origin-name="' + origin_name + '" title="Close this reference">'+
+        return '<li data-id=' + id + ' data-path="' + path + '" title="Close this reference">'+
+        '<span class="close-reference">&times;</span>' +
                   origin_name +
-                  '<span class="close-reference">&times;</span>' +
                 '</li>';
     }
 

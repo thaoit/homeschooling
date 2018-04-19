@@ -46,4 +46,8 @@ class User extends Authenticatable
   public function children(){
     return $this->belongsTo('App\User', 'parent_id');
   }
+
+  public function medias(){
+    return $this->hasMany('App\Media');
+  }
 }
