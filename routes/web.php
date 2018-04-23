@@ -51,4 +51,10 @@ Route::get('/profile', function(){
 
 Route::get('/topics/search', 'TopicController@search');
 
-Route::post('/upload/media-references', 'MediaController@storeMediaReferences');
+Route::post('/upload/media-references/new-upload', 'MediaController@storeUploadMediaReferences');
+
+Route::post('/upload/media-references/new-url', 'MediaController@storeUrlMediaReferences');
+
+Route::get('/upload/media-references-by-user', 'MediaController@getMediaReferencesByUser');
+
+Route::get('/upload/media-references/view/{name}', 'MediaController@viewMediaReference');

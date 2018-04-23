@@ -211,8 +211,9 @@
         <ul class="modal-body option-container">
           <li class="option">
             <p class="option-name">URL</p>
-            <input class="form-control option-content" type="text" name="" placeholder="Paste URL here">
-
+            <form class="option-content url-media-ref">
+              <input class="form-control" type="text" name="url" placeholder="Paste URL here">
+            </form>
           </li>
           <li class="option">
             <p class="option-name">Upload new reference</p>
@@ -223,7 +224,7 @@
           </li>
           <li class="option">
             <p class="option-name">Your existed uploaded references</p>
-            <ul class="option-content uploaded-references">
+            <ul class="option-content uploaded-refs">
               <li class="uploaded-ref">All in the Earth.doc</li>
               <li class="uploaded-ref">Who change your life?.pdf</li>
             </ul>
@@ -352,7 +353,7 @@
     margin-top: 15px;
   }
 
-  .uploaded-references .uploaded-ref{
+  .uploaded-refs .uploaded-ref{
     cursor: pointer;
     margin-bottom: 10px;
   }
@@ -375,6 +376,10 @@
 
   .content li{
     margin-bottom: 10px;
+  }
+
+  #references-container .content li .name{
+    cursor: pointer;
   }
 
 
@@ -463,35 +468,86 @@
         parent.siblings().children('.option-name').removeClass('option-name-clicked');
     })
 
-    $('.uploaded-references .uploaded-ref').on('click', function(){
+    // marked as choose this references
+    $('.uploaded-refs').on('click', '.uploaded-ref', function(){
 
         $(this).toggleClass('selected');
     })
 
+    // actions after closing the modal
     $('#references-modal .references-btn').on('click', function(){
 
+        var references_container = $('#references-container .content');
+
         var new_media_refs = $(this).parents('#references-modal').find('.new-media-refs');
+        var uploaded_refs = $(this).parents('#references-modal').find('.uploaded-refs');
+        var url_media_ref = $(this).parents('#references-modal').find('.url-media-ref');
+
         if(new_media_refs.css('display') !== "none" && new_media_refs.length > 0){
 
-            var references_container = $('#references-container .content');
-            storeAndAssignMediaReferences(new_media_refs[0], references_container);
+            storeAndAssignNewUploadMediaReferences(new_media_refs[0], references_container);
+        }
+        else if(uploaded_refs.css('display') !== "none"){
+
+            var uploaded_ref = uploaded_refs.children('.uploaded-ref.selected');
+            var uploaded_ref_html = '';
+
+            for(var i = 0; i < uploaded_ref.length; i++){
+                uploaded_ref_html += generateReferenceAfterChosen(
+                    uploaded_ref.eq(i).attr('data-id'),
+                    uploaded_ref.eq(i).attr('data-path'),
+                    uploaded_ref[i].innerText,
+                    true
+                )
+            }
+
+            references_container.append(uploaded_ref_html);
+        }
+        else if(url_media_ref.css('display') !== "none"){
+
+            storeAndAssignNewUrlMediaReferences(url_media_ref, references_container);
         }
     })
 
-    function storeAndAssignMediaReferences(new_media_refs, references_container){
+    // open References modal
+    $('.references-modal-btn').on('click', function(){
+        // get current user id
+        $user_id = 1;
+        // load uploaded references by current user
+        $.ajax({
+
+            type: 'get',
+            url:'{{ action('MediaController@getMediaReferencesByUser') }}',
+            data: {
+                'user_id': $user_id
+            },
+            success: function(data){
+
+                var html_data = generateUploadReferencesBeforeChosen(data);
+
+                $('#references-modal .uploaded-refs').children().remove();
+                $('#references-modal .uploaded-refs').append(html_data);
+            },
+            error: function(data){
+                console.log(data);
+            }
+        });
+    })
+
+    function storeAndAssignNewUploadMediaReferences(new_media_refs, references_container){
 
         var formData = new FormData(new_media_refs);
         formData.append('user_id', 1);
 
         $.ajax({
             type: 'post',
-            url: '{{ action('MediaController@storeMediaReferences') }}',
+            url: '{{ action('MediaController@storeUploadMediaReferences') }}',
             data: formData,
             contentType: false,
             processData: false,
             success: function(data){
 
-                var html_data = generateReferencesFromAjaxResponse(data);
+                var html_data = generateReferencesAfterChosen(data);
                 references_container.append(html_data);
 
             },
@@ -501,28 +557,124 @@
         });
     }
 
+    function storeAndAssignNewUrlMediaReferences(url_media_ref, references_container){
+
+        var url = url_media_ref.children('input').val();
+        var html_data = generateReferenceAfterChosen(
+            '',
+            url,
+            url.substr(url.lastIndexOf('/') + 1),
+            false
+        );
+
+        references_container.append(html_data);
+
+        /*$.ajaxSetup({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+        });
+
+        $.ajax({
+
+            type: 'post',
+            url: '{{ action('MediaController@storeUrlMediaReferences') }}',
+            data: {
+                url: url_media_ref.children('input').val(),
+                user_id: 1
+            },
+            success: function(data){
+
+                var html_data = generateReferenceAfterChosen(data.id, data.path, data.origin_name, false);
+                references_container.append(html_data);
+            },
+            error: function(data){
+              console.log(data);
+            }
+        });*/
+    }
+
     $('#references-container .content').on('click', '.close-reference', function(){
 
         $(this).parent().remove();
     })
 
-    function generateReferencesFromAjaxResponse(data){
+    $('#references-container .content').on('click', 'li .name', function(){
+
+        //var link = " action('MediaController@viewMediaReference', 'url')";
+        //link = link.replace('url', $(this).parent().attr('data-path'));
+
+
+        /*$.ajax({
+
+            type: 'get',
+            url: " action('MediaController@viewMediaReference') ",
+            data: {
+                url: $(this).parent().attr('data-path')
+            },
+            success: function(data){
+              console.log(data);
+            },
+            error: function(data){
+              console.log(data);
+            }
+        });*/
+        //window.open('https://www.youtube.com/watch?v=Ou6aFBiNwV8', '_blank');
+    })
+
+    function generateUploadReferencesBeforeChosen(data){
+
+        var uploaded_refs = '';
+        for(var i = 0; i < data.length; i++){
+
+            uploaded_refs +=  '<li class="uploaded-ref" data-id=' + data[i].id + ' data-path="' + data[i].url + '" >' +
+                                  data[i].origin_name +
+                              '</li>';
+        }
+
+        return uploaded_refs;
+    }
+
+    function generateReferencesAfterChosen(data){
 
         var references = ''
         for(var i = 0; i < data.length; i++){
 
-            references += generateReference(data[i].id, data[i].path, data[i].origin_name);
+            references += generateReferenceAfterChosen(data[i].id, data[i].path, data[i].origin_name, true);
         }
 
         return references;
     }
 
-    function generateReference(id, path, origin_name){
+    function generateReferenceAfterChosen(id, path, origin_name, isUploaded){
 
-        return '<li data-id=' + id + ' data-path="' + path + '" title="Close this reference">'+
-        '<span class="close-reference">&times;</span>' +
-                  origin_name +
+        if(isUploaded){
+
+            var href = "{{ action('MediaController@viewMediaReference', 'url') }}";
+            var name = path.substr(path.lastIndexOf('/') + 1);
+            console.log(path);
+            console.log(name);
+            href = href.replace('url', name);
+
+            var link =  '<a href="' + href + '" target="_blank">' +
+                          origin_name +
+                        '</a>';
+        }
+        else{
+            var link =  '<a href="' + path + '">'+
+                          origin_name +
+                        '</a>';
+        }
+
+        return '<li data-id=' + id + ' data-path="' + path + '" >' +
+                  link +
+                  '<span class="close-reference" title="Close this reference">&times;</span>' +
                 '</li>';
+
+        /*return '<li data-id=' + id + ' data-path="' + path + '" >' +
+                  '<span class="name">' + origin_name + '</span>' +
+                  '<span class="close-reference" title="Close this reference">&times;</span>' +
+                '</li>';*/
     }
 
     // topics
@@ -597,6 +749,9 @@
                   message[0].innerText = 'To be the first having lesson on this topic! Press Enter to add the topic.';
                   message.show();
                 }
+            },
+            error: function(data){
+                console.log(data);
             }
         });
     }
