@@ -37,6 +37,8 @@ $(document).ready(function(){
         var outline_container = deleted_section.parents('.outline-container');
         var outline = outline_container.find('.outline');
         var step_index = outline_container.find('.step-index');
+        var outline_content = $(outline_container.attr('data-target'));
+        var control_next = $(outline_container.attr('data-control-next'));
 
         if(outline.length > 1){
 
@@ -45,6 +47,26 @@ $(document).ready(function(){
             // change name of steps following the current outline
             for(var i = current_outline_index; i < outline.length; i++){
               step_index[i].textContent = 'Step ' + i + ' - ';
+            }
+
+            // move to next outline if the deleted section is shown current
+            var step_nav = control_next.parents('#step-nav');
+            var step_nav_index = parseInt(step_nav.attr('data-outline-index'));
+
+            if(control_next.length > 0){
+
+                // update new index
+                if(step_nav_index === current_outline_index - 1){
+                    control_next.click();
+
+                    // case the deleted section is the last outline
+                    if(current_outline_index < outline.length){
+                        step_nav.attr('data-outline-index', step_nav_index);
+                    }
+                }
+                else if(step_nav_index > current_outline_index - 1){
+                    step_nav.attr('data-outline-index', step_nav_index - 1);
+                }
             }
 
             // remove the outline and decrease step
@@ -56,6 +78,18 @@ $(document).ready(function(){
                 outline.eq(current_outline_index - 1).attr('data-id'),
                 $('.test-container')
             )
+
+            // update outline data-id
+            for(var i = current_outline_index; i < outline.length; i++){
+                outline.eq(i).attr('data-id', i);
+            }
+
+            // delete the outline content within this outline
+            var editor = outline_content.children('.note-editor.note-frame').eq(current_outline_index - 1);
+
+            editor.prev().remove();
+            editor.remove();
+
         }
         else{
 

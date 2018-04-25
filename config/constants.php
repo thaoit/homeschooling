@@ -19,6 +19,11 @@ return [
         'video'     => 'Video',
         'document'  => 'Document',
         'undefined' => 'Undefined'
+    ],
+
+    'lesson_status' => [
+        'draft'     => 'Draft',
+        'publish'   => 'Publish'
     ]
 ];
 

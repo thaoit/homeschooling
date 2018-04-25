@@ -29,7 +29,7 @@
   </div>
 
   <div class="col-xs-12 col-md-3">
-    <div class="form-group border outline-container">
+    <div class="form-group border outline-container" data-target="#outline-content" data-control-next="#nextstep">
       <p>Outline</p>
       <div class="input-group">
         <span class="input-group-addon step-index">Step 1 - </span>
@@ -72,13 +72,16 @@
       <button class="btn btn-default" type="button" id="nextstep">Next</button>
       </p>
     </div>
-    <div id="summernote">
+    <div id="outline-content">
+      <div id="summernote">
 
+      </div>
     </div>
+
     <div class="form-group" id="func-buttons">
-      <button class="btn btn-default" type="submit" name="button">Preview</button>
-      <button class="btn btn-default" type="submit" name="save_as_draft">Save as Draft</button>
-      <button class="btn btn-default" type="submit" name="publish">Publish</button>
+      <button id="preview" class="btn btn-default" type="submit" name="button">Preview</button>
+      <button id="save_as_draft" class="btn btn-default" type="submit" name="save_as_draft">Save as Draft</button>
+      <button id="publish" class="btn btn-default" type="submit" name="publish">Publish</button>
     </div>
   </div>
 
@@ -196,7 +199,7 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-default delete-btn" type="button" name="" data-dismiss="modal">OK</button>
-          <button class="btn btn-default" type="button" name="" data-dismiss="modal">Cancel</button>
+          <button class="btn btn-default cancel-btn" type="button" name="" data-dismiss="modal">Cancel</button>
         </div>
       </div>
     </div>
@@ -422,7 +425,10 @@
 
 <script>
   $(document).ready(function(){
-    //outline
+
+    var delete_outlines = [];
+
+    setupAjax();
 
 
     // Navigate to the first
@@ -437,10 +443,15 @@
         var current_outline_index = parseInt($('#step-nav').attr('data-outline-index'));
         var num_of_outline = parseInt($('.outline-container .outline').length);
 
-        var next_index = (current_outline_index === num_of_outline - 1) ? 0 : current_outline_index + 1;
+        var next_index = (current_outline_index >= num_of_outline - 1) ? 0 : current_outline_index + 1;
 
         $('#step-nav').attr('data-outline-index', next_index);
         $('#step-nav > p > span')[0].textContent = $('.outline-container .outline')[next_index].value;
+
+        // show the next outline content and hide the current
+        var outline_content = $('#outline-content').children('.note-editor.note-frame');
+        outline_content.eq(current_outline_index).hide();
+        outline_content.eq(next_index).show();
     });
 
     // Navigate back step
@@ -450,10 +461,15 @@
         var current_outline_index = parseInt($('#step-nav').attr('data-outline-index'));
         var num_of_outline = parseInt($('.outline-container .outline').length);
 
-        var next_index = (current_outline_index === 0) ? num_of_outline - 1 : current_outline_index - 1;
+        var prev_index = (current_outline_index <= 0) ? num_of_outline - 1 : current_outline_index - 1;
 
-        $('#step-nav').attr('data-outline-index', next_index);
-        $('#step-nav > p > span')[0].textContent = $('.outline-container .outline')[next_index].value;
+        $('#step-nav').attr('data-outline-index', prev_index);
+        $('#step-nav > p > span')[0].textContent = $('.outline-container .outline')[prev_index].value;
+
+        // show the next outline content and hide the current
+        var outline_content = $('#outline-content').children('.note-editor.note-frame');
+        outline_content.eq(current_outline_index).hide();
+        outline_content.eq(prev_index).show();
     });
 
     // kind of adding references
@@ -652,8 +668,7 @@
 
             var href = "{{ action('MediaController@viewMediaReference', 'url') }}";
             var name = path.substr(path.lastIndexOf('/') + 1);
-            console.log(path);
-            console.log(name);
+
             href = href.replace('url', name);
 
             var link =  '<a href="' + href + '" target="_blank">' +
@@ -799,6 +814,188 @@
         $('#topic-modal .typing-hint input')[0].value = "";
     });
 
+
+    // create edit content of each outline
+    $('.outline-container').on('keypress', '.outline', function(e){
+
+        if(e.key === "Enter"){
+
+            // create new content with new outline
+            $('#outline-content').append("<div></div>");
+            var new_content = $('#outline-content').children().last();
+
+            new_content.summernote({
+                placeholder: 'Add details for each outline',
+                height: 280
+            });
+
+            new_content.next().hide();
+        }
+    })
+
+    // save lesson
+    $('#save_as_draft').on('click', function(){
+
+        saveGeneralLesson(false);
+    })
+
+    // publish lesson
+    $('#publish').on('click', function(){
+
+        saveGeneralLesson(true);
+    })
+
+    // save object of deleted outlines
+    $('.outline-container').on('click', '.close-outline', function(){
+
+       var no_of_outlines = $(this).parents('.outline-container').find('.outline').length;
+
+       if(no_of_outlines > 1){
+            delete_outlines.push($(this).siblings('.outline'));
+        }
+    })
+
+    $('.confirmation-modal .delete-btn').on('click', function(){
+
+        var latest_outline = delete_outlines.pop();
+        if(typeof latest_outline === "undefined"){
+            return true;
+        }
+
+        var outline_id = latest_outline.attr('data-outline-id');
+
+        // save the deleted outline id that has been saved in db
+        if(typeof outline_id !== "undefined" && outline_id.length > 0){
+            delete_outlines.push(outline_id);
+        }
+    })
+
+    // remove the latest object
+    $('.confirmation-modal .cancel-btn').on('click', function(){
+
+        delete_outlines.pop();
+    })
+
+    function saveGeneralLesson(is_publish){
+
+        var lesson_id = $('#general').attr('data-lesson-id');
+        var url;
+        var isNew = true;
+
+        // check lesson is added or updated
+        if(typeof lesson_id === 'undefined'){
+            url = '{{ action('LessonController@store') }}';
+        }
+        else{
+            isNew =false;
+            url = '{{ action('LessonController@update') }}';
+        }
+
+        $.ajax({
+
+            type: 'post',
+            url: url,
+            data:{
+                'id' :        lesson_id,
+                'title':      $('#title').val(),
+                'intro':      $('#intro').val(),
+                'author_id':  1,
+                'is_publish': is_publish
+            },
+            success: function(data){
+
+                if(isNew && typeof data['id'] !== "undefined"){
+                    lesson_id = data['id'];
+                    $('#general').attr('data-lesson-id', lesson_id);
+                }
+
+                if(is_publish){
+
+                    $('#save_as_draft').hide();
+                    $('#publish')[0].innerText = "Save";
+                }
+
+                saveOutlines(lesson_id);
+            },
+            error: function(data){
+                console.log(data);
+            }
+        });
+    }
+
+    function saveOutlines(lesson_id){
+
+        var new_outlines = $('.outline-container .outline:not([data-outline-id])');
+        var update_outlines = $('.outline-container .outline[data-outline-id]');
+        var new_contents = getArrayOfObjFromOutlineContents(new_outlines, lesson_id);
+        var update_contents = getArrayOfObjFromOutlineContents(update_outlines, lesson_id);
+
+        $.ajax({
+
+            type: 'post',
+            url: '{{ action('OutlineController@doStoreUpdateDelete') }}',
+            data: {
+                new: new_contents,
+                update: update_contents,
+                delete: delete_outlines
+            },
+            success: function(data){
+
+                if(data['success'] == true){
+
+                    // update new outlines id
+                    var new_outlines_id = data['new_outlines_id'];
+                    for(var i = 0; i < new_outlines_id.length; i++){
+                        new_outlines.attr('data-outline-id', new_outlines_id[i]);
+                    }
+
+                    // remove the deleted outlines
+                    delete_outlines = [];
+                }
+                else{
+                    alert('There are errors!');
+                }
+            },
+            error: function(data){
+                console.log(data);
+            }
+        })
+    }
+
+    function getArrayOfObjFromOutlineContents(outline_elements, lesson_id){
+
+        var contents = [];
+        for(var i = 0; i < outline_elements.length; i++){
+
+            contents.push(getObjFromOutlineContent(outline_elements.eq(i), lesson_id));
+        }
+
+        return contents;
+    }
+
+    function getObjFromOutlineContent(outline_element, lesson_id){
+
+        var outline_id = outline_element.attr('data-outline-id');
+        var outline_name = outline_element.val();
+        var index = parseInt(outline_element.attr('data-id')) - 1;
+        var inner_html = $('#outline-content').find('.note-editor .note-editable')[index].innerHTML;
+
+        return {
+            id: outline_id,
+            name: outline_name,
+            content: inner_html,
+            lesson_id: lesson_id
+        };
+    }
+
+    function setupAjax(){
+
+        $.ajaxSetup({
+            headers: {
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    }
 
   });
 </script>

@@ -21,6 +21,12 @@ Route::get('/lessons', function(){
 
 Route::get('/lessons/create', 'LessonController@create');
 
+Route::post('/lessons/store', 'LessonController@store');
+
+Route::post('/lessons/update', 'LessonController@update');
+
+Route::post('lessons/save-outlines', 'OutlineController@doStoreUpdateDelete');
+
 Route::get('/lessons/view', function(){
     return view('lesson.view');
 });
