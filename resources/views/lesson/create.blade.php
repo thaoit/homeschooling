@@ -11,18 +11,18 @@
       <textarea id="intro" class="col-sm-6 col-sm-offset-3 col-xs-12" name="intro" rows="3" placeholder="Intro here"></textarea>
     </div>
     <div class="chosen-hints">
-      <span>
+      <!--<span>
         Science
         <span class="close-chosen-hint">&times</span>
       </span>
       <span>
         Art
         <span class="close-chosen-hint">&times</span>
-      </span>
+      </span>-->
 
       <span>
         Add
-        <span class="glyphicon glyphicon-plus" id="add-topic" data-toggle="modal" data-target="#topic-modal"></span>
+        <span class="glyphicon glyphicon-plus" id="add-topic" data-toggle="modal" data-target="#topic-modal" title="Add more topics"></span>
       </span>
 
     </div>
@@ -427,6 +427,7 @@
   $(document).ready(function(){
 
     var delete_outlines = [];
+    var delete_topics = [];
 
     setupAjax();
 
@@ -681,7 +682,12 @@
                         '</a>';
         }
 
-        return '<li data-id=' + id + ' data-path="' + path + '" >' +
+        var data_id = '';
+        if(id.length > 0){
+            data_id = 'data-id="' + id + '"';
+        }
+
+        return '<li ' + data_id + ' data-path="' + path + '" >' +
                   link +
                   '<span class="close-reference" title="Close this reference">&times;</span>' +
                 '</li>';
@@ -718,7 +724,7 @@
           }
 
           // create new topic
-          var new_topic = generateHint(hint, false);
+          var new_topic = generateHint(hint, null);
           chosen_hints_container.append(new_topic);
 
           // hide message and empty the input after adding new chosen topic
@@ -788,7 +794,7 @@
     // get data from modal
     $('#ok').on('click', function(){
 
-        var chosen_hints = $('#topic-modal .chosen-hints > span').filter(function(){
+        var chosen_hints = $('#topic-modal .chosen-hints .chosen-hint').filter(function(){
             return $(this).css('display') !== 'none'
         });
 
@@ -876,6 +882,16 @@
         delete_outlines.pop();
     })
 
+    // save the deleted topics which is existed in db
+    $('#general .chosen-hints').on('click', '.close-chosen-hint', function(){
+
+        var topic_id = $(this).parent('.chosen-hint').attr('data-id');
+
+        if(typeof topic_id !== "undefined"){
+            delete_topics.push(topic_id);
+        }
+    })
+
     function saveGeneralLesson(is_publish){
 
         var lesson_id = $('#general').attr('data-lesson-id');
@@ -916,6 +932,7 @@
                 }
 
                 saveOutlines(lesson_id);
+                saveTopics(lesson_id);
             },
             error: function(data){
                 console.log(data);
@@ -986,6 +1003,71 @@
             content: inner_html,
             lesson_id: lesson_id
         };
+    }
+
+    function saveTopics(lesson_id){
+
+        var new_topic_elements = $('#general .chosen-hints .chosen-hint:not([data-id])');
+        var update_topic_elements = $('#general .chosen-hints .chosen-hint[data-id]');
+        var new_topics = getArrayOfObjFromTopics(new_topic_elements);
+        var update_topics = getArrayOfObjFromTopics(update_topic_elements);
+
+        $.ajax({
+
+            type: 'post',
+            url: '{{ action('TopicController@doStoreUpdateDelete') }}',
+            data:{
+                new: new_topics,
+                update: update_topics,
+                delete: delete_topics,
+                lesson_id: lesson_id
+            },
+            success: function(data){
+
+                if(data['success'] == true){
+
+                  var new_topics_id = data['new_topics_id'];
+                  for(var i = 0; i < new_topics_id.length; i++){
+                      new_topic_elements.attr('data-id', new_topics_id[i]);
+                  }
+
+                  // remove the deleted topics
+                  delete_topics = [];
+                }
+                else{
+                    alert('There are errors!');
+                }
+            },
+            error: function(data){
+                console.log(data);
+            }
+        });
+
+    }
+
+    function getArrayOfObjFromTopics(topic_elements){
+
+        var topics = [];
+
+        for(var i = 0; i < topic_elements.length; i++){
+            topics.push(getObjFromTopic( topic_elements.eq(i) ));
+        }
+
+        return topics;
+    }
+
+    function getObjFromTopic(topic_element){
+
+        var id = topic_element.attr('data-id');
+
+        var name = topic_element[0].innerText;
+        var close_name = topic_element.children('.close-chosen-hint')[0].innerText;
+        var name = name.substr(0, name.length - close_name.length);
+
+        return {
+          id: id,
+          name: name
+        }
     }
 
     function setupAjax(){

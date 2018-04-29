@@ -25,6 +25,7 @@ $('.hints').hide();
 $('.hints').on('click', 'ul > li', function(){
 
     var hint = $(this)[0].textContent;
+    var id = $(this).attr('data-id');
     var panel = $(this).parents('.hint-chosen-panel');
     var chosen_hints_container = panel.find('.chosen-hints');
     var message = panel.find('.message');
@@ -38,18 +39,28 @@ $('.hints').on('click', 'ul > li', function(){
         return true;
     }
 
-    var topic = generateHint(hint, true);
+    var topic = generateHint(hint, id);
 
     chosen_hints_container.append(topic);
     $('.hints').hide();
 });
 
-function generateHint(hint, isHintExisted){
+function generateHint(hint, id){
 
-    var new_hint_class = (isHintExisted) ? '' : 'new-hint';
-    return  "<span class='" + new_hint_class + "'>" + hint +
-              "<span class='close-chosen-hint'>&times</span>" +
-            "</span>";
+    var hint_html = '';
+
+    if(typeof id === "undefined" || id === null){
+        hint_html =   "<span class='chosen-hint'>" + hint +
+                        "<span class='close-chosen-hint'>&times</span>" +
+                      "</span>";
+    }
+    else{
+      hint_html =   "<span class='chosen-hint' data-id=" + id + ">" + hint +
+                      "<span class='close-chosen-hint'>&times</span>" +
+                    "</span>";
+    }
+
+    return hint_html;
 }
 
 function isHintChosen(hint, chosen_hints_container){

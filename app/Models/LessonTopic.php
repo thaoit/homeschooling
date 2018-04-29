@@ -13,4 +13,6 @@ class LessonTopic extends Model
       'lesson_id',
       'topic_id'
     ];
+
+    public $timestamps = false;
 }
