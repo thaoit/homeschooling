@@ -57,6 +57,8 @@ Route::get('/profile', function(){
 
 Route::get('/topics/search', 'TopicController@search');
 
+Route::post('/topics/save-topics', 'TopicController@doStoreUpdateDelete');
+
 Route::post('/upload/media-references/new-upload', 'MediaController@storeUploadMediaReferences');
 
 Route::post('/upload/media-references/new-url', 'MediaController@storeUrlMediaReferences');
