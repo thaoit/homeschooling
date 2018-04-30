@@ -18,7 +18,7 @@ $(document).ready(function(){
         var new_outline = "<div class='input-group'>" +
                             "<span class='input-group-addon step-index'>Step " + step + " - </span>" +
                             "<input class='form-control outline' type='text' data-id='" + step + "'>" +
-                            "<span class='input-group-addon close-outline' data-toggle='modal' data-target='#confirmation-modal'>&times;</span>" +
+                            "<span class='input-group-addon close-outline' data-toggle='modal' data-target='#confirmation-modal' title='Delete this outline'>&times;</span>" +
                           "</div>";
 
         $('.outline-container').append(new_outline);

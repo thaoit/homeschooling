@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Config;
 use App\Models\Lesson;
+use App\Services\LessonService;
 use Illuminate\Http\Request;
 
 class LessonController extends Controller
@@ -18,38 +19,17 @@ class LessonController extends Controller
     public function store(Request $request){
 
         $input = $request->all();
-
-        $lesson = new Lesson;
-
-        $lesson->title = $input['title'];
-        $lesson->intro = $input['intro'];
-        $lesson->author_id = $input['author_id'];
-        $lesson->status = ($input['is_publish'] == 'true') ? Config::get('constants.lesson_status.publish'): Config::get('constants.lesson_status.draft');
-
-        // save and return id
-        $lesson->save();
+        $lesson_id =  LessonService::store($input);
 
         return [
-           'id' => $lesson->id
+           'id' => $lesson_id
         ];
     }
 
     public function update(Request $request){
 
         $input = $request->all();
-        $lesson = Lesson::find($input['id']);
-        $success = false;
-
-        if($lesson != null){
-
-          $lesson->title = $input['title'];
-          $lesson->intro = $input['intro'];
-          $lesson->author_id = $input['author_id'];
-          $lesson->status = ($input['is_publish'] == 'true') ? Config::get('constants.lesson_status.publish'): Config::get('constants.lesson_status.draft');
-
-          $lesson->save();
-          $success = true;
-        }
+        $success = LessonService::update($input);
 
         return [
             'success' => $success

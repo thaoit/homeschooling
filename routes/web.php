@@ -27,6 +27,8 @@ Route::post('/lessons/update', 'LessonController@update');
 
 Route::post('lessons/save-outlines', 'OutlineController@doStoreUpdateDelete');
 
+Route::post('lessons/save-all-relating', 'GeneralController@saveAllRelatingLesson');
+
 Route::get('/lessons/view', function(){
     return view('lesson.view');
 });

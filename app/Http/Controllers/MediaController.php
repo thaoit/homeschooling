@@ -78,7 +78,7 @@ class MediaController extends Controller
             return Config::get('constants.media_type.document');
 
           default:
-            return Config::get('constants.undefined');
+            return Config::get('constants.media_type.undefined');
         }
     }
 
@@ -99,14 +99,23 @@ class MediaController extends Controller
 
         $url = $request->input('url');
         $user_id = $request->input('user_id');
+        $origin_name = substr($url, strrpos($url, "/") + 1);
 
         if($url == null || $user_id == null)
           return [];
 
         $media = new Media;
-        $media->origin_name = substr($url, strrpos($url, "/") + 1);
+
+        if( strrpos($media->origin_name, ".") == false){
+            $media->origin_name = $url;
+            $media->media_type = $this->getMediaType($origin_name);
+        }
+        else{
+            $media->origin_name = $origin_name;
+            $media->media_type = $this->getMediaType(substr($media->origin_name, strrpos($media->origin_name, ".") + 1));
+        }
+        
         $media->url = $url;
-        $media->media_type = $this->getMediaType(substr($media->origin_name, strrpos($media->origin_name, ".") + 1));
         $media->user_id = $user_id;
 
         $media->save();
@@ -129,7 +138,7 @@ class MediaController extends Controller
       //$pdf = PDF::loadFile(storage_path("app\\media-references\\123.docx"))->save(storage_path("app\\media-references\\123.docx"));
       //$pdf = PDF::loadFile('../public/img/123.pdf');
       //return $pdf->stream('test.pdf');
-      
+
       $path = storage_path("app/media-references/$name");
       $type = Storage::getMimeType("media-references/$name");
 

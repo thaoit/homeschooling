@@ -267,6 +267,10 @@
     border-bottom: 1px solid #ccc;
   }
 
+  .outline-container .close-outline{
+    cursor: pointer;
+  }
+
 
   #general{
     text-align: center;
@@ -428,6 +432,7 @@
 
     var delete_outlines = [];
     var delete_topics = [];
+    var delete_medias = [];
 
     setupAjax();
 
@@ -584,14 +589,6 @@
             false
         );
 
-        references_container.append(html_data);
-
-        /*$.ajaxSetup({
-          headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          }
-        });
-
         $.ajax({
 
             type: 'post',
@@ -601,18 +598,26 @@
                 user_id: 1
             },
             success: function(data){
-
+                console.log(data);
                 var html_data = generateReferenceAfterChosen(data.id, data.path, data.origin_name, false);
                 references_container.append(html_data);
             },
             error: function(data){
               console.log(data);
             }
-        });*/
+        });
     }
 
     $('#references-container .content').on('click', '.close-reference', function(){
 
+        // store delete references
+        var id = $(this).parents('.content li').attr('data-id');
+
+        if(typeof id !== "undefined"){
+            delete_medias.push(id);
+        }
+
+        // remove the reference
         $(this).parent().remove();
     })
 
@@ -682,10 +687,7 @@
                         '</a>';
         }
 
-        var data_id = '';
-        if(id.length > 0){
-            data_id = 'data-id="' + id + '"';
-        }
+        var data_id = 'data-id="' + id + '"';
 
         return '<li ' + data_id + ' data-path="' + path + '" >' +
                   link +
@@ -842,13 +844,13 @@
     // save lesson
     $('#save_as_draft').on('click', function(){
 
-        saveGeneralLesson(false);
+        saveAllRelatingLesson(false);
     })
 
     // publish lesson
     $('#publish').on('click', function(){
 
-        saveGeneralLesson(true);
+        saveAllRelatingLesson(true);
     })
 
     // save object of deleted outlines
@@ -892,7 +894,143 @@
         }
     })
 
-    function saveGeneralLesson(is_publish){
+    function saveAllRelatingLesson(is_publish){
+
+        var new_outline_elements = $('.outline-container .outline:not([data-outline-id])');
+        var update_outline_elements = $('.outline-container .outline[data-outline-id]');
+        var new_topic_elements = $('#general .chosen-hints .chosen-hint:not([data-id])');
+        var update_topic_elements = $('#general .chosen-hints .chosen-hint[data-id]');
+        var media_reference_elements = $('#references-container .content li');
+
+        var general = getObjOfGeneralLesson(
+            $('#general').attr('data-lesson-id'),
+            $('#title').val(),
+            $('#intro').val(),
+            1,
+            is_publish
+        );
+
+        var outlines = getObjOfOutlines(
+            new_outline_elements,
+            update_outline_elements,
+            delete_outlines
+        );
+
+        var topics = getObjOfTopics(
+            new_topic_elements,
+            update_topic_elements,
+            delete_topics
+        );
+
+        var media_references = getObjOfMediaReferences(media_reference_elements, delete_medias);
+
+        // send request
+        $.ajax({
+
+            type: 'post',
+            url: '{{ action('GeneralController@saveAllRelatingLesson') }}',
+            data:{
+                'general': general,
+                'outlines': outlines,
+                'topics': topics,
+                'media_references': media_references
+            },
+            success: function(data){
+                console.log(data);
+                if( !data['success'] ){
+                    return;
+                }
+
+                // assign lesson's id
+                lesson_id = data['id'];
+                $('#general').attr('data-lesson-id', lesson_id);
+
+                // assign outlines's id
+                var new_outlines_id = data['new_outlines_id'];
+
+                for(var i = 0; i < new_outlines_id.length; i++){
+
+                    new_outline_elements.eq(i).attr('data-outline-id', new_outlines_id[i]);
+                }
+
+                // assign topics's id
+                var new_topics_id = data['new_topics_id'];
+                for(var i = 0; i < new_topics_id.length; i++){
+                    new_topic_elements.eq(i).attr('data-id', new_topics_id[i]);
+                }
+
+                // remove the delete outlines / topics / medias
+                delete_outlines = [];
+                delete_topics = [];
+                delete_medias = [];
+
+                // save as craft / publish button
+                if(is_publish){
+
+                    $('#save_as_draft').hide();
+                    $('#publish')[0].innerText = "Save";
+                }
+            },
+            error: function(data){
+              console.log(data);
+            }
+        });
+    }
+
+    function getObjOfGeneralLesson(lesson_id, title, intro, author_id, is_publish){
+
+        var array = {
+            id: lesson_id,
+            title: title,
+            intro: intro,
+            author_id: author_id,
+            is_publish: is_publish
+        };
+
+        return array;
+    }
+
+    function getObjOfOutlines(new_outline_elements, update_outline_elements, delete_outlines){
+
+        var new_contents = getArrayOfObjFromOutlineContents(new_outline_elements);
+        var update_contents = getArrayOfObjFromOutlineContents(update_outline_elements);
+
+        var array = {
+          new: new_contents,
+          update: update_contents,
+          delete: delete_outlines
+        };
+
+        return array;
+    }
+
+    function getObjOfTopics(new_topic_elements, update_topic_elements, delete_topics){
+
+        var new_topics = getArrayOfObjFromTopics(new_topic_elements);
+        var update_topics = getArrayOfObjFromTopics(update_topic_elements);
+
+        var array = {
+          new: new_topics,
+          update: update_topics,
+          delete: delete_topics
+        };
+
+        return array;
+    }
+
+    function getObjOfMediaReferences(new_media_reference_elements, delete_media_refs){
+
+        var new_media_refs = getArrayOfObjFromMediaReferences(new_media_reference_elements);
+
+        var array = {
+          new: new_media_refs,
+          delete: delete_media_refs
+        }
+
+        return array;
+    }
+
+    /*function saveGeneralLesson(is_publish){
 
         var lesson_id = $('#general').attr('data-lesson-id');
         var url;
@@ -944,8 +1082,8 @@
 
         var new_outlines = $('.outline-container .outline:not([data-outline-id])');
         var update_outlines = $('.outline-container .outline[data-outline-id]');
-        var new_contents = getArrayOfObjFromOutlineContents(new_outlines, lesson_id);
-        var update_contents = getArrayOfObjFromOutlineContents(update_outlines, lesson_id);
+        var new_contents = getArrayOfObjFromOutlineContents(new_outlines);
+        var update_contents = getArrayOfObjFromOutlineContents(update_outlines);
 
         $.ajax({
 
@@ -977,20 +1115,20 @@
                 console.log(data);
             }
         })
-    }
+    }*/
 
-    function getArrayOfObjFromOutlineContents(outline_elements, lesson_id){
+    function getArrayOfObjFromOutlineContents(outline_elements){
 
         var contents = [];
         for(var i = 0; i < outline_elements.length; i++){
 
-            contents.push(getObjFromOutlineContent(outline_elements.eq(i), lesson_id));
+            contents.push(getObjFromOutlineContent(outline_elements.eq(i)));
         }
 
         return contents;
     }
 
-    function getObjFromOutlineContent(outline_element, lesson_id){
+    function getObjFromOutlineContent(outline_element){
 
         var outline_id = outline_element.attr('data-outline-id');
         var outline_name = outline_element.val();
@@ -1000,12 +1138,12 @@
         return {
             id: outline_id,
             name: outline_name,
-            content: inner_html,
-            lesson_id: lesson_id
+            content: inner_html
+            //lesson_id: lesson_id
         };
     }
 
-    function saveTopics(lesson_id){
+    /*function saveTopics(lesson_id){
 
         var new_topic_elements = $('#general .chosen-hints .chosen-hint:not([data-id])');
         var update_topic_elements = $('#general .chosen-hints .chosen-hint[data-id]');
@@ -1043,7 +1181,7 @@
             }
         });
 
-    }
+    }*/
 
     function getArrayOfObjFromTopics(topic_elements){
 
@@ -1067,6 +1205,30 @@
         return {
           id: id,
           name: name
+        }
+    }
+
+    function getArrayOfObjFromMediaReferences(media_elements){
+
+        var medias = [];
+
+        for(var i = 0; i < media_elements.length; i++){
+
+            var id = media_elements.eq(i).attr('data-id');
+            if(typeof id !== "undefined"){
+                medias.push( getObjFromMediaReference( media_elements.eq(i) ) );
+            }
+        }
+
+        return medias;
+    }
+
+    function getObjFromMediaReference(media_element){
+
+        var id = media_element.attr('data-id');
+
+        return {
+          media_id: id
         }
     }
 

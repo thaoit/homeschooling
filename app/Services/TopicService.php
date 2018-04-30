@@ -26,7 +26,7 @@ class TopicService{
             $id = TopicService::store($object);
 
             if($id > 0){
-                $new_outlines_id[] = $id;
+                $new_topics_id[] = $id;
             }
             else{
                 $success = false;
@@ -36,7 +36,7 @@ class TopicService{
 
         return [
           'success' => $success,
-          'id' => $new_outlines_id
+          'id' => $new_topics_id
         ];
     }
 

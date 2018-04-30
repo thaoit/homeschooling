@@ -13,4 +13,6 @@ class Reference extends Model
       'lesson_id',
       'media_id'
     ];
+
+    public $timestamps = false;
 }

@@ -18,6 +18,30 @@ class OutlineService{
         return $outline->id;
     }
 
+    public static function storeArr($array){
+
+        $success = true;
+        $new_outlines_id = array();
+
+        foreach ($array as $object) {
+
+            $id = OutlineService::store($object);
+
+            if($id > 0){
+                $new_outlines_id[] = $id;
+            }
+            else{
+                $success = false;
+                break;
+            }
+        }
+
+        return [
+           'success' => $success,
+           'id' => $new_outlines_id
+        ];
+    }
+
     public static function update($object){
 
         $outline = Outline::find($object['id']);
@@ -29,7 +53,22 @@ class OutlineService{
         $outline->content = $object['content'];
         $outline->lesson_id = $object['lesson_id'];
 
+        $outline->save();
+
         return true;
+    }
+
+    public static function updateArr($array){
+
+        $success = true;
+
+        foreach ($array as $object) {
+            if(!OutlineService::update( $object )){
+                $success = false;
+            }
+        }
+
+        return $success;
     }
 
     public static function delete($id){
@@ -41,5 +80,36 @@ class OutlineService{
 
         $outline->delete();
         return true;
+    }
+
+    public static function deleteArr($array){
+
+        $success = true;
+
+        foreach ($array as $id) {
+            if(!OutlineService::delete($id)){
+                $success = false;
+            }
+        }
+
+        return $success;
+    }
+
+    // objects are new, not contains id or lesson id
+    public static function getArrayOfOutlineFromObj($objects, $lesson_id){
+
+        $array = array();
+
+        foreach ($objects as $object) {
+
+            $array[] = array(
+              'id' => isset($object['id']) ? $object['id'] : null,
+              'name' => $object['name'],
+              'content' => $object['content'],
+              'lesson_id' => $lesson_id
+            );
+        }
+
+        return $array;
     }
 }
