@@ -36,18 +36,18 @@ class User extends Authenticatable
   ];
 
   public function lessons(){
-    return $this->hasMany('App\Lesson');
+    return $this->hasMany('App\Models\Lesson');
   }
 
   public function parent(){
-    return $this->hasMany('App\User', 'parent_id');
+    return $this->hasMany('App\Models\User', 'parent_id');
   }
 
   public function children(){
-    return $this->belongsTo('App\User', 'parent_id');
+    return $this->belongsTo('App\Models\User', 'parent_id');
   }
 
   public function medias(){
-    return $this->hasMany('App\Media');
+    return $this->hasMany('App\Models\Media');
   }
 }

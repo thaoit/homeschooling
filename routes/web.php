@@ -15,9 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/lessons', function(){
-    return view('lesson.index');
-});
+Route::get('/lessons', 'LessonController@index');
 
 Route::get('/lessons/create', 'LessonController@create');
 
@@ -29,9 +27,7 @@ Route::post('lessons/save-outlines', 'OutlineController@doStoreUpdateDelete');
 
 Route::post('lessons/save-all-relating', 'GeneralController@saveAllRelatingLesson');
 
-Route::get('/lessons/view', function(){
-    return view('lesson.view');
-});
+Route::get('/lessons/view/{id}', 'LessonController@view');
 
 Route::get('/tests', function(){
     return view('test.index');

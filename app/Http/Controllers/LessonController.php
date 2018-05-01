@@ -11,6 +11,20 @@ class LessonController extends Controller
 {
     //
 
+    public function index(){
+
+        $lessons = LessonService::getAllByUser(1);
+
+        return view('lesson/index', compact('lessons'));
+    }
+
+    public function view($id){
+
+        $lesson = LessonService::getAllRelatingLesson($id);
+
+        return view('lesson/view', compact('lesson'));
+    }
+
     public function create(){
 
         return view('lesson/create');

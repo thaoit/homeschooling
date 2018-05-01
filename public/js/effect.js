@@ -294,7 +294,7 @@ $(document).ready(function(){
             var siblings_after = slides_out[i].nextAll('.slide');
 
             for(var j = 0; j < siblings_after.length; j++){
-                console.log(siblings_after.eq(j));
+                
                 slideToTheLeftBrowser(siblings_after.eq(j), 0);
             }
         }
@@ -334,7 +334,7 @@ $(document).ready(function(){
             'height': current.outerHeight(),
             'transition': 'height ' + duration + 's'
         });
-        
+
         // set the ancestor container
         var ancestor_slide = container.parents('.slide');
 

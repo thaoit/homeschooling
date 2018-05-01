@@ -75,7 +75,53 @@
   </div>
 
   <div class="lesson-road">
-    <div>
+    @for($i = 0; $i < count($lessons); $i++)
+    <div class="lesson" data-id="{{ $lessons[$i]->id }}">
+
+      <div class="top">
+        <div class="viewed">
+
+          <img src="{{ asset('img/flag-filled.png') }}" alt="Viewed">
+        </div>
+        <div class="not-viewed" style="display: none;">
+          <p>New</p>
+          <img src="{{ asset('img/arrow-up.png') }}" alt="New">
+        </div>
+      </div>
+
+      <div class="lesson-progress">
+        <div>
+          <div class="col-xs-6 one"></div>
+          <div class="col-xs-6 two"></div>
+        </div>
+        <div>
+          <div class="col-xs-6 three"></div>
+          <div class="col-xs-6 four"></div>
+        </div>
+      </div>
+
+      <div class="bottom">
+        <a href="{{ action('LessonController@view', $lessons[$i]->id) }}" class="btn btn-default control-view" title="View">
+          {{ count($lessons) - $i }}
+        </a>
+        <div class="flipper-container">
+          <div class="flipper">
+            <div class="control-container">
+              <p>Have fun with this!</p>
+              <div class="control-others">
+                <p><a href="">Edit</a></p>
+                <p><a href="">Delete</a></p>
+              </div>
+            </div>
+            <div class="content">
+              <p>{{ $lessons[$i]->title }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    @endfor
+    <!--<div>
 
       <div class="top">
         <div class="viewed" style="display: none;">
@@ -449,7 +495,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>-->
   </div>
 
   <div id="lesson-modal" class="modal fade" role="dialog">

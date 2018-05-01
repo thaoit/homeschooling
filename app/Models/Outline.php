@@ -17,6 +17,6 @@ class Outline extends Model
     public $timestamps = false;
 
     public function lesson(){
-        return $this->belongsTo('App\Lesson', 'lesson_id');
+        return $this->belongsTo('App\Models\Lesson', 'lesson_id');
     }
 }

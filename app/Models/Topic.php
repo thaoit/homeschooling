@@ -14,6 +14,6 @@ class Topic extends Model
     ];
 
     public function lessons(){
-      return $this->belongsToMany('App\Lesson', 'lesson_topics', 'topic_id', 'lesson_id');
+      return $this->belongsToMany('App\Models\Lesson', 'lesson_topics', 'topic_id', 'lesson_id');
     }
 }

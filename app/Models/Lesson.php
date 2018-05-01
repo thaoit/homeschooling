@@ -17,18 +17,18 @@ class Lesson extends Model
     ];
 
     public function topics(){
-      return $this->belongsToMany('App\Topic');
+      return $this->belongsToMany('App\Models\Topic');
     }
 
     public function medias(){
-      return $this->belongsToMany('App\Media');
+      return $this->belongsToMany('App\Models\Media', 'references', 'lesson_id', 'media_id');
     }
 
     public function user(){
-      return $this->belongsTo('App\User', 'author_id');
+      return $this->belongsTo('App\Models\User', 'author_id');
     }
 
     public function outlines(){
-      return $this->hasMany('App\Outline');
+      return $this->hasMany('App\Models\Outline');
     }
 }

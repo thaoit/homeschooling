@@ -18,10 +18,10 @@ class Media extends Model
     ];
 
     public function lessons(){
-      return $this->belongsToMany('App\Lesson', 'references', 'media_id', 'lesson_id');
+      return $this->belongsToMany('App\Models\Lesson', 'references', 'media_id', 'lesson_id');
     }
 
     public function user(){
-      return $this->belongsTo('App\User', 'user_id');
+      return $this->belongsTo('App\Models\User', 'user_id');
     }
 }

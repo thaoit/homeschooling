@@ -7,6 +7,7 @@ use Config;
 use Response;
 use PDF;
 use App\Models\Media;
+use App\Services\MediaService;
 use Illuminate\Http\Request;
 
 class MediaController extends Controller
@@ -38,7 +39,7 @@ class MediaController extends Controller
             $media->name = substr($path, strrpos($path, "/") + 1);
             $media->origin_name = $media_ref->getClientOriginalName();
             $media->url = $path;
-            $media->media_type = $this->getMediaType($media_ref->getClientOriginalExtension());
+            $media->media_type = MediaService::getMediaType($media_ref->getClientOriginalExtension());
             $media->user_id = $user_id;
 
             $media->save();
@@ -52,34 +53,6 @@ class MediaController extends Controller
         }
 
         return $data;
-    }
-
-    public function getMediaType($extension){
-
-        switch (strtolower($extension)) {
-
-          case 'png':
-          case 'jpg':
-          case 'jpeg':
-          case 'bmp':
-            return Config::get('constants.media_type.image');
-
-          case 'mp3':
-          case 'mp4':
-            return Config::get('constants.media_type.video');
-
-          case 'doc':
-          case 'docx':
-          case 'ppt':
-          case 'pptx':
-          case 'xls':
-          case 'pdf':
-          case 'txt':
-            return Config::get('constants.media_type.document');
-
-          default:
-            return Config::get('constants.media_type.undefined');
-        }
     }
 
     public function getMediaReferencesByUser(Request $request){
@@ -108,13 +81,13 @@ class MediaController extends Controller
 
         if( strrpos($media->origin_name, ".") == false){
             $media->origin_name = $url;
-            $media->media_type = $this->getMediaType($origin_name);
+            $media->media_type = MediaService::getMediaType($origin_name);
         }
         else{
             $media->origin_name = $origin_name;
-            $media->media_type = $this->getMediaType(substr($media->origin_name, strrpos($media->origin_name, ".") + 1));
+            $media->media_type = MediaService::getMediaType(substr($media->origin_name, strrpos($media->origin_name, ".") + 1));
         }
-        
+
         $media->url = $url;
         $media->user_id = $user_id;
 
