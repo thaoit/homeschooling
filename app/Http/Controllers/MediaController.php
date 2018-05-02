@@ -38,7 +38,8 @@ class MediaController extends Controller
             $media = new Media;
             $media->name = substr($path, strrpos($path, "/") + 1);
             $media->origin_name = $media_ref->getClientOriginalName();
-            $media->url = $path;
+
+            $media->url = action('MediaController@viewMediaReference', $media->name);
             $media->media_type = MediaService::getMediaType($media_ref->getClientOriginalExtension());
             $media->user_id = $user_id;
 
