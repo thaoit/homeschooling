@@ -5,6 +5,8 @@ namespace App\Services;
 use Config;
 use App\Models\Lesson;
 use App\Models\User;
+use App\Models\LessonTopic;
+use App\Models\Reference;
 use App\Services\UserService;
 use App\Services\MediaService;
 
@@ -49,13 +51,28 @@ class LessonService{
         return $success;
     }
 
+    public static function delete($id){
+
+        $lesson = Lesson::find($id);
+
+        if($lesson == null){
+            return;
+        }
+
+        $lesson->outlines()->delete();
+        LessonTopic::where('lesson_id', $id)->delete();
+        Reference::where('lesson_id', $id)->delete();
+
+        $lesson->delete();
+    }
+
     public static function getAllByUser($user_id){
 
         $role = UserService::getRole($user_id);
 
         switch ($role) {
           case Config::get('constants.role.admin'):
-              $lessons = Lesson::orderBy('title', 'desc')->get();
+              $lessons = Lesson::orderBy('created_at', 'desc')->get();
               break;
 
           case Config::get('constants.role.parent'):
@@ -105,11 +122,15 @@ class LessonService{
 
         // get media
         $media = MediaService::getCategorizedMediaBy($lesson_id);
-      
+
+        // get topics
+        $topics = $lesson->topics()->get();
+
         return [
           'general' => $lesson,
           'outlines' => $outlines,
           'media' => $media,
+          'topics' => $topics,
           'split_outline_contents' => $split_outline_contents
         ];
     }

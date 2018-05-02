@@ -109,8 +109,8 @@
             <div class="control-container">
               <p>Have fun with this!</p>
               <div class="control-others">
-                <p><a href="">Edit</a></p>
-                <p><a href="">Delete</a></p>
+                <p><a href="{{ action('LessonController@edit', $lessons[$i]->id) }}">Edit</a></p>
+                <p><a href="" class="delete-btn" data-toggle="modal" data-target="#delete-confirmation">Delete</a></p>
               </div>
             </div>
             <div class="content">
@@ -539,6 +539,24 @@
 
     </div>
   </div>
+
+  <div id="delete-confirmation" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>Delete Confirmation</h4>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure to delete this lesson?</p>
+          <p>All the content and attached files will be also delete?</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-default delete-confirmation-btn" type="button" name=""><a>OK</a></button>
+          <button class="btn btn-default delete-cancel-btn" type="button" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 @endsection
@@ -589,6 +607,15 @@
 
     .search-container{
       margin-bottom: 10px;
+    }
+
+    button a{
+      color: #000;
+    }
+
+    button a:hover, button a:active{
+      color: #000;
+      text-decoration: none;
     }
 
     /* Add - Filter */
@@ -657,6 +684,17 @@
 
           $(this).hide();
       })*/
+
+
+      $('.delete-btn').on('click', function(){
+
+          var delete_lesson_id = $(this).parents('.lesson').attr('data-id');
+
+          var url = '{{ action('LessonController@delete', 'id') }}';
+          url = url.replace('id', delete_lesson_id);
+
+          $('.delete-confirmation-btn a').attr('href', url);
+      });
 
     });
   </script>

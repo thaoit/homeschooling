@@ -29,6 +29,10 @@ Route::post('lessons/save-all-relating', 'GeneralController@saveAllRelatingLesso
 
 Route::get('/lessons/view/{id}', 'LessonController@view');
 
+Route::get('/lessons/edit/{id}', 'LessonController@edit');
+
+Route::get('/lessons/delete/{id}', 'LessonController@delete');
+
 Route::get('/tests', function(){
     return view('test.index');
 });

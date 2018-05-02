@@ -30,6 +30,13 @@ class LessonController extends Controller
         return view('lesson/create');
     }
 
+    public function edit($id){
+
+        $lesson = LessonService::getAllRelatingLesson($id);
+
+        return view('lesson/edit', compact('lesson'));
+    }
+
     public function store(Request $request){
 
         $input = $request->all();
@@ -48,5 +55,11 @@ class LessonController extends Controller
         return [
             'success' => $success
         ];
+    }
+
+    public function delete($id){
+
+        LessonService::delete($id);
+        return redirect()->action('LessonController@index');
     }
 }

@@ -17,7 +17,7 @@ class Lesson extends Model
     ];
 
     public function topics(){
-      return $this->belongsToMany('App\Models\Topic');
+      return $this->belongsToMany('App\Models\Topic', 'lesson_topics');
     }
 
     public function medias(){

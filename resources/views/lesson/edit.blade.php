@@ -2,13 +2,15 @@
 
 @section('content')
 
-  <div class="container-fluid" id="general">
+  <div class="container-fluid" id="general" data-lesson-id="{{ $lesson['general']->id }}">
 
     <div class="form-group">
-      <input class="form-control" id="title" type="text" name="title" placeholder="Title here" value="Title here" required>
+      <input class="form-control" id="title" type="text" name="title" placeholder="Title here" value="{{ $lesson['general']->title }}" required>
     </div>
     <div class="form-group">
-      <textarea id="intro" class="col-sm-6 col-sm-offset-3 col-xs-12" name="intro" rows="3" placeholder="Intro here"></textarea>
+      <textarea id="intro" class="col-sm-6 col-sm-offset-3 col-xs-12" name="intro" rows="3" placeholder="Intro here">
+        {{ $lesson['general']->intro }}
+      </textarea>
     </div>
     <div class="chosen-hints">
       <!--<span>
@@ -19,6 +21,12 @@
         Art
         <span class="close-chosen-hint">&times</span>
       </span>-->
+      @foreach( $lesson['topics'] as $topic )
+      <span class="chosen-hint" data-id="{{ $topic->id }}">
+        {{ $topic->name }}
+        <span class="close-chosen-hint">&times</span>
+      </span>
+      @endforeach
 
       <span>
         Add
@@ -31,17 +39,31 @@
   <div class="col-xs-12 col-md-3">
     <div class="form-group border outline-container" data-target="#outline-content" data-control-next="#nextstep">
       <p>Outline</p>
-      <div class="input-group">
-        <span class="input-group-addon step-index">Step 1 - </span>
-        <input class="form-control outline" type="text" value="Hi World" data-id="1">
-        <span class='input-group-addon close-outline' data-toggle="modal" data-target="#confirmation-modal">&times;</span>
-      </div>
+
+      @for( $i = 0; $i < count($lesson['outlines']); $i++ )
+        <div class="input-group">
+          <span class="input-group-addon step-index">Step {{ $i + 1 }} - </span>
+          <input class="form-control outline" type="text" value="{{ $lesson['outlines'][$i]->name }}" data-id="{{ $i + 1 }}" data-outline-id="{{ $lesson['outlines'][$i]->id }}">
+          <span class='input-group-addon close-outline' data-toggle="modal" data-target="#confirmation-modal">&times;</span>
+        </div>
+      @endfor
+
     </div>
     <div class="form-group border" id="references-container">
       <p>References</p>
       <div class="content">
-        <!--<li data-path="" data-origin-name="" title="Close this reference">Zoom_in.png<span class="close-reference">&times;</span></li>
-        <li data-path="" data-origin-name="" title="Close this reference">wrox-professional-java-development-with-the-spring-framework.pdf<span class="close-reference">&times;</span></li>-->
+
+        @foreach( $lesson['media'] as $media_type )
+          @foreach( $media_type as $media )
+            <li data-id="{{ $media->id }}">
+              <a href="{{ $media->url }}" target="_blank">
+                {{ $media->origin_name }}
+              </a>
+              <span class="close-reference" title="Close this reference">&times;</span>
+            </li>
+          @endforeach
+        @endforeach
+
       </div>
       <button class="references-modal-btn" type="button" name="" title="Add references" data-toggle="modal" data-target="#references-modal">
         <span class="glyphicon glyphicon-plus"></span>
@@ -73,9 +95,11 @@
       </p>
     </div>
     <div id="outline-content">
-      <div id="summernote">
 
-      </div>
+      @foreach( $lesson['outlines'] as $outline )
+        <div class="summernote"></div>
+      @endforeach
+
     </div>
 
     <div class="form-group" id="func-buttons">
@@ -427,10 +451,29 @@
 <script src="{{ asset('js/outline.js') }}"></script>
 <script src="{{ asset('js/hint-chosen-panel.js' )}}"></script>
 <script src="{{ asset('js/lesson-editing.js') }}"></script>
+<script src="{{ asset('js/summernote.js') }}"></script>
 
 <script>
 
   $(document).ready(function(){
+
+      // set up summernote
+      $('.summernote').summernote({
+          height: 280
+      });
+
+      // hide all summernotes, except the first
+      $('.note-editor.note-frame:not(:first)').hide();
+
+      // pass outline contents to summernotes
+      var outline_contents = $('.note-editor .note-editable');
+      @for( $i = 0; $i < count($lesson['outlines']); $i++)
+        @php
+          //$filter_content = str_replace("'", "\'", $lesson['outlines'][$i]->content);
+        @endphp
+        outline_contents.eq('{{ $i }}').empty();
+        outline_contents.eq('{{ $i }}').append(`{!! $lesson['outlines'][$i]->content !!}`);
+      @endfor
 
       // Navigate to the first
       $('#step-nav').attr('data-outline-index', 0);
@@ -732,36 +775,6 @@
           );
       })
 
-  });
-</script>
-
-
-<!-- nicedit: rich text editor
-<script type="text/javascript" src="http://js.nicedit.com/nicEdit-latest.js"></script>
-
-<script type="text/javascript">
-//<![CDATA[
-    bkLib.onDomLoaded(function() {
-      nicEditors.editors.push(
-        new nicEditor().panelInstance(
-            document.getElementById('outline-content')
-        )
-      );
-    });
-  //]]>
-</script>-->
-
-<!-- summernotes: rich text editor -->
-
-<!--<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.js"></script>-->
-<script src="{{ asset('js/summernote.js') }}"></script>
-<script>
-  $(document).ready(function(){
-
-      $('#summernote').summernote({
-          placeholder: 'Add details for each outline',
-          height: 280
-      });
   });
 </script>
 
