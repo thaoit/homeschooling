@@ -91,6 +91,11 @@ class TopicService{
         return $success;
     }*/
 
+    public static function getAllInOrder($order){
+
+        return Topic::orderBy('name', $order)->get();
+    }
+
     public static function getArrayOfLessonTopicFromTopicObj($objects, $lesson_id){
 
         $array = array();

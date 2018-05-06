@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Config;
 use App\Models\Lesson;
 use App\Services\LessonService;
+use App\Services\TopicService;
 use Illuminate\Http\Request;
 
 class LessonController extends Controller
@@ -61,5 +62,28 @@ class LessonController extends Controller
 
         LessonService::delete($id);
         return redirect()->action('LessonController@index');
+    }
+
+    public function resources(){
+
+        $lessons = LessonService::getAllInPublic();
+        $topics = TopicService::getAllInOrder('asc');
+
+        return view('community/resource', compact('lessons', 'topics'));
+    }
+
+    public function findLessonsByTopics(Request $request){
+
+        $input = $request->all();
+        $lesson_ids = array();
+
+        // check whether passing parameter about topics
+        if( isset( $input['topics'] ) ){
+
+          $topics = $input['topics'];
+          $lessons = LessonService::getAllBelongsToTopics($topics);
+        }
+
+        return $lessons;
     }
 }

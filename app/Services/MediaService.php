@@ -58,7 +58,7 @@ class MediaService{
                                     ->get();
       $undefined = $lesson->medias()->where('media_type', $undefined_name)
                                     ->get();
-                                    
+
       $image = ($image->count() > 0) ? $image: array();
       $video = ($video->count() > 0) ? $video:array();
       $document = ($document->count() > 0) ? $document: array();

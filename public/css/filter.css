@@ -33,6 +33,7 @@
 .filter-container .filter-group .filter-options .radio-option{
   position: relative;
   cursor: pointer;
+  margin-bottom: 20px;
 }
 
 .filter-container .filter-group .filter-options input{

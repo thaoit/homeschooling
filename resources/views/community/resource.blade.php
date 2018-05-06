@@ -24,12 +24,14 @@
     <div class="filter-group">
       <p class="filter-name">Topics</p>
       <div class="filter-options">
-        <label class="col-xs-12 col-sm-3 col-md-2 checkbox-option">
-          <input type="checkbox" name="" value="science">
+        @foreach( $topics as $topic )
+        <label class="col-xs-6 col-sm-3 col-md-2 checkbox-option">
+          <input type="checkbox" name="filter_topics" value="{{ $topic->name }}">
           <span class="checkmark"></span>
-          Science
+          {{ $topic->name }}
         </label>
-        <label class="col-xs-12 col-sm-3 col-md-2 checkbox-option">
+        @endforeach
+        <!--<label class="col-xs-12 col-sm-3 col-md-2 checkbox-option">
           <input type="checkbox" name="" value="art">
           <span class="checkmark"></span>
           Art
@@ -43,10 +45,10 @@
           <input type="checkbox" name="" value="ecosystem">
           <span class="checkmark"></span>
           Ecosystem
-        </label>
+        </label>-->
       </div>
     </div>
-    <div class="filter-group">
+    <!--<div class="filter-group">
       <p class="filter-name">Time</p>
       <div class="filter-options">
         <label class="col-xs-12 col-sm-3 col-md-2 radio-option">
@@ -60,28 +62,32 @@
           Oldest
         </label>
       </div>
-    </div>
+    </div>-->
     <div class="filter-group">
-      <button class="filter-control" type="button" name="filter_ok" title="Start filter">OK</button>
+      <button class="filter-control filter-ok" type="button" name="filter_ok" title="Start filter">OK</button>
       <button class="filter-control" type="button" name="filter_cancel" title="Close filter pane" data-dismiss="filter-container">Cancel</button>
+      <button class="filter-control filter-clear" type="button" style="display: none">Clear</button>
     </div>
   </div>
 
   <div class="clearfix"></div>
 
   <div class="lesson-container">
+
+    @foreach($lessons as $lesson)
     <div class="lesson">
       <div class="head">
         <div class="col-xs-12 col-sm-9">
-          <h4 class="title"><a href="">Discovery about the Earth</a></h4>
+          <h4 class="title"><a href="{{ action('LessonController@view', $lesson['general']->id) }}">{{ $lesson['general']->title }}</a></h4>
           <div class="topics">
-            <span>Science</span>
-            <span>Art</span>
+            @foreach($lesson['topics'] as $topic)
+            <span>{{ $topic->name }}</span>
+            @endforeach
           </div>
         </div>
         <div class="col-xs-12 col-sm-3">
           <h4 class="likes">
-            <span>12,009</span>
+            <span>{{ $lesson['general']->no_of_love }}</span>
             <button class="like-btn" type="button" name="" title="Like if this is useful!">
               <span class="glyphicon glyphicon-heart-empty"></span>
             </button>
@@ -93,28 +99,58 @@
         <div>
           <p>Outlines</p>
           <ul class="outlines">
-            <li><span class="index">Step 1 -</span>What is the Earth?</li>
-            <li><span class="index">Step 2 -</span>Which benefit does the Earth give us?</li>
-            <li><span class="index">Step 3 -</span>How can we save the Earth?</li>
-            <li><span class="index">Step 4 -</span>Alert yourself!</li>
+            @for( $i = 0; $i < count($lesson['outlines']); $i++ )
+            <li><span class="index">Step {{ $i + 1 }} -</span>{{ $lesson['outlines'][$i]->name }}</li>
+            @endfor
           </ul>
         </div>
         <div>
           <p>References</p>
           <ul class="references">
-            <li class="col-xs-12 col-sm-4 col-md-3">
-              <span class="glyphicon glyphicon-file"></span>
-              <a href="#">How does the Earth work?</a>
-            </li>
-            <li class="col-xs-12 col-sm-4 col-md-3">
-              <span class="glyphicon glyphicon-file"></span>
-              <a href="#">Dig deeper into the Earth</a>
-            </li>
+
+            @foreach( Config::get('constants.media_type') as $type )
+              @foreach( $lesson['media'][$type] as $media )
+                <li class="col-xs-12 col-sm-4 col-md-3">
+
+                @switch($type)
+
+                  @case( Config::get('constants.media_type.image') )
+                    <span class="glyphicon glyphicon-picture"></span>
+                    @break
+                  @case( Config::get('constants.media_type.video') )
+                    <span class="glyphicon glyphicon-film"></span>
+                    @break
+                  @case( Config::get('constants.media_type.document') )
+                    <span class="glyphicon glyphicon-file"></span>
+                    @break
+                  @default
+                    <span class="glyphicon glyphicon-question-sign"></span>
+
+                @endswitch
+
+                @if( $media->name == null )
+                    <a target="_blank" href="{{ $media->url }}">
+                      {{$media->origin_name}}
+                    </a>
+                @else
+                  <a target="_blank" href="{{ action('MediaController@viewMediaReference', $media->name) }}">
+                    {{$media->origin_name}}
+                  </a>
+                @endif
+                </li>
+              @endforeach
+            @endforeach
+          <!--<li class="col-xs-12 col-sm-4 col-md-3">
+
+            <span class="glyphicon glyphicon-file"></span>
+            <a href="#">$media->origin_name</a>
+          </li>-->
           </ul>
         </div>
       </div>
     </div>
-    <div class="lesson">
+    @endforeach
+    <!--<div class="lesson">
       <div class="head">
         <div class="col-xs-12 col-sm-9">
           <h4 class="title"><a href="">Animals around the world</a></h4>
@@ -157,7 +193,7 @@
           </ul>
         </div>
       </div>
-    </div>
+    </div>-->
   </div>
 
 </div>
@@ -174,12 +210,13 @@
 @section('scripts')
 
 <script src="{{ asset('js/filter.js') }}"></script>
+<script src="{{ asset('js/custom.js') }}"></script>
 
 <script>
 
   $(document).ready(function(){
 
-      $('.lesson').on('click', '.likes .like-btn', function(){
+      $('.lesson-container').on('click', '.lesson .likes .like-btn', function(){
 
           var icon = $(this).children('span');
 
@@ -197,6 +234,33 @@
 
               $(this).attr('title', 'Like if this is useful!');
           }
+      })
+
+      $('#filter-lesson .filter-ok').on('click', function(){
+
+          var lesson_container = $('.lesson-container');
+          var chosen_topic_elements = $('#filter-lesson input[name="filter_topics"]:checked');
+          var chosen_topic_values = [];
+
+          for(var i = 0; i < chosen_topic_elements.length; i++){
+              chosen_topic_values.push(chosen_topic_elements.eq(i).val());
+          }
+
+          ajaxFilterLessons(
+              chosen_topic_values,
+              lesson_container,
+              '{{ action('LessonController@findLessonsByTopics') }}',
+              '{{ action('MediaController@getDefaultTypes') }}',
+              '{{ action('MediaController@viewMediaReference', ':name') }}'
+          );
+
+          // show button for clearing filter results
+          $(this).parents('.filter-container').find('.filter-clear').show();
+      })
+
+      $('.filter-container .filter-clear').on('click', function(){
+
+          $(this).hide();
       })
   });
 

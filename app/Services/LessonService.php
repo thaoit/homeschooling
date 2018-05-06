@@ -9,6 +9,7 @@ use App\Models\LessonTopic;
 use App\Models\Reference;
 use App\Services\UserService;
 use App\Services\MediaService;
+use Illuminate\Support\Facades\DB;
 
 class LessonService{
 
@@ -93,6 +94,46 @@ class LessonService{
         return $lessons;
     }
 
+    public static function getAllInPublic(){
+
+        // get all lesson ids having public status and,
+        // ordered by the number of love and latest created time
+        $lesson_id_array =  Lesson::where('status', Config::get('constants.lesson_status.publish'))
+                                   ->orderBy('no_of_love', 'desc')
+                                   ->latest()
+                                   ->pluck('id');
+
+        $lesson = array();
+
+        foreach($lesson_id_array as $id){
+            $lesson[] = LessonService::getAllRelatingLesson($id);
+        }
+
+        return $lesson;
+    }
+
+    public static function getAllBelongsToTopics($topics){
+
+        // get lessons have topics in the input and,
+        // order by the largest number of topics in the $topics input and,
+        // order by the no of love
+        // return array of lesson id
+        $filter_lesson_ids = DB::table('lesson_topics')
+                            ->join('lessons', 'lesson_topics.lesson_id', '=', 'lessons.id')
+                            ->join('topics', 'lesson_topics.topic_id', '=', 'topics.id')
+                            ->whereIn('topics.name', $topics)
+                            ->where('lessons.status', Config::get('constants.lesson_status.publish'))
+                            ->groupBy('lessons.id')
+                            ->orderByRaw('count(*) desc')
+                            ->orderBy('lessons.no_of_love', 'desc')
+                            ->pluck('lessons.id');
+
+
+        $filter_lessons = LessonService::getAllRelatingArrayOfLessons($filter_lesson_ids->toArray());
+
+        return $filter_lessons;
+    }
+
     public static function getById($lesson_id){
 
         return Lesson::find($lesson_id);
@@ -135,4 +176,20 @@ class LessonService{
         ];
     }
 
+    public static function getAllRelatingArrayOfLessons($lesson_ids){
+
+        $lessons = array();
+
+        foreach($lesson_ids as $id){
+
+            $lesson = LessonService::getAllRelatingLesson($id);
+
+            // check if there is info about this lesson
+            if( count($lesson) > 0){
+                $lessons[] = $lesson;
+            }
+        }
+
+        return $lessons;
+    }
 }

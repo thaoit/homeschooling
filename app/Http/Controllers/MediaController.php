@@ -147,4 +147,16 @@ class MediaController extends Controller
 
         /*return response()->download($path, 'test.docx', [], 'inline');*/
     }
+
+    public function getDefaultTypes(){
+
+        $types = Config::get('constants.media_type');
+        $array = array();
+
+        foreach($types as $type){
+            $array[] = $type;
+        }
+
+        return $array;
+    }
 }

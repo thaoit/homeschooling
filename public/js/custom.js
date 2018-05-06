@@ -526,3 +526,171 @@ function getObjFromMediaReference(media_element){
       media_id: id
     }
 }
+
+function ajaxFilterLessons(topics, lesson_container, process_filter_url, process_default_media_type_url, process_view_media_url){
+
+    $.ajax({
+
+        type: 'get',
+        url: process_filter_url,
+        data:{
+          topics: topics
+        },
+        success: function(data){
+
+            ajaxGetDefaultMediaTypes(lesson_container, data, process_default_media_type_url, process_view_media_url);
+        },
+        error: function(data){
+            console.log(data);
+        }
+    });
+}
+
+function ajaxGetDefaultMediaTypes(lesson_container, lesson_objs, process_default_media_type_url, process_view_media_url){
+
+    $.ajax({
+
+        type: 'get',
+        url: process_default_media_type_url,
+        data: {},
+        success: function(data){
+
+            resetLessonElements(lesson_container, lesson_objs, data, process_view_media_url);
+        },
+        error: function(data){
+            console.log(data);
+        }
+    });
+}
+
+function resetLessonElements(lesson_container, lesson_objs, default_media_types, media_viewing_process_url){
+
+    // remove the old
+    lesson_container.empty();
+
+    // get html from lesson objs
+    var html = generateLessonsInResources(lesson_objs, default_media_types, media_viewing_process_url);
+
+    // append new lessons
+    lesson_container.append(html);
+
+}
+
+function generateLessonsInResources(lesson_objs, default_media_types, media_viewing_process_url){
+
+    var html = ``;
+
+    for(var i = 0; i < lesson_objs.length; i++){
+
+        html += generateLessonInResources(lesson_objs[i], default_media_types, media_viewing_process_url);
+    }
+
+    return html;
+}
+
+function generateLessonInResources(lesson_obj, default_media_types, media_viewing_process_url){
+
+    // general info
+    var title = lesson_obj['general']['title'];
+    var no_of_love = lesson_obj['general']['no_of_love'];
+
+    // topic info
+    var topic_html = ``;
+
+    for( var i = 0; i < lesson_obj['topics'].length; i++ ){
+        topic_html += `<span>` + lesson_obj['topics'][i]['name']  +`</span>`;
+    }
+
+    // outline info
+    var outline_html = ``;
+    for( var i = 0; i < lesson_obj['outlines'].length; i++ ){
+
+        outline_html += `<li><span class="index">Step ` + (i + 1) + ` -</span>` +
+                            lesson_obj['outlines'][i]['name'] +
+                        `</li>`;
+    }
+
+    // reference info
+    var reference_html = ``;
+
+    for( var i = 0; i < default_media_types.length; i++ ){
+
+        var type = default_media_types[i];
+
+        for( var j = 0; j < lesson_obj['media'][type].length; j++ ){
+
+            reference_html += `<li class="col-xs-12 col-sm-4 col-md-3">`;
+
+            switch ( type ) {
+              case 'Image':
+                reference_html += `<span class="glyphicon glyphicon-picture"></span>`;
+                break;
+              case 'Video':
+                reference_html += `<span class="glyphicon glyphicon-film"></span>`;
+                break;
+              case 'Document':
+                reference_html += `<span class="glyphicon glyphicon-file"></span>`;
+                break;
+              default:
+                reference_html += `<span class="glyphicon glyphicon-question-sign"></span>`;
+            }
+
+            var media = lesson_obj['media'][type][j];
+            
+            if( media['name'] == null ){
+
+                reference_html += `<a target="_blank" href="` + media['url'] + `">` +
+                                      media['origin_name'] +
+                                  `</a>`;
+            }
+            else{
+
+                reference_html += `<a target="_blank" href="` + media_viewing_process_url + `/` + media['name'] + `">` +
+                                      media['origin_name'] +
+                                  `</a>`;
+            }
+
+            reference_html += `</li>`;
+        }
+    }
+
+    // combine all
+    var html =
+    `<div class="lesson">
+          <div class="head">
+            <div class="col-xs-12 col-sm-9">
+              <h4 class="title"><a href="">` + title  + `</a></h4>
+              <div class="topics">
+                ` +
+                topic_html +
+                `
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-3">
+              <h4 class="likes">
+                <span>` + no_of_love + `</span>
+                <button class="like-btn" type="button" name="" title="Like if this is useful!">
+                  <span class="glyphicon glyphicon-heart-empty"></span>
+                </button>
+              </h4>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div class="content">
+            <div>
+              <p>Outlines</p>
+              <ul class="outlines">` +
+                  outline_html +
+              `</ul>
+            </div>
+            <div>
+              <p>References</p>
+              <ul class="references">` +
+                  reference_html +
+              `</ul>
+            </div>
+          </div>
+        </div>`;
+
+      return html;
+}

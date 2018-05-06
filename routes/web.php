@@ -27,6 +27,10 @@ Route::post('lessons/save-outlines', 'OutlineController@doStoreUpdateDelete');
 
 Route::post('lessons/save-all-relating', 'GeneralController@saveAllRelatingLesson');
 
+Route::get('lessons/find-lessons-by-topics', 'LessonController@findLessonsByTopics');
+
+Route::get('lessons/get-lessons-from-array-ids', 'LessonController@getAllRelatingArrayOfLessons');
+
 Route::get('/lessons/view/{id}', 'LessonController@view');
 
 Route::get('/lessons/edit/{id}', 'LessonController@edit');
@@ -45,9 +49,7 @@ Route::get('/tests/view', function(){
     return view('test.view');
 });
 
-Route::get('/resources', function(){
-    return view('community.resource');
-});
+Route::get('/resources', 'LessonController@resources');
 
 Route::get('/groups', function(){
     return view('community.group');
@@ -68,3 +70,5 @@ Route::post('/upload/media-references/new-url', 'MediaController@storeUrlMediaRe
 Route::get('/upload/media-references-by-user', 'MediaController@getMediaReferencesByUser');
 
 Route::get('/upload/media-references/view/{name}', 'MediaController@viewMediaReference');
+
+Route::get('/media/get-default-types', 'MediaController@getDefaultTypes');

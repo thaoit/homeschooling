@@ -450,7 +450,7 @@
 
 <script src="{{ asset('js/outline.js') }}"></script>
 <script src="{{ asset('js/hint-chosen-panel.js' )}}"></script>
-<script src="{{ asset('js/lesson-editing.js') }}"></script>
+<script src="{{ asset('js/custom.js') }}"></script>
 <script src="{{ asset('js/summernote.js') }}"></script>
 
 <script>
