@@ -29,7 +29,7 @@ Route::post('lessons/save-all-relating', 'GeneralController@saveAllRelatingLesso
 
 Route::get('lessons/find-lessons-by-topics', 'LessonController@findLessonsByTopics');
 
-Route::get('lessons/get-lessons-from-array-ids', 'LessonController@getAllRelatingArrayOfLessons');
+Route::get('lessons/get-all-public-lessons', 'LessonController@getAllInPublic');
 
 Route::get('/lessons/view/{id}', 'LessonController@view');
 

@@ -527,18 +527,22 @@ function getObjFromMediaReference(media_element){
     }
 }
 
-function ajaxFilterLessons(topics, lesson_container, process_filter_url, process_default_media_type_url, process_view_media_url){
+function ajaxFilterLessons(data, urls, elements){
 
     $.ajax({
 
         type: 'get',
-        url: process_filter_url,
+        url: urls['find_lessons_by_topics'],
         data:{
-          topics: topics
+          topics: data
+        },
+        beforeSend: function(){
+
+            showWaitingFilter(elements['filter_button'], elements['filter_clear_button']);
         },
         success: function(data){
 
-            ajaxGetDefaultMediaTypes(lesson_container, data, process_default_media_type_url, process_view_media_url);
+            ajaxResetLessonsAfterFilter(data, urls, elements);
         },
         error: function(data){
             console.log(data);
@@ -546,30 +550,78 @@ function ajaxFilterLessons(topics, lesson_container, process_filter_url, process
     });
 }
 
-function ajaxGetDefaultMediaTypes(lesson_container, lesson_objs, process_default_media_type_url, process_view_media_url){
+// clear the current lessons and return all lessons in public status
+function ajaxClearFilterLessons(urls, elements){
 
     $.ajax({
 
         type: 'get',
-        url: process_default_media_type_url,
+        url: urls['all_lessons_in_public'],
+        beforeSend: function(){
+
+            showWaitingClearingFilter(elements['filter_button'], elements['filter_clear_button']);
+        },
+        success: function(data){
+
+            ajaxResetLessonsAfterClearingFilter(data, urls, elements);
+        },
+        error: function(data){
+            console.log(data);
+        }
+    });
+}
+
+function ajaxResetLessonsAfterFilter(lesson_objs, urls, elements){
+
+    $.ajax({
+
+        type: 'get',
+        url: urls['default_media_types'],
         data: {},
         success: function(data){
 
-            resetLessonElements(lesson_container, lesson_objs, data, process_view_media_url);
+            resetLessonElements(lesson_objs, data, urls, elements);
         },
         error: function(data){
             console.log(data);
+        },
+        complete: function(){
+
+              showAfterCompleteFilter(elements['filter_button'], elements['filter_clear_button']);
         }
     });
 }
 
-function resetLessonElements(lesson_container, lesson_objs, default_media_types, media_viewing_process_url){
+function ajaxResetLessonsAfterClearingFilter(lesson_objs, urls, elements){
+
+    $.ajax({
+
+        type: 'get',
+        url: urls['default_media_types'],
+        data: {},
+        success: function(data){
+
+            resetLessonElements(lesson_objs, data, urls, elements);
+        },
+        error: function(data){
+            console.log(data);
+        },
+        complete: function(){
+
+              showAfterCompleteClearingFilter(elements['filter_button'], elements['filter_clear_button']);
+        }
+    });
+}
+
+function resetLessonElements(lesson_objs, default_media_types, urls, elements){
+
+    var lesson_container = elements['lesson_container'];
 
     // remove the old
     lesson_container.empty();
 
     // get html from lesson objs
-    var html = generateLessonsInResources(lesson_objs, default_media_types, media_viewing_process_url);
+    var html = generateLessonsInResources(lesson_objs, default_media_types, urls['view_media_reference']);
 
     // append new lessons
     lesson_container.append(html);
@@ -612,6 +664,7 @@ function generateLessonInResources(lesson_obj, default_media_types, media_viewin
 
     // reference info
     var reference_html = ``;
+    var media_process_url = media_viewing_process_url.substring(1, media_viewing_process_url.lastIndexOf(':'));
 
     for( var i = 0; i < default_media_types.length; i++ ){
 
@@ -636,7 +689,7 @@ function generateLessonInResources(lesson_obj, default_media_types, media_viewin
             }
 
             var media = lesson_obj['media'][type][j];
-            
+
             if( media['name'] == null ){
 
                 reference_html += `<a target="_blank" href="` + media['url'] + `">` +
@@ -645,7 +698,7 @@ function generateLessonInResources(lesson_obj, default_media_types, media_viewin
             }
             else{
 
-                reference_html += `<a target="_blank" href="` + media_viewing_process_url + `/` + media['name'] + `">` +
+                reference_html += `<a target="_blank" href="` + media_process_url + media['name'] + `">` +
                                       media['origin_name'] +
                                   `</a>`;
             }
@@ -693,4 +746,39 @@ function generateLessonInResources(lesson_obj, default_media_types, media_viewin
         </div>`;
 
       return html;
+}
+
+function showWaitingFilter(filter_button, filter_clear_button){
+
+    filter_button.readOnly = true;
+    filter_button[0].innerText = 'Filtering...';
+
+    filter_clear_button.hide();
+}
+
+function showAfterCompleteFilter(filter_button, filter_clear_button){
+
+    // set filter button
+    filter_button.readOnly = false;
+    filter_button[0].innerText = 'OK';
+
+    // show button for clearing filter results
+    filter_clear_button.show();
+}
+
+function showWaitingClearingFilter(filter_button, filter_clear_button){
+
+    filter_button.hide();
+
+    filter_clear_button.readOnly = true;
+    filter_clear_button[0].innerText = 'Clearing...';
+}
+
+function showAfterCompleteClearingFilter(filter_button, filter_clear_button){
+
+    filter_button.show();
+
+    filter_clear_button.hide();
+    filter_clear_button.readOnly = false;
+    filter_clear_button[0].innerText = 'Clear';
 }

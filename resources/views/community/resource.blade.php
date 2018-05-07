@@ -66,7 +66,7 @@
     <div class="filter-group">
       <button class="filter-control filter-ok" type="button" name="filter_ok" title="Start filter">OK</button>
       <button class="filter-control" type="button" name="filter_cancel" title="Close filter pane" data-dismiss="filter-container">Cancel</button>
-      <button class="filter-control filter-clear" type="button" style="display: none">Clear</button>
+      <button class="filter-control filter-clear" type="button" title="Clear filter results" style="display: none">Clear</button>
     </div>
   </div>
 
@@ -238,29 +238,50 @@
 
       $('#filter-lesson .filter-ok').on('click', function(){
 
-          var lesson_container = $('.lesson-container');
           var chosen_topic_elements = $('#filter-lesson input[name="filter_topics"]:checked');
           var chosen_topic_values = [];
 
+          // set chosen topics
           for(var i = 0; i < chosen_topic_elements.length; i++){
               chosen_topic_values.push(chosen_topic_elements.eq(i).val());
           }
 
+          // elements for completing filtering
+          var elements = [];
+          elements['lesson_container'] = $('.lesson-container');
+          elements['filter_button'] = $(this);
+          elements['filter_clear_button'] = $(this).siblings('.filter-clear');
+
+          // url for processing
+          var urls = [];
+          urls['find_lessons_by_topics'] = '{{ action('LessonController@findLessonsByTopics') }}';
+          urls['default_media_types'] = '{{ action('MediaController@getDefaultTypes') }}';
+          urls['view_media_reference'] = '{{ action('MediaController@viewMediaReference', ':name') }}';
+
+          // call function filter
           ajaxFilterLessons(
               chosen_topic_values,
-              lesson_container,
-              '{{ action('LessonController@findLessonsByTopics') }}',
-              '{{ action('MediaController@getDefaultTypes') }}',
-              '{{ action('MediaController@viewMediaReference', ':name') }}'
+              urls,
+              elements
           );
-
-          // show button for clearing filter results
-          $(this).parents('.filter-container').find('.filter-clear').show();
       })
 
       $('.filter-container .filter-clear').on('click', function(){
 
-          $(this).hide();
+          var elements = [];
+          elements['lesson_container'] = $('.lesson-container');
+          elements['filter_button'] = $(this).siblings('.filter-ok');
+          elements['filter_clear_button'] = $(this);
+
+          var urls = [];
+          urls['all_lessons_in_public'] = '{{ action('LessonController@getAllInPublic') }}';
+          urls['default_media_types'] = '{{ action('MediaController@getDefaultTypes') }}';
+          urls['view_media_reference'] = '{{ action('MediaController@viewMediaReference', ':name') }}';
+
+          ajaxClearFilterLessons(
+              urls,
+              elements
+          );
       })
   });
 

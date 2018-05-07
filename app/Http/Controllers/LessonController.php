@@ -86,4 +86,9 @@ class LessonController extends Controller
 
         return $lessons;
     }
+
+    public function getAllInPublic(){
+
+        return LessonService::getAllInPublic();
+    }
 }
