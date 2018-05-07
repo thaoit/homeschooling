@@ -75,7 +75,7 @@ class LessonController extends Controller
     public function findLessonsByTopics(Request $request){
 
         $input = $request->all();
-        $lesson_ids = array();
+        $lessons = array();
 
         // check whether passing parameter about topics
         if( isset( $input['topics'] ) ){

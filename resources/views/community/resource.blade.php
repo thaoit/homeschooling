@@ -63,6 +63,12 @@
         </label>
       </div>
     </div>-->
+
+    <div class="alert alert-danger alert-dismissible" style="display: none">
+      <a href="#" class="close" aria-label="close">&times;</a>
+        You need to choose at least 1 topic for fiter!
+    </div>
+
     <div class="filter-group">
       <button class="filter-control filter-ok" type="button" name="filter_ok" title="Start filter">OK</button>
       <button class="filter-control" type="button" name="filter_cancel" title="Close filter pane" data-dismiss="filter-container">Cancel</button>
@@ -216,6 +222,11 @@
 
   $(document).ready(function(){
 
+      $('.alert .close').on('click', function(){
+
+          $(this).parent('.alert').hide();
+      });
+
       $('.lesson-container').on('click', '.lesson .likes .like-btn', function(){
 
           var icon = $(this).children('span');
@@ -240,6 +251,12 @@
 
           var chosen_topic_elements = $('#filter-lesson input[name="filter_topics"]:checked');
           var chosen_topic_values = [];
+
+          // Check number of chosen topics
+          if(chosen_topic_elements.length == 0){
+              $('.alert').show();
+              return;
+          }
 
           // set chosen topics
           for(var i = 0; i < chosen_topic_elements.length; i++){
