@@ -27,9 +27,9 @@ Route::post('lessons/save-outlines', 'OutlineController@doStoreUpdateDelete');
 
 Route::post('lessons/save-all-relating', 'GeneralController@saveAllRelatingLesson');
 
-Route::get('lessons/find-lessons-by-topics', 'LessonController@findLessonsByTopics');
+Route::get('lessons/filter-lessons-by-topics', 'LessonController@filterLessonsByTopics');
 
-Route::get('lessons/get-all-public-lessons', 'LessonController@getAllInPublic');
+Route::get('lessons/filter-lessons-by-name', 'LessonController@filterLessonsByName');
 
 Route::get('/lessons/view/{id}', 'LessonController@view');
 
@@ -50,6 +50,8 @@ Route::get('/tests/view', function(){
 });
 
 Route::get('/resources', 'LessonController@resources');
+
+Route::get('/resources/search', 'LessonController@searchName');
 
 Route::get('/groups', function(){
     return view('community.group');

@@ -112,7 +112,7 @@ class LessonService{
         return $lesson;
     }
 
-    public static function getAllBelongsToTopics($topics){
+    public static function getAllBelongsToTopics($topics, $lesson_ids){
 
         // get lessons have topics in the input and,
         // order by the largest number of topics in the $topics input and,
@@ -122,6 +122,7 @@ class LessonService{
                             ->join('lessons', 'lesson_topics.lesson_id', '=', 'lessons.id')
                             ->join('topics', 'lesson_topics.topic_id', '=', 'topics.id')
                             ->whereIn('topics.name', $topics)
+                            ->whereIn('lessons.id', $lesson_ids)
                             ->where('lessons.status', Config::get('constants.lesson_status.publish'))
                             ->groupBy('lessons.id')
                             ->orderByRaw('count(*) desc')
@@ -188,6 +189,25 @@ class LessonService{
             if( count($lesson) > 0){
                 $lessons[] = $lesson;
             }
+        }
+
+        return $lessons;
+    }
+
+    public static function searchName($name){
+
+        $lesson_id_array =  Lesson::where([
+                                      ['status', '=', Config::get('constants.lesson_status.publish')],
+                                      ['title', 'like', "%$name%"]
+                                    ])
+                                  ->orderBy('no_of_love', 'desc')
+                                  ->latest()
+                                  ->pluck('id');
+
+        $lessons = array();
+
+        foreach($lesson_id_array as $id){
+            $lessons[] = LessonService::getAllRelatingLesson($id);
         }
 
         return $lessons;

@@ -527,14 +527,15 @@ function getObjFromMediaReference(media_element){
     }
 }
 
-function ajaxFilterLessons(data, urls, elements){
+function ajaxFilterLessons(topic_data, lesson_id_data, urls, elements){
 
     $.ajax({
 
         type: 'get',
         url: urls['find_lessons_by_topics'],
         data:{
-          topics: data
+          topics: topic_data,
+          lesson_ids: lesson_id_data
         },
         beforeSend: function(){
 
@@ -551,12 +552,16 @@ function ajaxFilterLessons(data, urls, elements){
 }
 
 // clear the current lessons and return all lessons in public status
-function ajaxClearFilterLessons(urls, elements){
+function ajaxClearFilterLessons(is_filter_all, search_text, urls, elements){
 
     $.ajax({
 
         type: 'get',
         url: urls['all_lessons_in_public'],
+        data:{
+            is_all: is_filter_all,
+            name: search_text
+        },
         beforeSend: function(){
 
             showWaitingClearingFilter(elements['filter_button'], elements['filter_clear_button']);
@@ -643,6 +648,7 @@ function generateLessonsInResources(lesson_objs, default_media_types, media_view
 function generateLessonInResources(lesson_obj, default_media_types, media_viewing_process_url){
 
     // general info
+    var id = lesson_obj['general']['id'];
     var title = lesson_obj['general']['title'];
     var no_of_love = lesson_obj['general']['no_of_love'];
 
@@ -709,7 +715,7 @@ function generateLessonInResources(lesson_obj, default_media_types, media_viewin
 
     // combine all
     var html =
-    `<div class="lesson">
+    `<div class="lesson" data-id="` + id + `">
           <div class="head">
             <div class="col-xs-12 col-sm-9">
               <h4 class="title"><a href="">` + title  + `</a></h4>

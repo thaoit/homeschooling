@@ -4,13 +4,13 @@
 
 <div class="container">
   <div class="col-xs-12 form-group">
-    <form action="" method="get" class="col-xs-12 col-sm-10 search-container">
-      <div class="input-group">
-        <input class="form-control" type="text" name="search" placeholder="Search here">
-        <span class="input-group-addon">
+    <form action="{{ action('LessonController@searchName') }}" method="get" class="col-xs-12 col-sm-10 search-container">
+      <!--<div class="input-group">-->
+        <input class="form-control search-input" type="text" name="q" value="{{ isset($search) ? $search : '' }}" placeholder="Search here">
+        <!--<span class="input-group-addon search-btn">
           <span class="glyphicon glyphicon-search"></span>
         </span>
-      </div>
+      </div>-->
     </form>
 
     <div class="col-xs-12 col-sm-2 filter-create-container">
@@ -81,7 +81,7 @@
   <div class="lesson-container">
 
     @foreach($lessons as $lesson)
-    <div class="lesson">
+    <div class="lesson" data-id="{{ $lesson['general']->id }}">
       <div class="head">
         <div class="col-xs-12 col-sm-9">
           <h4 class="title"><a href="{{ action('LessonController@view', $lesson['general']->id) }}">{{ $lesson['general']->title }}</a></h4>
@@ -263,6 +263,14 @@
               chosen_topic_values.push(chosen_topic_elements.eq(i).val());
           }
 
+          // get lesson ids
+          var lesson_elements = $('.lesson-container .lesson');
+          var lesson_ids = [];
+
+          for(var i = 0; i < lesson_elements.length; i++){
+              lesson_ids.push( lesson_elements.eq(i).attr('data-id') );
+          }
+
           // elements for completing filtering
           var elements = [];
           elements['lesson_container'] = $('.lesson-container');
@@ -271,13 +279,14 @@
 
           // url for processing
           var urls = [];
-          urls['find_lessons_by_topics'] = '{{ action('LessonController@findLessonsByTopics') }}';
+          urls['find_lessons_by_topics'] = '{{ action('LessonController@filterLessonsByTopics') }}';
           urls['default_media_types'] = '{{ action('MediaController@getDefaultTypes') }}';
           urls['view_media_reference'] = '{{ action('MediaController@viewMediaReference', ':name') }}';
 
           // call function filter
           ajaxFilterLessons(
               chosen_topic_values,
+              lesson_ids,
               urls,
               elements
           );
@@ -285,17 +294,27 @@
 
       $('.filter-container .filter-clear').on('click', function(){
 
+          // get searched lesson name
+          var search_text = $('.search-container .search-input').val();
+          var is_filter_all = false;
+
+          if(search_text.trim().length === 0){
+              is_filter_all = true;
+          }
+
           var elements = [];
           elements['lesson_container'] = $('.lesson-container');
           elements['filter_button'] = $(this).siblings('.filter-ok');
           elements['filter_clear_button'] = $(this);
 
           var urls = [];
-          urls['all_lessons_in_public'] = '{{ action('LessonController@getAllInPublic') }}';
+          urls['all_lessons_in_public'] = '{{ action('LessonController@filterLessonsByName') }}';
           urls['default_media_types'] = '{{ action('MediaController@getDefaultTypes') }}';
           urls['view_media_reference'] = '{{ action('MediaController@viewMediaReference', ':name') }}';
 
           ajaxClearFilterLessons(
+              is_filter_all,
+              search_text,
               urls,
               elements
           );

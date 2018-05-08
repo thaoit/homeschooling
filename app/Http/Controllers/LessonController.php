@@ -64,7 +64,7 @@ class LessonController extends Controller
         return redirect()->action('LessonController@index');
     }
 
-    public function resources(){
+    public function resources(Request $request){
 
         $lessons = LessonService::getAllInPublic();
         $topics = TopicService::getAllInOrder('asc');
@@ -72,23 +72,53 @@ class LessonController extends Controller
         return view('community/resource', compact('lessons', 'topics'));
     }
 
-    public function findLessonsByTopics(Request $request){
+    public function filterLessonsByTopics(Request $request){
 
         $input = $request->all();
         $lessons = array();
 
-        // check whether passing parameter about topics
-        if( isset( $input['topics'] ) ){
+        // check whether passing parameter exists
+        if( isset( $input['topics'] ) && isset( $input['lesson_ids'] ) ){
 
-          $topics = $input['topics'];
-          $lessons = LessonService::getAllBelongsToTopics($topics);
+            $lessons = LessonService::getAllBelongsToTopics($input['topics'], $input['lesson_ids']);
         }
 
         return $lessons;
     }
 
-    public function getAllInPublic(){
+    public function filterLessonsByName(Request $request){
 
-        return LessonService::getAllInPublic();
+        $input = $request->all();
+        $lessons = array();
+
+        // check whether passing parameter exists
+        if( isset( $input['is_all'] ) ){
+
+            if($input['is_all'] === "true"){
+                $lessons = LessonService::getAllInPublic();
+            }
+            else{
+                $lessons = LessonService::searchName($input['name']);
+            }
+        }
+
+        return $lessons;
+    }
+
+    public function searchName(Request $request){
+
+        $input = $request->input();
+        $lessons = array();
+        $search = '';
+
+        $topics = TopicService::getAllInOrder('asc');
+
+        if( isset( $input['q'] ) ){
+
+            $search = $input['q'];
+            $lessons = LessonService::searchName($search);
+        }
+
+        return view('community/resource', compact('lessons', 'topics', 'search'));
     }
 }
