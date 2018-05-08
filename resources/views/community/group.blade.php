@@ -21,22 +21,22 @@
           <option value="others">Others</option>
         </select>
       </p>
+      <p>Max number of partners
+        <input type="number" name="max_no_of_partners">
+      </p>
       <div class="favourite-topics hint-chosen-panel">
         <p>Favourite topics</p>
-        <div class="typing-hint">
-          <input class="form-control" type="text" name="topics" placeholder="Type some topics here">
-        </div>
-        <div class="hints">
-          <ul>
-            <li>Science</li>
-            <li>Art</li>
-            <li>Skill</li>
-            <li>Music</li>
-          </ul>
-        </div>
         <div class="chosen-hints">
 
         </div>
+        <div class="typing-hint">
+          <input class="form-control" type="text" name="topics" placeholder="Type some topics here">
+        </div>
+        <div class="hints"></div>
+
+        <p class="message" style="display: none">
+          Press <strong>Enter</strong> to add the topic.</em>
+        </p>
       </div>
       <p>Your family comes from
         <select name="countries">
@@ -56,7 +56,7 @@
       </p>
       <div>
         <p>Other info</p>
-        <input class="form-control" type="text" name="others" placeholder="Type some other requirements here">
+        <textarea class="form-control" rows="4" placeholder="Type some other requirements here"></textarea>
       </div>
     </div>
     <div class="foot">
@@ -199,6 +199,18 @@
     padding-right: 0;
   }
 
+  .message{
+    font-size: 0.85em;
+    margin-top: 20px;
+    padding-left: 5px;
+    font-style: italic;
+    display: none;
+  }
+
+  .favourite-topics{
+    margin-bottom: 15px;
+  }
+
 </style>
 
 @endsection
@@ -206,5 +218,31 @@
 @section('scripts')
 
 <script src="{{ asset('js/hint-chosen-panel.js') }}"></script>
+<script src="{{ asset('js/custom.js') }}"></script>
+
+<script>
+
+  $(document).ready(function(){
+
+      $('.typing-hint > input').on('keyup', function(e){
+
+          var hints = $(this).parent('.typing-hint').siblings('.hints');
+          var message = $('.message');
+
+          if(e.key !== "Enter"){
+
+              ajaxSearchAndShowTopicsHints(
+                  $(this).val(),
+                  hints,
+                  message,
+                  'Press Enter to add topic',
+                  '{{ action('TopicController@search') }}'
+              );
+          }
+
+      });
+  });
+
+</script>
 
 @endsection

@@ -141,7 +141,7 @@ function generateReferenceAfterChosen(id, path, origin_name, isUploaded, view_pr
 
 }
 
-function ajaxSearchAndShowTopicsHints(search_text, hints_container, message, process_url){
+function ajaxSearchAndShowTopicsHints(search_text, hints_container, message, message_text, process_url){
 
     $.ajax({
         type: 'get',
@@ -165,7 +165,7 @@ function ajaxSearchAndShowTopicsHints(search_text, hints_container, message, pro
             }
             else{
               hints_container.hide();
-              message[0].innerText = 'To be the first having lesson on this topic! Press Enter to add the topic.';
+              message[0].innerText = message_text;
               message.show();
             }
         },

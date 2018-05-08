@@ -676,38 +676,12 @@
         var hints = $(this).parent('.typing-hint').siblings('.hints');
         var message = $('.message');
 
-        // check empty text input
-        if( $(this).val().length === 0 ){
-
-          hints.hide();
-          message.hide();
-          return true;
-        }
-
-        if(e.key === "Enter" && hints.children().length === 0){
-
-            var hint = $(this).val();
-            var chosen_hints_container = $(this).parents('.hint-chosen-panel').find('.chosen-hints');
-
-            // check if this hint is existed in chosen, if not: inform user
-            if(isHintChosen(hint, chosen_hints_container)){
-                message[0].innerText = 'This topic has been chosen';
-                return true;
-            }
-
-            // create new topic
-            var new_topic = generateHint(hint, null);
-            chosen_hints_container.append(new_topic);
-
-            // hide message and empty the input after adding new chosen topic
-            message.hide();
-            $(this).val('');
-        }
-        else{
+        if(e.key !== "Enter"){
             ajaxSearchAndShowTopicsHints(
                 $(this).val(),
                 hints,
                 message,
+                'To be the first having lesson on this topic! Press Enter to add the topic.',
                 '{{ action('TopicController@search') }}'
             );
         }
