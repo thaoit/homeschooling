@@ -7,6 +7,7 @@ use App\Models\Lesson;
 use App\Models\User;
 use App\Models\LessonTopic;
 use App\Models\Reference;
+use App\Models\FavoriteLesson;
 use App\Services\UserService;
 use App\Services\MediaService;
 use Illuminate\Support\Facades\DB;
@@ -60,10 +61,13 @@ class LessonService{
             return;
         }
 
+        // delete references with the lesson
         $lesson->outlines()->delete();
         LessonTopic::where('lesson_id', $id)->delete();
         Reference::where('lesson_id', $id)->delete();
+        FavoriteLesson::where('lesson_id', $id)->delete();
 
+        // delete lesson
         $lesson->delete();
     }
 
@@ -103,11 +107,7 @@ class LessonService{
                                    ->latest()
                                    ->pluck('id');
 
-        $lesson = array();
-
-        foreach($lesson_id_array as $id){
-            $lesson[] = LessonService::getAllRelatingLesson($id);
-        }
+        $lesson = LessonService::getAllRelatingArrayOfLessons($lesson_id_array);
 
         return $lesson;
     }
@@ -168,12 +168,16 @@ class LessonService{
         // get topics
         $topics = $lesson->topics()->get();
 
+        // get favorite lessons of current user
+        $favorite = FavoriteLessonService::getArrayOfFavoriteLessonIDsByUser(1);
+
         return [
           'general' => $lesson,
           'outlines' => $outlines,
           'media' => $media,
           'topics' => $topics,
-          'split_outline_contents' => $split_outline_contents
+          'split_outline_contents' => $split_outline_contents,
+          'favorite_lesson_ids' => $favorite
         ];
     }
 
@@ -204,12 +208,25 @@ class LessonService{
                                   ->latest()
                                   ->pluck('id');
 
-        $lessons = array();
-
-        foreach($lesson_id_array as $id){
-            $lessons[] = LessonService::getAllRelatingLesson($id);
-        }
+        $lessons = LessonService::getAllRelatingArrayOfLessons($lesson_id_array);
 
         return $lessons;
+    }
+
+    public static function loveLesson($lesson_id, $user_id){
+
+        $object = [
+            'lesson_id' => $lesson_id,
+            'user_id' => $user_id
+        ];
+
+        // add to favorite lessons and, return result
+        return FavoriteLessonService::store($object);
+    }
+
+    public static function unloveLesson($lesson_id, $user_id){
+
+        // delete favorite and, return result
+        return FavoriteLessonService::delete($lesson_id, $user_id);
     }
 }

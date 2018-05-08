@@ -31,4 +31,8 @@ class Lesson extends Model
     public function outlines(){
       return $this->hasMany('App\Models\Outline');
     }
+
+    public function favorByUsers(){
+      return $this->belongsToMany('App\Models\User', 'favorite_lessons', 'lesson_id', 'user_id');
+    }
 }

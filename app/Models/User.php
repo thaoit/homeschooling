@@ -50,4 +50,8 @@ class User extends Authenticatable
   public function medias(){
     return $this->hasMany('App\Models\Media');
   }
+
+  public function favorLessons(){
+    return $this->belongsToMany('App\Models\Lesson', 'favorite_lessons', 'user_id', 'lesson_id');
+  }
 }

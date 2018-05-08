@@ -31,6 +31,10 @@ Route::get('lessons/filter-lessons-by-topics', 'LessonController@filterLessonsBy
 
 Route::get('lessons/filter-lessons-by-name', 'LessonController@filterLessonsByName');
 
+Route::get('/lessons/love-lesson', 'LessonController@loveLesson');
+
+Route::get('/lessons/unlove-lesson', 'LessonController@unloveLesson');
+
 Route::get('/lessons/view/{id}', 'LessonController@view');
 
 Route::get('/lessons/edit/{id}', 'LessonController@edit');

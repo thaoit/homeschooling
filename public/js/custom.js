@@ -713,6 +713,22 @@ function generateLessonInResources(lesson_obj, default_media_types, media_viewin
         }
     }
 
+    // like button
+    var like_button;
+
+    if( lesson_obj['favorite_lesson_ids'].indexOf(id) >= 0 ){
+
+        like_button = `<button class="like-btn" type="button" name="" title="Remove this from my favourite lessons">
+                          <span class="glyphicon glyphicon-heart"></span>
+                       </button>`;
+    }
+    else{
+
+        like_button = `<button class="like-btn" type="button" name="" title="Like if this is useful!">
+                          <span class="glyphicon glyphicon-heart-empty"></span>
+                       </button>`;
+    }
+
     // combine all
     var html =
     `<div class="lesson" data-id="` + id + `">
@@ -727,11 +743,9 @@ function generateLessonInResources(lesson_obj, default_media_types, media_viewin
             </div>
             <div class="col-xs-12 col-sm-3">
               <h4 class="likes">
-                <span>` + no_of_love + `</span>
-                <button class="like-btn" type="button" name="" title="Like if this is useful!">
-                  <span class="glyphicon glyphicon-heart-empty"></span>
-                </button>
-              </h4>
+                <span class="number">` + no_of_love + `</span>` +
+                like_button +
+              `</h4>
             </div>
             <div class="clearfix"></div>
           </div>
@@ -787,4 +801,58 @@ function showAfterCompleteClearingFilter(filter_button, filter_clear_button){
     filter_clear_button.hide();
     filter_clear_button.readOnly = false;
     filter_clear_button[0].innerText = 'Clear';
+}
+
+function ajaxLoveLesson(lesson_id, user_id, process_url, elements){
+
+    $.ajax({
+
+        type: 'get',
+        url: process_url,
+        data: {
+          lesson_id: lesson_id,
+          user_id: user_id
+        },
+        success: function(data){
+
+            if( data['result'] ){
+
+              // change content and shape when starting to love
+              elements['icon'].removeClass('glyphicon-heart-empty');
+              elements['icon'].addClass('glyphicon-heart');
+              elements['number'].innerText = parseInt( elements['number'].innerText ) + 1;
+              elements['like-btn'].attr('title', 'Remove this from my favourite lessons');
+            }
+        },
+        error: function(data){
+            console.log(data);
+        }
+    });
+}
+
+function ajaxUnloveLesson(lesson_id, user_id, process_url, elements){
+
+    $.ajax({
+
+        type: 'get',
+        url: process_url,
+        data: {
+          lesson_id: lesson_id,
+          user_id: user_id
+        },
+        success: function(data){
+
+            if( data['result'] ){
+
+              // change content and shape when stopping to love
+              elements['icon'].removeClass('glyphicon-heart');
+              elements['icon'].addClass('glyphicon-heart-empty');
+              elements['number'].innerText = parseInt( elements['number'].innerText ) - 1;
+              elements['like-btn'].attr('title', 'Like if this is useful!');
+            }
+        },
+        error: function(data){
+            console.log(data);
+        }
+    });
 }

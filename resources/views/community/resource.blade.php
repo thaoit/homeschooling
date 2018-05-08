@@ -6,7 +6,7 @@
   <div class="col-xs-12 form-group">
     <form action="{{ action('LessonController@searchName') }}" method="get" class="col-xs-12 col-sm-10 search-container">
       <!--<div class="input-group">-->
-        <input class="form-control search-input" type="text" name="q" value="{{ isset($search) ? $search : '' }}" placeholder="Search here">
+        <input class="form-control search-input" type="text" name="q" value="{{ isset($search) ? $search : '' }}" placeholder="Search here" required>
         <!--<span class="input-group-addon search-btn">
           <span class="glyphicon glyphicon-search"></span>
         </span>
@@ -93,10 +93,16 @@
         </div>
         <div class="col-xs-12 col-sm-3">
           <h4 class="likes">
-            <span>{{ $lesson['general']->no_of_love }}</span>
-            <button class="like-btn" type="button" name="" title="Like if this is useful!">
-              <span class="glyphicon glyphicon-heart-empty"></span>
-            </button>
+            <span class="number">{{ $lesson['general']->no_of_love }}</span>
+            @if( in_array( $lesson['general']->id, $lesson['favorite_lesson_ids'] ) )
+              <button class="like-btn" type="button" name="" title="Remove this from my favourite lessons">
+                  <span class="glyphicon glyphicon-heart"></span>
+              </button>
+            @else
+              <button class="like-btn" type="button" name="" title="Like if this is useful!">
+                  <span class="glyphicon glyphicon-heart-empty"></span>
+              </button>
+            @endif
           </h4>
         </div>
         <div class="clearfix"></div>
@@ -230,20 +236,25 @@
       $('.lesson-container').on('click', '.lesson .likes .like-btn', function(){
 
           var icon = $(this).children('span');
+          var lesson_id = $(this).parents('.lesson').attr('data-id');
+          var user_id = 1;
+
+          var elements = [];
+          elements['icon'] = icon;
+          elements['number'] = $(this).parents('.likes').find('.number')[0];
+          elements['like-btn'] = $(this);
 
           if(icon.hasClass('glyphicon-heart-empty')){
 
-              icon.removeClass('glyphicon-heart-empty');
-              icon.addClass('glyphicon-heart');
+              var url = '{{ action('LessonController@loveLesson') }}';
 
-              $(this).attr('title', 'Remove this from my favourite lessons');
+              ajaxLoveLesson(lesson_id, user_id, url, elements);
           }
           else{
 
-              icon.removeClass('glyphicon-heart');
-              icon.addClass('glyphicon-heart-empty');
+              var url = '{{ action('LessonController@unloveLesson') }}';
 
-              $(this).attr('title', 'Like if this is useful!');
+              ajaxUnloveLesson(lesson_id, user_id, url, elements);
           }
       })
 
@@ -319,6 +330,7 @@
               elements
           );
       })
+
   });
 
 </script>

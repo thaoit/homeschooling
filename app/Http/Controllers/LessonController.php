@@ -121,4 +121,34 @@ class LessonController extends Controller
 
         return view('community/resource', compact('lessons', 'topics', 'search'));
     }
+
+    public function loveLesson(Request $request){
+
+        $input = $request->all();
+        $result = false;
+
+        if( isset($input['lesson_id']) && isset($input['user_id']) ){
+
+            $result = LessonService::loveLesson( $input['lesson_id'], $input['user_id'] );
+        }
+
+        return [
+            'result' => $result
+        ];
+    }
+
+    public function unloveLesson(Request $request){
+
+        $input = $request->all();
+        $result = false;
+
+        if( isset($input['lesson_id']) && isset($input['user_id']) ){
+
+            $result = LessonService::unloveLesson( $input['lesson_id'], $input['user_id'] );
+        }
+
+        return [
+            'result' => $result
+        ];
+    }
 }
