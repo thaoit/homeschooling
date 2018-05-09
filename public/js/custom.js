@@ -856,3 +856,24 @@ function ajaxUnloveLesson(lesson_id, user_id, process_url, elements){
         }
     });
 }
+
+function ajaxPartnerPost(data, process_url){
+
+    $.ajax({
+
+        type: 'post',
+        url: process_url,
+        data: data,
+        success: function(data){
+
+            window.location.href = data;
+        },
+        error: function(data){
+            console.log(data);
+        }
+    });
+}
+
+function ajaxPartnerSearch(data, process_url){
+
+}

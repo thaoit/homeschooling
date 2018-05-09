@@ -57,9 +57,11 @@ Route::get('/resources', 'LessonController@resources');
 
 Route::get('/resources/search', 'LessonController@searchName');
 
-Route::get('/groups', function(){
-    return view('community.group');
-});
+Route::get('/groups', 'PartnerPostController@index');
+
+Route::post('/groups/post', 'PartnerPostController@post');
+
+Route::get('/groups/search', 'PartnerPostController@search');
 
 Route::get('/profile', function(){
     return view('user.profile');
