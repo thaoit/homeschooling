@@ -13,9 +13,9 @@ class PartnerPost extends Model
         'age_from',
         'age_to',
         'gender',
-        'max_no_of_partners',
         'favorite_topics',
-        'address',
+        'country',
+        'province',
         'other_info',
         'user_id'
     ];

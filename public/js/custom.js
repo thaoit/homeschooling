@@ -874,6 +874,25 @@ function ajaxPartnerPost(data, process_url){
     });
 }
 
-function ajaxPartnerSearch(data, process_url){
+function ajaxDeletePartnerPost(post_id, post_element, process_url){
 
+  $.ajax({
+
+      type: 'post',
+      url: process_url,
+      data:{
+        id: post_id
+      },
+      success: function(data){
+
+          var result = data['result'];
+          if(typeof result != "undefined" && result){
+
+              post_element.remove();
+          }
+      },
+      error: function(data){
+          console.log(data);
+      }
+  });
 }

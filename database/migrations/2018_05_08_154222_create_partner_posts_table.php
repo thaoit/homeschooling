@@ -18,9 +18,9 @@ class CreatePartnerPostsTable extends Migration
             $table->integer('age_from')->nullable();
             $table->integer('age_to')->nullable();
             $table->string('gender', 100)->nullable();
-            $table->integer('max_no_of_partners')->default(1);
             $table->text('favorite_topics')->nullable();
-            $table->text('address')->nullable();
+            $table->string('country')->nullable();
+            $table->string('province')->nullable();
             $table->text('other_info')->nullable();
             $table->bigInteger('user_id')->unsigned();
 

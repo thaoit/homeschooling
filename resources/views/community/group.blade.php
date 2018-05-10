@@ -9,26 +9,33 @@
     </div>
     <form class="content">
       <p>Children's age from
-        <input class="min_age" type="number" name="min_age">
+        <input type="number" name="age_from" value="{{ isset($input['age_from']) ? $input['age_from'] : '' }}">
         to
-        <input class="max_age" type="number" name="max_age">
+        <input type="number" name="age_to" value="{{ isset($input['age_to']) ? $input['age_to'] : '' }}">
       </p>
       <p>Gender
-        <select class="gender" name="gender">
-          <option value="All">All</option>
-          <option value="Boy">Boy</option>
-          <option value="Girl">Girl</option>
-          <option value="Others">Others</option>
+        <select name="gender">
+          @foreach( Config::get('constants.gender') as $gender )
+            @if( isset($input['gender']) && $input['gender'] == $gender )
+              <option value="{{ $gender }}" selected>{{ $gender }}</option>
+            @else
+              <option value="{{ $gender }}">{{ $gender }}</option>
+            @endif
+          @endforeach
         </select>
-      </p>
-      <p>Max number of partners
-        <input class="max_no_of_partners" type="number" name="max_no_of_partners" value="1" required>
       </p>
       <div class="favourite-topics hint-chosen-panel">
         <p>Favourite topics</p>
 
         <div class="chosen-hints">
-
+          @if( isset($topics) )
+            @foreach( $topics as $topic )
+              <span class="chosen-hint">
+                {{ $topic }}
+                <span class="close-chosen-hint">&times;</span>
+              </span>
+            @endforeach
+          @endif
         </div>
         <div class="typing-hint">
           <input class="form-control" type="text" name="topic-typing-hint" placeholder="Type some topics here">
@@ -40,24 +47,32 @@
         </p>
       </div>
       <p>Family comes from
-        <select class="countries" name="countries">
-          <option value="All">All</option>
-          <option value="Gernamy">Germany</option>
-          <option value="japan">Japan</option>
-          <option value="korean">Korean</option>
-          <option value="us">US</option>
-          <option value="vietnam">Vietnam</option>
+        <select id="countries" name="countries">
+          @foreach( Config::get('constants.countries') as $country)
+            @if( isset($input['countries']) && $input['countries'] == $country['name'] )
+              <option value="{{ $country['name'] }}" selected>{{ $country['name'] }}</option>
+            @else
+              <option value="{{ $country['name'] }}">{{ $country['name'] }}</option>
+            @endif
+          @endforeach
         </select>
-        <select class="provinces" name="provinces">
+        
+        @if( isset($input['countries']) && $input['countries'] != 'All' )
+        <select id="provinces" name="provinces">
           <option value="All">All</option>
-          <option value="hanoi">Ha Noi</option>
-          <option value="danang">Da Nang</option>
-          <option value="tphcm">TP.Ho Chi Minh</option>
+          <option value="Ha noi">Ha Noi</option>
+          <option value="Da Nang">Da Nang</option>
+          <option value="Ho Chi Minh city">Ho Chi Minh city</option>
         </select>
+        @endif
       </p>
       <div>
         <p>Other info</p>
-          <textarea class="form-control other-info" rows="4" placeholder="Type some other requirements here" name="other_info"></textarea>
+          <textarea class="form-control other-info" rows="4" placeholder="Type some other requirements here" name="other_info">
+            @if( isset($input['other_info']) )
+              {{ $input['other_info'] }}
+            @endif
+          </textarea>
       </div>
     </form>
     <div class="foot">
@@ -66,11 +81,12 @@
     </div>
   </div>
 
-  <div class="post-container">
+  @if( count($not_own_posts) > 0)
+  <div class="post-container not-own-posts">
     <div class="head">
       <h4>Try to find some partners here!</h4>
     </div>
-    @foreach( $posts as $post )
+    @foreach( $not_own_posts as $post )
     <div class="post">
       <div class="head">
         <p>From. <a href="">{{ $post->user_name }}</a></p>
@@ -81,7 +97,7 @@
           <p class="col-xs-4">Age</p>
           <p class="col-xs-8">
             @if($post->age_from == null && $post->age_to == null)
-              No limitted
+              Any ages
             @elseif($post->age_from == null)
               <= {{ $post->age_to }} years old
             @elseif($post->age_to == null)
@@ -107,12 +123,23 @@
         </div>
         <div class="col-xs-12">
           <p class="col-xs-4">Living in</p>
-          <p class="col-xs-8">{{ $post->address }}</p>
+          <p class="col-xs-8">
+            @if( $post->country == 'All' )
+              Anywhere
+            @elseif( $post->province == 'All' )
+              {{ $post->country }}
+            @else
+              {{ $post->province }}, {{ $post->country }}
+            @endif
+          </p>
         </div>
+
+        @if( $post->other_info != null)
         <div class="col-xs-12">
-          <p class="col-xs-4">Others</p>
+          <p class="col-xs-4">Others info</p>
           <p class="col-xs-8">{{ $post->other_info }}</p>
         </div>
+        @endif
       </div>
     </div>
     @endforeach
@@ -174,6 +201,96 @@
       </div>
     </div>-->
 
+  </div>
+  @endif
+
+  @if( count($own_posts) > 0)
+  <div class="post-container own-posts">
+    <div class="head">
+      <h4>Your posts here!</h4>
+    </div>
+    @foreach( $own_posts as $post )
+    <div class="post" data-id="{{ $post->id }}">
+      <div class="head">
+        <div class="col-xs-10">
+          <p>From. <a href="">{{ $post->user_name }}</a></p>
+          <p>Wanna find partners for his/her 2 children with some requirements</p>
+        </div>
+        <div class="col-xs-2 delete-post-container">
+          <button type="button" class="delete-post" title="Delete this post" data-toggle="modal" data-target="#delete-confirmation">&times;</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="col-xs-12">
+          <p class="col-xs-4">Age</p>
+          <p class="col-xs-8">
+            @if($post->age_from == null && $post->age_to == null)
+              Any ages
+            @elseif($post->age_from == null)
+              <= {{ $post->age_to }} years old
+            @elseif($post->age_to == null)
+              >= {{ $post->age_from }} years old
+            @else
+              {{ $post->age_from }} - {{ $post->age_to }} years old
+            @endif
+          </p>
+        </div>
+        <div class="col-xs-12">
+          <p class="col-xs-4">Gender</p>
+          <p class="col-xs-8">{{ $post->gender }}</p>
+        </div>
+        <div class="col-xs-12">
+          <p class="col-xs-4">Favourite topics</p>
+          <p class="col-xs-8">
+            @if($post->favorite_topics == null)
+              Any topics
+            @else
+              {{ $post->favorite_topics }}
+            @endif
+          </p>
+        </div>
+        <div class="col-xs-12">
+          <p class="col-xs-4">Living in</p>
+          <p class="col-xs-8">
+            @if( $post->country == 'All' )
+              Anywhere
+            @elseif( $post->province == 'All' )
+              {{ $post->country }}
+            @else
+              {{ $post->province }}, {{ $post->country }}
+            @endif
+          </p>
+        </div>
+
+        @if( $post->other_info != null)
+        <div class="col-xs-12">
+          <p class="col-xs-4">Others info</p>
+          <p class="col-xs-8">{{ $post->other_info }}</p>
+        </div>
+        @endif
+      </div>
+    </div>
+    @endforeach
+  </div>
+  @endif
+
+  <div id="delete-confirmation" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content hint-chosen-panel">
+        <div class="modal-header">
+          <h4>Delete Confirmation</h4>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure to delete this post?</p>
+          <p>Everyone will unable to see the post anymore?</p>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-default delete-confirmation-btn" type="button" name="ok" data-dismiss="modal">OK</button>
+            <button class="btn btn-default delete-cancel-btn" type="button" name="cancel" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -238,6 +355,18 @@
 
   .favourite-topics{
     margin-bottom: 15px;
+  }
+
+  .delete-post-container{
+    padding: 0;
+    text-align: right;
+  }
+
+  .delete-post-container .delete-post{
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 1.3em;
   }
 
 </style>
@@ -323,6 +452,46 @@
           window.location.href = url + '?' + query;
       });
 
+      $('.own-posts .delete-post').on('click', function(){
+
+          var post_id = $(this).parents('.post').attr('data-id');
+          var target = $(this).attr('data-target');
+
+          $(target).attr('data-post-id', post_id);
+      })
+
+      $('.modal .delete-confirmation-btn').on('click', function(){
+
+          var no_of_posts = $('.own-posts .post').length;
+
+          if(no_of_posts == 1){
+              var post_element = $('.own-posts');
+          }
+          else{
+              var post_query = '.own-posts .post[data-id=' + post_id + ']';
+              var post_element = $(post_query);
+          }
+
+          var post_id = $(this).parents('.modal').attr('data-post-id');
+          var url = '{{ action('PartnerPostController@delete') }}';
+
+          ajaxDeletePartnerPost(post_id, post_element, url);
+      })
+
+      $('.info #countries').change(function(){
+
+          var country = $(this).val();
+          var provinces_element = $(this).parents('.info').find('#provinces');
+          var url = '';
+
+          if(country === 'All'){
+              provinces_element.hide();
+          }
+          else{
+              provinces_element.show();
+          }
+          //ajaxLoadProvinces(country, provinces_element, url);
+      })
   });
 
 </script>

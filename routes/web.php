@@ -63,6 +63,8 @@ Route::post('/groups/post', 'PartnerPostController@post');
 
 Route::get('/groups/search', 'PartnerPostController@search');
 
+Route::post('/groups/delete-post', 'PartnerPostController@delete');
+
 Route::get('/profile', function(){
     return view('user.profile');
 });

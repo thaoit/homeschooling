@@ -10,9 +10,25 @@ class PartnerPostController extends Controller
     //
     public function index(){
 
-        $posts = PartnerPostService::getAll();
+        $own_posts = PartnerPostService::getAllByUser(1);
+        $not_own_posts = PartnerPostService::getAllNotByUser(1);
 
-        return view('community/group', compact('posts'));
+        return view('community/group', compact('own_posts', 'not_own_posts'));
+    }
+
+    public function delete(Request $request){
+
+        $input = $request->all();
+        $result = false;
+
+        if( isset($input['id']) ){
+
+            $result = PartnerPostService::delete( $input['id'] );
+        }
+
+        return [
+            'result' => $result
+        ];
     }
 
     public function post(Request $request){
@@ -31,10 +47,16 @@ class PartnerPostController extends Controller
     public function search(Request $request){
 
         $input = $request->input();
+        $topics = array();
 
-        $posts = PartnerPostService::search($input);
+        if( $input['favorite_topics'] != null ){
+          $topics = explode(', ', $input['favorite_topics']);
+        }
 
-        //return redirect()->action('PartnerPostController@index');
-        return view('community/group', compact('posts'));
+        $own_posts = PartnerPostService::searchPostByUser(1, $input);
+        $not_own_posts = PartnerPostService::searchPostNotByUser(1, $input);
+
+
+        return view('community/group', compact('own_posts', 'not_own_posts', 'input', 'topics'));
     }
 }
