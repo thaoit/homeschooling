@@ -15,8 +15,9 @@ class LessonController extends Controller
     public function index(){
 
         $lessons = LessonService::getAllByUser(1);
+        $topics = TopicService::getAllInOrder('asc');
 
-        return view('lesson/index', compact('lessons'));
+        return view('lesson/index', compact('lessons', 'topics'));
     }
 
     public function view($id){

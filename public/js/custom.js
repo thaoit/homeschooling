@@ -676,7 +676,7 @@ function generateLessonInResources(lesson_obj, default_media_types, media_viewin
 
         var type = default_media_types[i];
 
-        for( var j = 0; j < lesson_obj['media'][type].length; j++ ){
+        for( var j = 0; j < lesson_obj['media']['types'][type].length; j++ ){
 
             reference_html += `<li class="col-xs-12 col-sm-4 col-md-3">`;
 

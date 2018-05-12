@@ -145,7 +145,7 @@
     <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3">
     @foreach(Config::get('constants.media_type') as $type)
 
-      @if( count( $lesson['media'][$type] ) )
+      @if( count( $lesson['media']['types'][$type] ) )
       <h5>{{ $type }}</h5>
 
       <ul>

@@ -77,23 +77,28 @@ class LessonService{
 
         switch ($role) {
           case Config::get('constants.role.admin'):
-              $lessons = Lesson::orderBy('created_at', 'desc')->get();
+
+              $lesson_id_array = Lesson::orderBy('created_at', 'desc')->pluck('id');
               break;
 
           case Config::get('constants.role.parent'):
-              $lessons = Lesson::where('author_id', $user_id)->latest()->get();
+
+              $lesson_id_array = Lesson::where('author_id', $user_id)->latest()->pluck('id');
               break;
 
           case Config::get('constants.role.child'):
+
               $parent_id = UserService::getParentId($user_id);
               if($parent_id != null){
-                  $lessons = Lesson::where('author_id', $parent_id)->latest()->get();
+                  $lesson_id_array = Lesson::where('author_id', $parent_id)->latest()->pluck('id');
               }
 
           default:
-              $lessons = array();
+              $lesson_id_array = array();
             break;
         }
+
+        $lessons = LessonService::getAllRelatingArrayOfLessons($lesson_id_array);
 
         return $lessons;
     }

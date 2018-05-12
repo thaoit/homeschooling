@@ -18,7 +18,7 @@ $(document).ready(function(){
     var obj = $(this).attr('data-dismiss');
 
     if(obj && obj === "filter-container"){
-      
+
         $(this).parents('.filter-container').hide();
     }
   })

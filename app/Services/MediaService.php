@@ -48,6 +48,7 @@ class MediaService{
       $video_name = Config::get('constants.media_type.video');
       $document_name = Config::get('constants.media_type.document');
       $undefined_name = Config::get('constants.media_type.undefined');
+      $count_name = 'num_of_media';
 
       // find media with each type
       $image     = $lesson->medias()->where('media_type', $image_name)
@@ -59,16 +60,20 @@ class MediaService{
       $undefined = $lesson->medias()->where('media_type', $undefined_name)
                                     ->get();
 
+      $count = $image->count() + $video->count() + $document->count() + $undefined->count();
       $image = ($image->count() > 0) ? $image: array();
       $video = ($video->count() > 0) ? $video:array();
       $document = ($document->count() > 0) ? $document: array();
       $undefined = ($undefined->count() > 0) ? $undefined: array();
 
       return [
-        $image_name => $image,
-        $video_name => $video,
-        $document_name => $document,
-        $undefined_name => $undefined
+        'types' =>    [
+                        $image_name => $image,
+                        $video_name => $video,
+                        $document_name => $document,
+                        $undefined_name => $undefined
+                      ],
+        'num_of_media' => $count
       ];
   }
 }

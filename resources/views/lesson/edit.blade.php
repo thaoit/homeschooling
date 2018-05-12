@@ -53,7 +53,7 @@
       <p>References</p>
       <div class="content">
 
-        @foreach( $lesson['media'] as $media_type )
+        @foreach( $lesson['media']['types'] as $media_type )
           @foreach( $media_type as $media )
             <li data-id="{{ $media->id }}">
               <a href="{{ $media->url }}" target="_blank">

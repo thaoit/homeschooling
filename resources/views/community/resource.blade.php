@@ -108,6 +108,7 @@
         <div class="clearfix"></div>
       </div>
       <div class="content">
+        @if( count($lesson['outlines']) > 0 )
         <div>
           <p>Outlines</p>
           <ul class="outlines">
@@ -116,12 +117,14 @@
             @endfor
           </ul>
         </div>
+        @endif
+        @if( $lesson['media']['num_of_media'] > 0 )
         <div>
           <p>References</p>
           <ul class="references">
 
             @foreach( Config::get('constants.media_type') as $type )
-              @foreach( $lesson['media'][$type] as $media )
+              @foreach( $lesson['media']['types'][$type] as $media )
                 <li class="col-xs-12 col-sm-4 col-md-3">
 
                 @switch($type)
@@ -159,6 +162,7 @@
           </li>-->
           </ul>
         </div>
+        @endif
       </div>
     </div>
     @endforeach
