@@ -106,7 +106,7 @@ class LessonController extends Controller
         return $lessons;
     }
 
-    public function searchName(Request $request){
+    public function searchNameInResource(Request $request){
 
         $input = $request->input();
         $lessons = array();
@@ -121,6 +121,23 @@ class LessonController extends Controller
         }
 
         return view('community/resource', compact('lessons', 'topics', 'search'));
+    }
+
+    public function searchNameInLesson(Request $request){
+
+        $input = $request->input();
+        $lessons = array();
+        $search = '';
+
+        $topics = TopicService::getAllInOrder('asc');
+
+        if( isset( $input['q'] ) ){
+
+            $search = $input['q'];
+            $lessons = LessonService::searchName($search);
+        }
+
+        return view('lesson/index', compact('lessons', 'topics', 'search'));
     }
 
     public function loveLesson(Request $request){

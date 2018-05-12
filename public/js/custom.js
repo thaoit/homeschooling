@@ -527,15 +527,15 @@ function getObjFromMediaReference(media_element){
     }
 }
 
-function ajaxFilterLessons(topic_data, lesson_id_data, urls, elements){
+function ajaxFilterLessons(request_data, urls, elements){
 
     $.ajax({
 
         type: 'get',
         url: urls['find_lessons_by_topics'],
         data:{
-          topics: topic_data,
-          lesson_ids: lesson_id_data
+          topics: request_data['chosen_topic_values'],
+          lesson_ids: request_data['lesson_ids']
         },
         beforeSend: function(){
 
@@ -543,7 +543,7 @@ function ajaxFilterLessons(topic_data, lesson_id_data, urls, elements){
         },
         success: function(data){
 
-            ajaxResetLessonsAfterFilter(data, urls, elements);
+            ajaxResetLessonsAfterFilter(data, urls, elements, request_data['is_from_resource']);
         },
         error: function(data){
             console.log(data);
@@ -552,15 +552,15 @@ function ajaxFilterLessons(topic_data, lesson_id_data, urls, elements){
 }
 
 // clear the current lessons and return all lessons in public status
-function ajaxClearFilterLessons(is_filter_all, search_text, urls, elements){
+function ajaxClearFilterLessons(request_data, urls, elements){
 
     $.ajax({
 
         type: 'get',
         url: urls['all_lessons_in_public'],
         data:{
-            is_all: is_filter_all,
-            name: search_text
+            is_all: request_data['is_filter_all'],
+            name: request_data['search_text']
         },
         beforeSend: function(){
 
@@ -568,7 +568,7 @@ function ajaxClearFilterLessons(is_filter_all, search_text, urls, elements){
         },
         success: function(data){
 
-            ajaxResetLessonsAfterClearingFilter(data, urls, elements);
+            ajaxResetLessonsAfterClearingFilter(data, urls, elements, request_data['is_from_resource']);
         },
         error: function(data){
             console.log(data);
@@ -576,7 +576,7 @@ function ajaxClearFilterLessons(is_filter_all, search_text, urls, elements){
     });
 }
 
-function ajaxResetLessonsAfterFilter(lesson_objs, urls, elements){
+function ajaxResetLessonsAfterFilter(lesson_objs, urls, elements, is_from_resource){
 
     $.ajax({
 
@@ -585,7 +585,7 @@ function ajaxResetLessonsAfterFilter(lesson_objs, urls, elements){
         data: {},
         success: function(data){
 
-            resetLessonElements(lesson_objs, data, urls, elements);
+            resetLessonElements(lesson_objs, data, urls, elements, is_from_resource);
         },
         error: function(data){
             console.log(data);
@@ -597,7 +597,7 @@ function ajaxResetLessonsAfterFilter(lesson_objs, urls, elements){
     });
 }
 
-function ajaxResetLessonsAfterClearingFilter(lesson_objs, urls, elements){
+function ajaxResetLessonsAfterClearingFilter(lesson_objs, urls, elements, is_from_resource){
 
     $.ajax({
 
@@ -606,7 +606,7 @@ function ajaxResetLessonsAfterClearingFilter(lesson_objs, urls, elements){
         data: {},
         success: function(data){
 
-            resetLessonElements(lesson_objs, data, urls, elements);
+            resetLessonElements(lesson_objs, data, urls, elements, is_from_resource);
         },
         error: function(data){
             console.log(data);
@@ -618,7 +618,7 @@ function ajaxResetLessonsAfterClearingFilter(lesson_objs, urls, elements){
     });
 }
 
-function resetLessonElements(lesson_objs, default_media_types, urls, elements){
+function resetLessonElements(lesson_objs, default_media_types, urls, elements, is_from_resource){
 
     var lesson_container = elements['lesson_container'];
 
@@ -626,26 +626,31 @@ function resetLessonElements(lesson_objs, default_media_types, urls, elements){
     lesson_container.empty();
 
     // get html from lesson objs
-    var html = generateLessonsInResources(lesson_objs, default_media_types, urls['view_media_reference']);
+    if(is_from_resource){
+      var html = generateLessonsInResources(lesson_objs, default_media_types, urls);
+    }
+    else{
+      var html = generateLessonsInLessonPage(lesson_objs, default_media_types, urls);
+    }
 
     // append new lessons
     lesson_container.append(html);
 
 }
 
-function generateLessonsInResources(lesson_objs, default_media_types, media_viewing_process_url){
+function generateLessonsInResources(lesson_objs, default_media_types, urls){
 
     var html = ``;
 
     for(var i = 0; i < lesson_objs.length; i++){
 
-        html += generateLessonInResources(lesson_objs[i], default_media_types, media_viewing_process_url);
+        html += generateLessonInResources(lesson_objs[i], default_media_types, urls);
     }
 
     return html;
 }
 
-function generateLessonInResources(lesson_obj, default_media_types, media_viewing_process_url){
+function generateLessonInResources(lesson_obj, default_media_types, urls){
 
     // general info
     var id = lesson_obj['general']['id'];
@@ -661,56 +666,76 @@ function generateLessonInResources(lesson_obj, default_media_types, media_viewin
 
     // outline info
     var outline_html = ``;
-    for( var i = 0; i < lesson_obj['outlines'].length; i++ ){
+    if( lesson_obj['outlines'].length > 0 ){
 
-        outline_html += `<li><span class="index">Step ` + (i + 1) + ` -</span>` +
-                            lesson_obj['outlines'][i]['name'] +
-                        `</li>`;
+        for( var i = 0; i < lesson_obj['outlines'].length; i++ ){
+
+            outline_html += `<li><span class="index">Step ` + (i + 1) + ` -</span>` +
+                                lesson_obj['outlines'][i]['name'] +
+                            `</li>`;
+        }
+
+        outline_html = `<div>
+                          <p>Outlines</p>
+                          <ul class="outlines">` +
+                              outline_html +
+                          `</ul>
+                        </div>`;
     }
 
     // reference info
     var reference_html = ``;
-    var media_process_url = media_viewing_process_url.substring(1, media_viewing_process_url.lastIndexOf(':'));
+    var media_process_url = urls['view_media_reference'].substring(1, urls['view_media_reference'].lastIndexOf(':'));
 
-    for( var i = 0; i < default_media_types.length; i++ ){
+    if( lesson_obj['media']['num_of_media'] > 0 ){
 
-        var type = default_media_types[i];
+        for( var i = 0; i < default_media_types.length; i++ ){
 
-        for( var j = 0; j < lesson_obj['media']['types'][type].length; j++ ){
+          var type = default_media_types[i];
 
-            reference_html += `<li class="col-xs-12 col-sm-4 col-md-3">`;
+          for( var j = 0; j < lesson_obj['media']['types'][type].length; j++ ){
 
-            switch ( type ) {
-              case 'Image':
-                reference_html += `<span class="glyphicon glyphicon-picture"></span>`;
-                break;
-              case 'Video':
-                reference_html += `<span class="glyphicon glyphicon-film"></span>`;
-                break;
-              case 'Document':
-                reference_html += `<span class="glyphicon glyphicon-file"></span>`;
-                break;
-              default:
-                reference_html += `<span class="glyphicon glyphicon-question-sign"></span>`;
-            }
+              reference_html += `<li class="col-xs-12 col-sm-4 col-md-3">`;
 
-            var media = lesson_obj['media'][type][j];
+              switch ( type ) {
+                case 'Image':
+                  reference_html += `<span class="glyphicon glyphicon-picture"></span>`;
+                  break;
+                case 'Video':
+                  reference_html += `<span class="glyphicon glyphicon-film"></span>`;
+                  break;
+                case 'Document':
+                  reference_html += `<span class="glyphicon glyphicon-file"></span>`;
+                  break;
+                default:
+                  reference_html += `<span class="glyphicon glyphicon-question-sign"></span>`;
+              }
 
-            if( media['name'] == null ){
+              var media = lesson_obj['media']['types'][type][j];
 
-                reference_html += `<a target="_blank" href="` + media['url'] + `">` +
-                                      media['origin_name'] +
-                                  `</a>`;
-            }
-            else{
+              if( media['name'] == null ){
 
-                reference_html += `<a target="_blank" href="` + media_process_url + media['name'] + `">` +
-                                      media['origin_name'] +
-                                  `</a>`;
-            }
+                  reference_html += `<a target="_blank" href="` + media['url'] + `">` +
+                                        media['origin_name'] +
+                                    `</a>`;
+              }
+              else{
 
-            reference_html += `</li>`;
+                  reference_html += `<a target="_blank" href="` + media_process_url + media['name'] + `">` +
+                                        media['origin_name'] +
+                                    `</a>`;
+              }
+
+              reference_html += `</li>`;
+          }
         }
+
+        reference_html = `<div>
+                            <p>References</p>
+                            <ul class="references">` +
+                                reference_html +
+                            `</ul>
+                          </div>`;
     }
 
     // like button
@@ -734,7 +759,7 @@ function generateLessonInResources(lesson_obj, default_media_types, media_viewin
     `<div class="lesson" data-id="` + id + `">
           <div class="head">
             <div class="col-xs-12 col-sm-9">
-              <h4 class="title"><a href="">` + title  + `</a></h4>
+              <h4 class="title"><a href="` + media_process_url + `">` + title  + `</a></h4>
               <div class="topics">
                 ` +
                 topic_html +
@@ -749,20 +774,160 @@ function generateLessonInResources(lesson_obj, default_media_types, media_viewin
             </div>
             <div class="clearfix"></div>
           </div>
-          <div class="content">
-            <div>
-              <p>Outlines</p>
-              <ul class="outlines">` +
-                  outline_html +
-              `</ul>
+          <div class="content">` +
+                outline_html +
+                reference_html +
+          `</div>
+        </div>`;
+
+      return html;
+}
+
+function generateLessonsInLessonPage(lesson_objs, default_media_types, urls){
+
+    var html = ``;
+
+    for(var i = 0; i < lesson_objs.length; i++){
+
+        html += generateLessonInLessonPage(lesson_objs[i], default_media_types, urls);
+    }
+
+    return html;
+}
+
+function generateLessonInLessonPage(lesson_obj, default_media_types, urls){
+
+    // general info
+    var id = lesson_obj['general']['id'];
+    var title = lesson_obj['general']['title'];
+    var no_of_love = lesson_obj['general']['no_of_love'];
+
+    // topic info
+    var topic_html = ``;
+
+    for( var i = 0; i < lesson_obj['topics'].length; i++ ){
+        topic_html += `<span>` + lesson_obj['topics'][i]['name']  +`</span>`;
+    }
+
+    // outline info
+    var outline_html = ``;
+    if( lesson_obj['outlines'].length > 0 ){
+
+        for( var i = 0; i < lesson_obj['outlines'].length; i++ ){
+
+            outline_html += `<li><span class="index">Step ` + (i + 1) + ` -</span>` +
+                                lesson_obj['outlines'][i]['name'] +
+                            `</li>`;
+        }
+
+        outline_html = `<div>
+                          <p>Outlines</p>
+                          <ul class="outlines">` +
+                              outline_html +
+                          `</ul>
+                        </div>`;
+    }
+
+    // reference info
+    var reference_html = ``;
+    var media_process_url = urls['view_media_reference'].substring(1, urls['view_media_reference'].lastIndexOf(':'));
+
+    if( lesson_obj['media']['num_of_media'] > 0 ){
+
+        for( var i = 0; i < default_media_types.length; i++ ){
+
+          var type = default_media_types[i];
+
+          for( var j = 0; j < lesson_obj['media']['types'][type].length; j++ ){
+
+              reference_html += `<li class="col-xs-12 col-sm-4 col-md-3">`;
+
+              switch ( type ) {
+                case 'Image':
+                  reference_html += `<span class="glyphicon glyphicon-picture"></span>`;
+                  break;
+                case 'Video':
+                  reference_html += `<span class="glyphicon glyphicon-film"></span>`;
+                  break;
+                case 'Document':
+                  reference_html += `<span class="glyphicon glyphicon-file"></span>`;
+                  break;
+                default:
+                  reference_html += `<span class="glyphicon glyphicon-question-sign"></span>`;
+              }
+
+              var media = lesson_obj['media']['types'][type][j];
+
+              if( media['name'] == null ){
+
+                  reference_html += `<a target="_blank" href="` + media['url'] + `">` +
+                                        media['origin_name'] +
+                                    `</a>`;
+              }
+              else{
+
+                  reference_html += `<a target="_blank" href="` + media_process_url + media['name'] + `">` +
+                                        media['origin_name'] +
+                                    `</a>`;
+              }
+
+              reference_html += `</li>`;
+          }
+        }
+
+        reference_html = `<div>
+                            <p>References</p>
+                            <ul class="references">` +
+                                reference_html +
+                            `</ul>
+                          </div>`;
+    }
+
+    // like button
+    var like_button;
+
+    if( lesson_obj['favorite_lesson_ids'].indexOf(id) >= 0 ){
+
+        like_button = `<button class="like-btn" type="button" name="" title="Remove this from my favourite lessons">
+                          <span class="glyphicon glyphicon-heart"></span>
+                       </button>`;
+    }
+    else{
+
+        like_button = `<button class="like-btn" type="button" name="" title="Like if this is useful!">
+                          <span class="glyphicon glyphicon-heart-empty"></span>
+                       </button>`;
+    }
+
+    // url
+    var edit_lesson_process_url = urls['edit_lesson'].substring(1, urls['edit_lesson'].lastIndexOf(':')) + id;
+
+    // combine all
+    var html =
+    `<div class="lesson" data-id="` + id + `">
+          <div class="head">
+            <div class="col-xs-10">
+              <h4 class="title"><a href="">` + title  + `</a></h4>
+              <div class="topics">
+                ` +
+                topic_html +
+                `
+              </div>
             </div>
-            <div>
-              <p>References</p>
-              <ul class="references">` +
-                  reference_html +
-              `</ul>
+            <div class="col-xs-2 control-container">
+              <button type="button">
+                <a href="` + edit_lesson_process_url + `" title="Edit this lesson"><span class="glyphicon glyphicon-pencil"></span></a>
+              </button>
+              <button class="delete-btn" type="button" data-toggle="modal" data-target="#delete-confirmation" title="Delete this lesson">
+                &times;
+              </button>
             </div>
+            <div class="clearfix"></div>
           </div>
+          <div class="content">` +
+                outline_html +
+                reference_html +
+          `</div>
         </div>`;
 
       return html;

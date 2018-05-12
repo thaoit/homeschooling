@@ -16,7 +16,7 @@
         </span>
       </div>
     </form>-->
-    <form action="{{ action('LessonController@searchName') }}" method="get" class="col-xs-12 col-sm-10 search-container">
+    <form action="{{ action('LessonController@searchNameInLesson') }}" method="get" class="col-xs-12 col-sm-10 search-container">
         <input class="form-control search-input" type="text" name="q" value="{{ isset($search) ? $search : '' }}" placeholder="Search here" required>
     </form>
 
@@ -730,7 +730,7 @@
 
   <script>
     $(document).ready(function(){
-      var step = 2;
+      /*var step = 2;
 
       $('#outline-container').on('keypress', '.outline', function(e){
 
@@ -766,7 +766,7 @@
               $(this).parent().remove();
               step--;
           }
-      })
+      })*/
 
       // lesson-road
 
@@ -781,7 +781,7 @@
       })*/
 
 
-      $('.delete-btn').on('click', function(){
+      $('.lesson-container').on('click', '.lesson .delete-btn', function(){
 
           var delete_lesson_id = $(this).parents('.lesson').attr('data-id');
 
@@ -820,6 +820,12 @@
               lesson_ids.push( lesson_elements.eq(i).attr('data-id') );
           }
 
+          // data for filtering
+          var data = [];
+          data['chosen_topic_values'] = chosen_topic_values;
+          data['lesson_ids'] = lesson_ids;
+          data['is_from_resource'] = false;
+
           // elements for completing filtering
           var elements = [];
           elements['lesson_container'] = $('.lesson-container');
@@ -831,11 +837,11 @@
           urls['find_lessons_by_topics'] = '{{ action('LessonController@filterLessonsByTopics') }}';
           urls['default_media_types'] = '{{ action('MediaController@getDefaultTypes') }}';
           urls['view_media_reference'] = '{{ action('MediaController@viewMediaReference', ':name') }}';
+          urls['edit_lesson'] = '{{ action('LessonController@edit', ':id') }}'
 
           // call function filter
           ajaxFilterLessons(
-              chosen_topic_values,
-              lesson_ids,
+              data,
               urls,
               elements
           );
@@ -851,6 +857,11 @@
               is_filter_all = true;
           }
 
+          var data = [];
+          data['is_filter_all'] = is_filter_all;
+          data['search_text'] = search_text;
+          data['is_from_resource'] = false;
+
           var elements = [];
           elements['lesson_container'] = $('.lesson-container');
           elements['filter_button'] = $(this).siblings('.filter-ok');
@@ -860,10 +871,10 @@
           urls['all_lessons_in_public'] = '{{ action('LessonController@filterLessonsByName') }}';
           urls['default_media_types'] = '{{ action('MediaController@getDefaultTypes') }}';
           urls['view_media_reference'] = '{{ action('MediaController@viewMediaReference', ':name') }}';
+          urls['edit_lesson'] = '{{ action('LessonController@edit', ':id') }}'
 
           ajaxClearFilterLessons(
-              is_filter_all,
-              search_text,
+              data,
               urls,
               elements
           );

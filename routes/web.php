@@ -31,6 +31,8 @@ Route::get('lessons/filter-lessons-by-topics', 'LessonController@filterLessonsBy
 
 Route::get('lessons/filter-lessons-by-name', 'LessonController@filterLessonsByName');
 
+Route::get('lessons/search', 'LessonController@searchNameInLesson');
+
 Route::get('/lessons/love-lesson', 'LessonController@loveLesson');
 
 Route::get('/lessons/unlove-lesson', 'LessonController@unloveLesson');
@@ -55,7 +57,7 @@ Route::get('/tests/view', function(){
 
 Route::get('/resources', 'LessonController@resources');
 
-Route::get('/resources/search', 'LessonController@searchName');
+Route::get('/resources/search', 'LessonController@searchNameInResource');
 
 Route::get('/groups', 'PartnerPostController@index');
 

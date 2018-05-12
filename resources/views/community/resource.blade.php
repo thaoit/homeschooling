@@ -4,7 +4,7 @@
 
 <div class="container">
   <div class="col-xs-12 form-group">
-    <form action="{{ action('LessonController@searchName') }}" method="get" class="col-xs-12 col-sm-10 search-container">
+    <form action="{{ action('LessonController@searchNameInResource') }}" method="get" class="col-xs-12 col-sm-10 search-container">
       <!--<div class="input-group">-->
         <input class="form-control search-input" type="text" name="q" value="{{ isset($search) ? $search : '' }}" placeholder="Search here" required>
         <!--<span class="input-group-addon search-btn">
@@ -286,6 +286,12 @@
               lesson_ids.push( lesson_elements.eq(i).attr('data-id') );
           }
 
+          // data for filtering
+          var data = [];
+          data['chosen_topic_values'] = chosen_topic_values;
+          data['lesson_ids'] = lesson_ids;
+          data['is_from_resource'] = true;
+
           // elements for completing filtering
           var elements = [];
           elements['lesson_container'] = $('.lesson-container');
@@ -300,8 +306,7 @@
 
           // call function filter
           ajaxFilterLessons(
-              chosen_topic_values,
-              lesson_ids,
+              data,
               urls,
               elements
           );
@@ -317,6 +322,11 @@
               is_filter_all = true;
           }
 
+          var data = [];
+          data['is_filter_all'] = is_filter_all;
+          data['search_text'] = search_text;
+          data['is_from_resource'] = true;
+
           var elements = [];
           elements['lesson_container'] = $('.lesson-container');
           elements['filter_button'] = $(this).siblings('.filter-ok');
@@ -328,8 +338,7 @@
           urls['view_media_reference'] = '{{ action('MediaController@viewMediaReference', ':name') }}';
 
           ajaxClearFilterLessons(
-              is_filter_all,
-              search_text,
+              data,
               urls,
               elements
           );
