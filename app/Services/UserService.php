@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use Config;
 use App\Models\User;
 
 class UserService{
@@ -23,5 +24,14 @@ class UserService{
             return null;
         else
             $user->select('parent_id')->get();
+    }
+
+    public static function getChildFromParent($user_id){
+
+        $child_users = User::where('role', Config::get('constants.role.child'))
+                            ->where('parent_id', $user_id)
+                            ->get();
+
+        return $child_users;
     }
 }

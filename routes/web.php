@@ -10,6 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+//URL::forceScheme('https');
 
 Route::get('/', function () {
     return view('welcome');
@@ -67,9 +68,7 @@ Route::get('/groups/search', 'PartnerPostController@search');
 
 Route::post('/groups/delete-post', 'PartnerPostController@delete');
 
-Route::get('/profile', function(){
-    return view('user.profile');
-});
+Route::get('/profile/{username}', 'UserController@profile');
 
 Route::get('/topics/search', 'TopicController@search');
 

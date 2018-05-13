@@ -1,0 +1,77 @@
+button{
+  border: none;
+  outline: none;
+  background: none;
+}
+
+textarea{
+  resize: vertical;
+}
+
+.clearfix{
+  clear: both;
+}
+
+.text-center{
+  text-align: center;
+}
+
+.form-control{
+  border: none;
+  box-shadow: none;
+  outline: none;
+  border-bottom: 1px solid #ccc;
+  border-radius: 0;
+}
+
+.form-control:focus {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.profile-container .form-group{
+  margin-bottom: 30px;
+}
+
+.profile-container .profile{
+  padding: 20px 0;
+}
+
+.profile-container label, .profile-container span{
+  color: #ccc;
+  font-weight: normal;
+  font-size: 0.9em;
+}
+
+.profile-container .profile input, .profile-container .profile textarea{
+  padding-left: 0;
+}
+
+.profile-container .control-container{
+  text-align: center;
+  margin: 25px 0;
+}
+
+.profile-container .control-container button{
+  margin: 0 5px;
+  padding: 15px;
+  width: 50px;
+  height: 50px;
+}
+
+.profile-container .control-container button:hover{
+  border: 1px solid #ccc;
+  border-radius: 50%;
+}
+
+.profile-container table th{
+  font-weight: normal;
+}
+
+.profile-container table tbody tr td{
+  padding: 15px 8px;
+}
+
+.profile-container .child-profile-container .delete-child{
+  font-size: 0.8em;
+}
