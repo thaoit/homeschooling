@@ -43,7 +43,9 @@ textarea{
   font-size: 0.9em;
 }
 
-.profile-container .profile input, .profile-container .profile textarea{
+.profile-container .profile input,
+.profile-container .profile textarea,
+.profile-container .profile select{
   padding-left: 0;
 }
 
@@ -74,4 +76,8 @@ textarea{
 
 .profile-container .child-profile-container .delete-child{
   font-size: 0.8em;
+}
+
+.table-responsive{
+  border: none;
 }

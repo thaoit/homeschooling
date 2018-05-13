@@ -70,6 +70,8 @@ Route::post('/groups/delete-post', 'PartnerPostController@delete');
 
 Route::get('/profile/{username}', 'UserController@profile');
 
+Route::post('/profile/add-child', 'UserController@storeChild');
+
 Route::get('/topics/search', 'TopicController@search');
 
 Route::post('/topics/save-topics', 'TopicController@doStoreUpdateDelete');

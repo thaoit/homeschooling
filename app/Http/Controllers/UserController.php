@@ -33,4 +33,25 @@ class UserController extends Controller
             return view('user/profile/child', compact('user'));
         }
     }
+
+    public function storeChild(Request $request){
+
+        $input = $request->input();
+        $validator = UserService::validate($input);
+
+        if($validator->fails()){
+
+            return [
+                'errors' => $validator->errors()->all()
+            ];
+        }
+        else{
+
+            $child = UserService::storeChildByParent($input, 1)->toArray();
+
+            return [
+                'success' => $child
+            ];
+        }
+    }
 }

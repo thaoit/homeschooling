@@ -1061,3 +1061,67 @@ function ajaxDeletePartnerPost(post_id, post_element, process_url){
       }
   });
 }
+
+function ajaxAddChildProfile(request_data, elements, url){
+
+    $.ajax({
+
+        type: 'post',
+        url: url,
+        data: request_data,
+        beforeSend: function(){
+
+            elements['add-profile-btn'].innerText = 'Saving...';
+            elements['add-profile-btn'].readOnly = true;
+        },
+        success: function(data){
+
+            elements['add-profile-btn'].innerText = 'Save';
+            elements['add-profile-btn'].readOnly = false;
+
+            if(typeof data['errors'] !== "undefined"){
+
+                var html = generateErrorInfo(data['errors']);
+                elements['form'].append(html);
+            }
+            else if(typeof data['success'] !== "undefined"){
+
+                var html = generateChildInfo(data['success']);
+                elements['child-profile-container'].append(html);
+                elements['modal'].modal('hide');
+            }
+        },
+        error: function(data){
+            console.log(data);
+        }
+    });
+}
+
+function generateErrorInfo(errors){
+
+    var html = '';
+
+    for(var i = 0; i < errors.length; i++){
+        html += '<p>' + errors[i] + '</p>';
+    }
+
+    return `<div class="alert alert-danger alert-dismissible">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>` +
+              html +
+            `</div>`;
+
+}
+
+function generateChildInfo(obj){
+
+    return `<tr class="child-profile" data-user-id="` + obj['id'] + `">
+                  <td>` + obj['name'] + `</td>
+                  <td>` + obj['gender'] + `</td>
+                  <td>` + obj['birthday'] + `</td>
+                  <td style="text-align: right">
+                    <button class="delete-child" type="button" data-toggle="modal" data-target="#delete-confirmation">
+                      <span class="glyphicon glyphicon-remove" title="Delete"></span>
+                    </button>
+                  </td>
+                </tr>`;
+}

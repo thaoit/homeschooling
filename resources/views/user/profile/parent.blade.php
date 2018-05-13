@@ -88,7 +88,7 @@
           </div>
           <div class="form-group">
             <label for="">Retype new password</label>
-            <input class="form-control retype-password" type="password" name="retype_password" value="" required>
+            <input class="form-control retype-password" type="password" name="password_confirmation" value="" required>
           </div>
         </div>
 
@@ -104,43 +104,48 @@
 <div id="add-profile-modal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content profile-container">
+      {{ csrf_field() }}
       <div class="modal-header">
         <h4>Add child</h4>
       </div>
       <div class="modal-body">
-        <div class="profile">
-          <div class="form-group">
-            <label>Name</label>
-            <input class="form-control" type="text" name="name" value="" required>
-          </div>
-          <div class="form-group">
-            <label>Gender</label>
-            <select class="form-control" name="gender">
-              @foreach( Config::get('constants.gender') as $gender )
-              <option value="{{ $gender }}">$gender</option>
-              @endforeach
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Birthday</label>
-            <input class="form-control" type="date" name="birthday" value="" required>
-          </div>
-          <div class="form-group">
-            <label>Username</label>
-            <input class="form-control" type="text" name="username" value="" required>
-          </div>
-          <div class="form-group">
-            <label>Password</label>
-            <input class="form-control" type="password" name="password" value="" required>
-          </div>
-          <div class="form-group">
-            <label>Retype Password</label>
-            <input class="form-control" type="password" name="retype_password" value="" required>
-          </div>
+        <form class="new-child-profile">
+          <div class="profile">
+            <div class="form-group">
+              <label>Name</label>
+              <input class="form-control" type="text" name="name" value="" >
+            </div>
+            <div class="form-group">
+              <label>Gender</label>
+              <select class="form-control" name="gender">
+                @foreach( Config::get('constants.gender') as $gender )
+                  @if( $gender != Config::get('constants.gender.all') )
+                  <option value="{{ $gender }}">{{$gender}}</option>
+                  @endif
+                @endforeach
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Birthday</label>
+              <input class="form-control" type="date" name="birthday" value="" >
+            </div>
+            <div class="form-group">
+              <label>Username</label>
+              <input class="form-control" type="text" name="username" value="" >
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input class="form-control" type="password" name="password" value="" min="6" required>
+            </div>
+            <div class="form-group">
+              <label>Retype Password</label>
+              <input class="form-control" type="password" name="password_confirmation" value="" >
+            </div>
         </div>
+        </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-default add-profile-btn" type="button" data-dismiss="modal">Save</button>
+        <button class="btn btn-default add-profile-btn" type="button">Save</button>
         <button class="btn btn-default" type="button" data-dismiss="modal">Cancel</button>
       </div>
     </div>
@@ -190,6 +195,29 @@ $(document).ready(function(){
         var target = $(this).attr('data-target');
 
         $(target).attr('data-user-id', child);
+    });
+
+    $('#add-profile-modal .add-profile-btn').on('click', function(e){
+
+        var form = $(this).parents('#add-profile-modal').find('.new-child-profile');
+        var child_profile_container = $('.child-profile-container table tbody');
+
+        var data = form.serialize();
+        var url = '{{ action('UserController@storeChild') }}'
+
+        var elements = [];
+        elements['modal'] = $('#add-profile-modal');
+        elements['form'] = form;
+        elements['child-profile-container'] = child_profile_container;
+        elements['add-profile-btn'] = $(this)[0];
+
+        ajaxAddChildProfile(data, elements, url);
+
+        // remove the last alert
+        var alert = form.find('.alert');
+        if( alert.length > 0 ){
+            alert.remove();
+        }
     });
 
 });
