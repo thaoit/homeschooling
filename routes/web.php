@@ -72,6 +72,8 @@ Route::get('/profile/{username}', 'UserController@profile');
 
 Route::post('/profile/add-child', 'UserController@storeChild');
 
+Route::post('/profile/delete', 'UserController@delete');
+
 Route::get('/topics/search', 'TopicController@search');
 
 Route::post('/topics/save-topics', 'TopicController@doStoreUpdateDelete');

@@ -54,4 +54,22 @@ class UserController extends Controller
             ];
         }
     }
+
+    public function delete(Request $request){
+
+        $input = $request->input();
+        $result = false;
+
+        if( isset($input['id']) ){
+
+            $result = UserService::delete( $input['id'] );
+        }
+
+        if(!$result){
+
+            return [
+                'errors' => 'Error on deleting'
+            ];
+        }
+    }
 }

@@ -42,6 +42,17 @@ class UserService{
         return $child;
     }
 
+    public static function delete($user_id){
+
+        $user = User::find($user_id);
+
+        if($user == null){
+            return false;
+        }
+
+        return $user->delete();
+    }
+
     public static function getRole($user_id){
 
         $user =  User::find($user_id);

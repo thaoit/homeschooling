@@ -43,7 +43,7 @@
                 <td>{{ $child_user->gender }}</td>
                 <td>{{ $child_user->birthday }}</td>
                 <td style="text-align: right">
-                  <button class="delete-child" type="button" data-toggle="modal" data-target="#delete-confirmation">
+                  <button class="delete-child" type="button" data-toggle="modal" data-target=".delete-confirmation">
                     <span class="glyphicon glyphicon-remove" title="Delete"></span>
                   </button>
                 </td>
@@ -57,7 +57,7 @@
     </div>
 
     <div class="control-container">
-      <button type="button" title="Add 1 more children profile" data-toggle="modal" data-target="#add-profile-modal">
+      <button type="button" title="Add 1 more children profile" data-toggle="modal" data-target=".add-profile-modal">
         <span class="glyphicon glyphicon-plus"></span>
       </button>
       <button class="save-profile" type="button" title="Save">
@@ -101,7 +101,7 @@
   </div>
 </div>
 
-<div id="add-profile-modal" class="modal fade" role="dialog">
+<div class="modal fade add-profile-modal" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content profile-container">
       {{ csrf_field() }}
@@ -141,6 +141,9 @@
               <label>Retype Password</label>
               <input class="form-control" type="password" name="password_confirmation" value="" >
             </div>
+          <div class="alert-container">
+
+          </div>
         </div>
         </form>
       </div>
@@ -152,7 +155,7 @@
   </div>
 </div>
 
-<div id="delete-confirmation" class="modal fade" role="dialog">
+<div class="modal fade delete-confirmation" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -161,9 +164,12 @@
       <div class="modal-body">
         <p>Are you sure to delete this profile?</p>
         <p>Account with this profile will be deleted too?</p>
+        <div class="alert-container">
+
+        </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-default delete-confirmation-btn" type="button" data-dismiss="modal">OK</button>
+        <button class="btn btn-default delete-confirmation-btn" type="button">OK</button>
         <button class="btn btn-default" type="button" data-dismiss="modal">Cancel</button>
       </div>
     </div>
@@ -197,27 +203,46 @@ $(document).ready(function(){
         $(target).attr('data-user-id', child);
     });
 
-    $('#add-profile-modal .add-profile-btn').on('click', function(e){
+    $('.add-profile-modal .add-profile-btn').on('click', function(e){
 
-        var form = $(this).parents('#add-profile-modal').find('.new-child-profile');
-        var child_profile_container = $('.child-profile-container table tbody');
+        var modal = $(this).parents('.add-profile-modal');
 
-        var data = form.serialize();
+        // request data
+        var data = modal.find('.new-child-profile').serialize();
+
+        // url
         var url = '{{ action('UserController@storeChild') }}'
 
+        // elements
         var elements = [];
-        elements['modal'] = $('#add-profile-modal');
-        elements['form'] = form;
-        elements['child-profile-container'] = child_profile_container;
-        elements['add-profile-btn'] = $(this)[0];
+        elements['modal'] = modal;
+        elements['alert-container'] = modal.find('.alert-container');
+        elements['child-profile-container'] = $('.child-profile-container table tbody');
+        elements['status-element'] = $(this)[0];
 
+        // process
         ajaxAddChildProfile(data, elements, url);
+    });
 
-        // remove the last alert
-        var alert = form.find('.alert');
-        if( alert.length > 0 ){
-            alert.remove();
-        }
+    $('.delete-confirmation .delete-confirmation-btn').on('click', function(){
+
+        var modal = $(this).parents('.delete-confirmation');
+
+        // request data
+        var user_id = modal.attr('data-user-id');
+
+        // elements
+        var elements = [];
+        elements['modal'] = modal;
+        elements['alert-container'] = $(this).parents('.delete-confirmation').find('.alert-container');
+        elements['child-profile'] = $('.child-profile-container .child-profile[data-user-id=' + user_id + ']');
+        elements['status-element'] = $(this)[0];
+
+        // process url
+        var url = '{{ action('UserController@delete') }}';
+
+        // process
+        ajaxDeleteProfile(user_id, elements, url);
     });
 
 });

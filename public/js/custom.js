@@ -1062,27 +1062,26 @@ function ajaxDeletePartnerPost(post_id, post_element, process_url){
   });
 }
 
-function ajaxAddChildProfile(request_data, elements, url){
+function ajaxAddChildProfile(request_data, elements, process_url){
+
+    var last_status = elements['status-element'].innerText;
 
     $.ajax({
 
         type: 'post',
-        url: url,
+        url: process_url,
         data: request_data,
         beforeSend: function(){
 
-            elements['add-profile-btn'].innerText = 'Saving...';
-            elements['add-profile-btn'].readOnly = true;
+            elements['alert-container'].empty();
+            setProcessStatus(elements['status-element'], 'Saving...');
         },
         success: function(data){
-
-            elements['add-profile-btn'].innerText = 'Save';
-            elements['add-profile-btn'].readOnly = false;
 
             if(typeof data['errors'] !== "undefined"){
 
                 var html = generateErrorInfo(data['errors']);
-                elements['form'].append(html);
+                elements['alert-container'].append(html);
             }
             else if(typeof data['success'] !== "undefined"){
 
@@ -1093,6 +1092,49 @@ function ajaxAddChildProfile(request_data, elements, url){
         },
         error: function(data){
             console.log(data);
+        },
+        complete: function(){
+
+            setCompleteStatus(elements['status-element'], last_status);
+        }
+    });
+}
+
+function ajaxDeleteProfile(request_data, elements, process_url){
+
+    var last_status = elements['status-element'].innerText;
+
+    $.ajax({
+
+        type: 'post',
+        url: process_url,
+        data:{
+            id: request_data
+        },
+        beforeSend: function(){
+
+            elements['alert-container'].empty();
+            setProcessStatus(elements['status-element'], 'Processing...');
+        },
+        success: function(data){
+
+            if( typeof data['errors'] !== "undefined" ){
+
+                var html = generateErrorInfo( data['erros'] );
+                elements['alert-container'].append(html);
+            }
+            else{
+
+                elements['modal'].modal('hide');
+                elements['child-profile'].remove();
+            }
+        },
+        error: function(data){
+            console.log(data);
+        },
+        complete: function(){
+
+            setCompleteStatus(elements['status-element'], last_status);
         }
     });
 }
@@ -1124,4 +1166,16 @@ function generateChildInfo(obj){
                     </button>
                   </td>
                 </tr>`;
+}
+
+function setProcessStatus(element, message){
+
+    element.innerText = message;
+    element.readOnly = true;
+}
+
+function setCompleteStatus(element, message){
+
+    element.innerText = message;
+    element.readOnly = false;
 }
