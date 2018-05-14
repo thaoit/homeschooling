@@ -12,7 +12,7 @@ class UserService{
         $rules = [
             'username' => 'required|unique:users|min:6',
             'name' => 'required',
-            'email' => 'unique: users|email',
+            'email' => 'nullable|unique:users|email',
             'password' => 'required|min:6|confirmed'
         ];
 
@@ -39,6 +39,23 @@ class UserService{
             'min' => 'The :attribute must be at least :min',
             'unique' => 'The :attribute has existed, try others',
             'password.confirmed' => 'Password not matching'
+        ];
+
+        return Validator::make($input, $rules, $messages);
+    }
+
+    public static function validateUpdateGeneralProfile($input){
+
+        $user_id = $input['id'];
+
+        $rules = [
+            'name' => 'required',
+            'email' => "nullable|unique:users,email,$user_id|email"
+        ];
+
+        $messages = [
+            'required' => 'The :attribute field is required',
+            'email.unique' => 'Email has existed, try others'
         ];
 
         return Validator::make($input, $rules, $messages);
@@ -72,6 +89,22 @@ class UserService{
         $user->password = bcrypt( $input['password'] );
 
         return $user->update();
+    }
+
+    public static function updateGeneralProfile($input){
+
+        $user = User::find( $input['id'] );
+
+        if($user == null){
+            return false;
+        }
+
+        $user->name = $input['name'];
+        $user->email = $input['email'];
+        $user->address = $input['address'];
+        $user->other_info = $input['other_info'];
+
+        return $user->save();
     }
 
     public static function delete($user_id){

@@ -3,29 +3,32 @@
 @section('content')
 
 <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
-  <form class="profile-container">
+  <div class="profile-container">
     <div class="parent-profile-container">
       <div class="text-center">
         <h1 class="parent-profile-username">{{ $user->username }}</h1>
         <button type="button" data-toggle="modal" data-target=".change-account-modal"><span>Change account</span></button>
       </div>
       <div class="profile">
-        <div class="form-group">
-          <label for="">Name</label>
-          <input class="form-control" type="text" name="name" value="{{ $user->name }}" required>
-        </div>
-        <div class="form-group">
-          <label for="">Email</label>
-          <input class="form-control" type="email" name="email" value="{{ $user->email }}" required>
-        </div>
-        <div class="form-group">
-          <label for="">Address</label>
-          <input class="form-control" type="text" name="address" value="{{ $user->address }}">
-        </div>
-        <div class="form-group">
-          <label for="">Other info</label>
-          <textarea class="form-control" name="other_info" rows="3">{{ $user->other_info }}</textarea>
-        </div>
+        <form class="parent-profile">
+          <input type="hidden" name="id" value="{{ $user->id }}">
+          <div class="form-group">
+            <label for="">Name</label>
+            <input class="form-control" type="text" name="name" value="{{ $user->name }}">
+          </div>
+          <div class="form-group">
+            <label for="">Email</label>
+            <input class="form-control" type="email" name="email" value="{{ $user->email }}">
+          </div>
+          <div class="form-group">
+            <label for="">Address</label>
+            <input class="form-control" type="text" name="address" value="{{ $user->address }}">
+          </div>
+          <div class="form-group">
+            <label for="">Other info</label>
+            <textarea class="form-control" name="other_info" rows="3">{{ $user->other_info }}</textarea>
+          </div>
+        </form>
         @if( count($child_users) > 0 )
         <div class="table-responsive child-profile-container">
           <label>Children</label>
@@ -54,17 +57,22 @@
         </div>
         @endif
       </div>
+      <div class="alert-container">
+
+      </div>
     </div>
 
     <div class="control-container">
       <button type="button" title="Add 1 more children profile" data-toggle="modal" data-target=".add-profile-modal">
         <span class="glyphicon glyphicon-plus"></span>
+        <span class="control-name">Add</span>
       </button>
       <button class="save-profile" type="button" title="Save">
         <span class="glyphicon glyphicon-floppy-disk"></span>
+        <span class="control-name">Save</span>
       </button>
     </div>
-  </form>
+  </div>
 </div>
 
 <div class="clearfix"></div>
@@ -267,6 +275,25 @@ $(document).ready(function(){
         // process
         ajaxChangeAccount(data, elements, url);
 
+    })
+
+    $('.profile-container .control-container .save-profile').on('click', function(){
+
+        var parent_container = $(this).parents('.profile-container').find('.parent-profile-container');
+
+        // request data
+        var data = parent_container.find('.parent-profile').serialize();
+
+        // process url
+        var url = '{{ action('UserController@updateGeneralProfile') }}';
+
+        // elements
+        var elements = [];
+        elements['alert-container'] = parent_container.find('.alert-container');
+        elements['status-element'] = $(this).find('.control-name')[0];
+        
+        // process
+        ajaxUpdateGeneralProfile(data, elements, url);
     })
 });
 

@@ -102,4 +102,26 @@ class UserController extends Controller
             }
         }
     }
+
+    public function updateGeneralProfile(Request $request){
+
+        $input = $request->input();
+        $validator = UserService::validateUpdateGeneralProfile($input);
+
+        if($validator->fails()){
+            return [
+                'errors' => $validator->errors()->all()
+            ];
+        }
+        else{
+
+            $result = UserService::updateGeneralProfile($input);
+
+            if(!$result){
+              return [
+                  'errors' => 'Error on deleting general profile'
+              ];
+            }
+        }
+    }
 }

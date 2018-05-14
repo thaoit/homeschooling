@@ -57,13 +57,16 @@ textarea{
 .profile-container .control-container button{
   margin: 0 5px;
   padding: 15px;
-  width: 50px;
-  height: 50px;
+}
+
+.profile-container .control-container button span{
+  color: #000;
+  font-size: 1em;
 }
 
 .profile-container .control-container button:hover{
   border: 1px solid #ccc;
-  border-radius: 50%;
+  border-radius: 3px;
 }
 
 .profile-container table th{

@@ -76,6 +76,8 @@ Route::post('/profile/delete', 'UserController@delete');
 
 Route::post('/profile/change-account', 'UserController@changeAccount');
 
+Route::post('/profile/update-general-profile', 'UserController@updateGeneralProfile');
+
 Route::get('/topics/search', 'TopicController@search');
 
 Route::post('/topics/save-topics', 'TopicController@doStoreUpdateDelete');
