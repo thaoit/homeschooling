@@ -4,13 +4,13 @@
 
 <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
   <div class="profile-container">
-    <div class="parent-profile-container">
+    <div class="main-profile-container">
       <div class="text-center">
-        <h1 class="parent-profile-username">{{ $user->username }}</h1>
+        <h1 class="main-profile-username">{{ $user->username }}</h1>
         <button type="button" data-toggle="modal" data-target=".change-account-modal"><span>Change account</span></button>
       </div>
       <div class="profile">
-        <form class="parent-profile">
+        <form class="main-profile">
           <input type="hidden" name="id" value="{{ $user->id }}">
           <div class="form-group">
             <label for="">Name</label>
@@ -30,7 +30,7 @@
           </div>
         </form>
         @if( count($child_users) > 0 )
-        <div class="table-responsive child-profile-container">
+        <div class="table-responsive sub-profile-container">
           <label>Children</label>
           <table class="table">
             <thead>
@@ -41,12 +41,12 @@
             </thead>
             <tbody>
               @foreach( $child_users as $child_user )
-              <tr class="child-profile" data-user-id="{{ $child_user->id }}">
+              <tr class="sub-profile" data-user-id="{{ $child_user->id }}">
                 <td>{{ $child_user->name }}</td>
                 <td>{{ $child_user->gender }}</td>
                 <td>{{ $child_user->birthday }}</td>
                 <td style="text-align: right">
-                  <button class="delete-child" type="button" data-toggle="modal" data-target=".delete-confirmation">
+                  <button class="delete-sub" type="button" data-toggle="modal" data-target=".delete-confirmation">
                     <span class="glyphicon glyphicon-remove" title="Delete"></span>
                   </button>
                 </td>
@@ -119,7 +119,7 @@
         <h4>Add child</h4>
       </div>
       <div class="modal-body">
-        <form class="new-child-profile">
+        <form class="new-sub-profile">
           <div class="profile">
             <div class="form-group">
               <label>Name</label>
@@ -205,20 +205,22 @@
 
 $(document).ready(function(){
 
-    $('.profile-container .child-profile-container').on('click', '.child-profile .delete-child', function(){
+    // bind child user id to modal
+    $('.profile-container .sub-profile-container').on('click', '.sub-profile .delete-sub', function(){
 
-        var child = $(this).parents('.child-profile').attr('data-user-id');
+        var sub_id = $(this).parents('.sub-profile').attr('data-user-id');
         var target = $(this).attr('data-target');
 
-        $(target).attr('data-user-id', child);
+        $(target).attr('data-user-id', sub_id);
     });
 
+    // add new child profile, means creating new child user
     $('.add-profile-modal .add-profile-btn').on('click', function(e){
 
         var modal = $(this).parents('.add-profile-modal');
 
         // request data
-        var data = modal.find('.new-child-profile').serialize();
+        var data = modal.find('.new-sub-profile').serialize();
 
         // url
         var url = '{{ action('UserController@storeChild') }}'
@@ -227,13 +229,14 @@ $(document).ready(function(){
         var elements = [];
         elements['modal'] = modal;
         elements['alert-container'] = modal.find('.alert-container');
-        elements['child-profile-container'] = $('.child-profile-container table tbody');
+        elements['sub-profile-container'] = $('.sub-profile-container table tbody');
         elements['status-element'] = $(this)[0];
 
         // process
         ajaxAddChildProfile(data, elements, url);
     });
 
+    // delete child profile, means delete child user
     $('.delete-confirmation .delete-confirmation-btn').on('click', function(){
 
         var modal = $(this).parents('.delete-confirmation');
@@ -245,7 +248,7 @@ $(document).ready(function(){
         var elements = [];
         elements['modal'] = modal;
         elements['alert-container'] = $(this).parents('.delete-confirmation').find('.alert-container');
-        elements['child-profile'] = $('.child-profile-container .child-profile[data-user-id=' + user_id + ']');
+        elements['sub-profile'] = $('.sub-profile-container .sub-profile[data-user-id=' + user_id + ']');
         elements['status-element'] = $(this)[0];
 
         // process url
@@ -255,6 +258,8 @@ $(document).ready(function(){
         ajaxDeleteProfile(user_id, elements, url);
     });
 
+    // change account info,
+    // info include: username, new password
     $('.change-account-modal .change-account-btn').on('click', function(){
 
         var modal = $(this).parents('.change-account-modal');
@@ -270,28 +275,30 @@ $(document).ready(function(){
         elements['modal'] = modal;
         elements['status-element'] = $(this)[0];
         elements['alert-container'] = modal.find('.alert-container');
-        elements['username-element'] = $('.parent-profile-container .parent-profile-username')[0];
+        elements['username-element'] = $('.main-profile-container .main-profile-username')[0];
 
         // process
         ajaxChangeAccount(data, elements, url);
 
     })
 
+    // save general info in profile,
+    // info include: name, email, address, other info
     $('.profile-container .control-container .save-profile').on('click', function(){
 
-        var parent_container = $(this).parents('.profile-container').find('.parent-profile-container');
+        var main_container = $(this).parents('.profile-container').find('.main-profile-container');
 
         // request data
-        var data = parent_container.find('.parent-profile').serialize();
+        var data = main_container.find('.main-profile').serialize();
 
         // process url
         var url = '{{ action('UserController@updateGeneralProfile') }}';
 
         // elements
         var elements = [];
-        elements['alert-container'] = parent_container.find('.alert-container');
+        elements['alert-container'] = main_container.find('.alert-container');
         elements['status-element'] = $(this).find('.control-name')[0];
-        
+
         // process
         ajaxUpdateGeneralProfile(data, elements, url);
     })
