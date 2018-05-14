@@ -26,6 +26,24 @@ class UserService{
         return Validator::make($input, $rules, $messages);
     }
 
+    public static function validateUpdateAccount($input){
+
+        $user_id = $input['id'];
+
+        $rules = [
+            'username' => "required_without:password|nullable|unique:users,username,$user_id|min:6",
+            'password' => 'required_without:username|nullable|min:6|confirmed'
+        ];
+
+        $messages = [
+            'min' => 'The :attribute must be at least :min',
+            'unique' => 'The :attribute has existed, try others',
+            'password.confirmed' => 'Password not matching'
+        ];
+
+        return Validator::make($input, $rules, $messages);
+    }
+
     public static function storeChildByParent($object, $parent_id){
 
         $child = new User;
@@ -40,6 +58,20 @@ class UserService{
         $child->save();
 
         return $child;
+    }
+
+    public static function updateAccount($input){
+
+        $user = User::find( $input['id'] );
+
+        if($user == null){
+            return false;
+        }
+
+        $user->username = $input['username'];
+        $user->password = bcrypt( $input['password'] );
+
+        return $user->update();
     }
 
     public static function delete($user_id){

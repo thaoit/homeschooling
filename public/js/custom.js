@@ -1139,6 +1139,43 @@ function ajaxDeleteProfile(request_data, elements, process_url){
     });
 }
 
+function ajaxChangeAccount(request_data, elements, process_url){
+
+    var last_status = elements['status-element'].innerText;
+
+    $.ajax({
+
+        type: 'post',
+        url: process_url,
+        data: request_data,
+        beforeSend: function(){
+
+            elements['alert-container'].empty();
+            setProcessStatus(elements['status-element'], 'Saving...');
+        },
+        success: function(data){
+
+            if(typeof data['errors'] != "undefined"){
+
+                var html = generateErrorInfo( data['errors'] );
+                elements['alert-container'].append(html);
+            }
+            else{
+              
+                elements['username-element'].innerText = data['username'];
+                elements['modal'].modal('hide');
+            }
+        },
+        error: function(data){
+            console.log(data);
+        },
+        complete: function(){
+
+            setCompleteStatus(elements['status-element'], last_status);
+        }
+    });
+}
+
 function generateErrorInfo(errors){
 
     var html = '';

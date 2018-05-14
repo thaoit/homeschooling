@@ -6,8 +6,8 @@
   <form class="profile-container">
     <div class="parent-profile-container">
       <div class="text-center">
-        <h1>{{ $user->username }}</h1>
-        <button type="button" data-toggle="modal" data-target="#change-account-modal"><span>Change account</span></button>
+        <h1 class="parent-profile-username">{{ $user->username }}</h1>
+        <button type="button" data-toggle="modal" data-target=".change-account-modal"><span>Change account</span></button>
       </div>
       <div class="profile">
         <div class="form-group">
@@ -69,32 +69,34 @@
 
 <div class="clearfix"></div>
 
-<div id="change-account-modal" class="modal fade" role="dialog">
+<div class="modal fade change-account-modal" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h4>Change account</h4>
       </div>
       <div class="modal-body profile-container">
-
-        <div class="form-group">
-          <label for="">Username</label>
-          <input class="form-control" type="text" name="username" value="{{ $user->username }}" required>
-        </div>
-        <div class="change_password">
+        <form class="account-form">
+          <input type="hidden" name="id" value="{{ $user->id }}">
+          <div class="form-group">
+            <label for="">Username</label>
+            <input class="form-control" type="text" name="username" value="{{ $user->username }}" required>
+          </div>
           <div class="form-group">
             <label for="">New password</label>
             <input class="form-control password" type="password" name="password" value="" required>
           </div>
           <div class="form-group">
             <label for="">Retype new password</label>
-            <input class="form-control retype-password" type="password" name="password_confirmation" value="" required>
+            <input class="form-control password_confirmation" type="password" name="password_confirmation" value="" required>
           </div>
-        </div>
+          <div class="alert-container">
 
+          </div>
+        </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-default" type="button" data-dismiss="modal">Save</button>
+        <button class="btn btn-default change-account-btn" type="button">Save</button>
         <button class="btn btn-default" type="button" data-dismiss="modal">Cancel</button>
       </div>
     </div>
@@ -245,6 +247,27 @@ $(document).ready(function(){
         ajaxDeleteProfile(user_id, elements, url);
     });
 
+    $('.change-account-modal .change-account-btn').on('click', function(){
+
+        var modal = $(this).parents('.change-account-modal');
+
+        // request data
+        var data = modal.find('.account-form').serialize();
+
+        // process url
+        var url = '{{ action('UserController@changeAccount') }}'
+
+        // elements
+        var elements = [];
+        elements['modal'] = modal;
+        elements['status-element'] = $(this)[0];
+        elements['alert-container'] = modal.find('.alert-container');
+        elements['username-element'] = $('.parent-profile-container .parent-profile-username')[0];
+
+        // process
+        ajaxChangeAccount(data, elements, url);
+
+    })
 });
 
 </script>

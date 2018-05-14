@@ -72,4 +72,34 @@ class UserController extends Controller
             ];
         }
     }
+
+    public function changeAccount(Request $request){
+
+        $input = $request->input();
+        $validator = UserService::validateUpdateAccount($input);
+
+        if($validator->fails()){
+
+            return [
+                'errors' => $validator->errors()->all()
+            ];
+        }
+        else{
+
+            $result = UserService::updateAccount($input);
+
+            if($result){
+
+                return [
+                    'username' => $input['username']
+                ];
+            }
+            else{
+
+                return [
+                    'errors' => 'Error on updating account'
+                ];
+            }
+        }
+    }
 }
