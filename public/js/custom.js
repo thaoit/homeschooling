@@ -189,20 +189,20 @@ function generateTopicHints(data, hints_container){
   hints_container.append(hints);
 }
 
-function ajaxSaveAllRelatingLesson(is_publish, process_url, element_data){
+function ajaxSaveAllRelatingLesson(request_data, elements, process_url){
 
-    var new_outline_elements = $('.outline-container .outline:not([data-outline-id])');
-    var update_outline_elements = $('.outline-container .outline[data-outline-id]');
-    var new_topic_elements = $('#general .chosen-hints .chosen-hint:not([data-id])');
-    var update_topic_elements = $('#general .chosen-hints .chosen-hint[data-id]');
-    var media_reference_elements = $('#references-container .content li');
+    var new_outline_elements = elements['new-outline-elements'];
+    var update_outline_elements = elements['update-outline-elements'];
+    var new_topic_elements = elements['new-topic-elements'];
+    var update_topic_elements = elements['update-topic-elements'];
+    var media_reference_elements = elements['media-reference-elements'];
 
     var general = getObjOfGeneralLesson(
-        $('#general').attr('data-lesson-id'),
-        $('#title').val(),
-        $('#intro').val(),
-        1,
-        is_publish
+        elements['general-container'].attr('data-lesson-id'),
+        request_data['title'],
+        request_data['intro'],
+        request_data['user-id'],
+        request_data['is-publish']
     );
 
     var outlines = getObjOfOutlines(
@@ -219,6 +219,8 @@ function ajaxSaveAllRelatingLesson(is_publish, process_url, element_data){
 
     var media_references = getObjOfMediaReferences(media_reference_elements, delete_medias);
 
+    var last_status = elements['main-status-element'][0].innerText;
+
     // send request
     $.ajax({
 
@@ -230,15 +232,19 @@ function ajaxSaveAllRelatingLesson(is_publish, process_url, element_data){
             'topics': topics,
             'media_references': media_references
         },
+        beforeSend: function(){
+
+            setProcessStatus(elements['main-status-element'][0], 'Processing...');
+        },
         success: function(data){
-            console.log(data);
+
             if( !data['success'] ){
                 return;
             }
 
             // assign lesson's id
             lesson_id = data['id'];
-            $('#general').attr('data-lesson-id', lesson_id);
+            elements['general-container'].attr('data-lesson-id', lesson_id);
 
             // assign outlines's id
             var new_outlines_id = data['new_outlines_id'];
@@ -259,15 +265,18 @@ function ajaxSaveAllRelatingLesson(is_publish, process_url, element_data){
             delete_topics = [];
             delete_medias = [];
 
-            // save as craft / publish button
-            if(is_publish){
-
-                $('#save_as_draft').hide();
-                $('#publish')[0].innerText = "Save";
-            }
+            // change chosen
+            console.log(elements['main-status-element']);
+            console.log(elements['sub-status-element']);
+            elements['main-status-element'].addClass('chosen-button');
+            elements['sub-status-element'].removeClass('chosen-button');
         },
         error: function(data){
           console.log(data);
+        },
+        complete: function(){
+
+            setCompleteStatus(elements['main-status-element'][0], last_status);
         }
     });
 }
@@ -535,7 +544,8 @@ function ajaxFilterLessons(request_data, urls, elements){
         url: urls['find_lessons_by_topics'],
         data:{
           topics: request_data['chosen_topic_values'],
-          lesson_ids: request_data['lesson_ids']
+          search_text: request_data['search_text']
+          //lesson_ids: request_data['lesson_ids']
         },
         beforeSend: function(){
 
@@ -557,10 +567,10 @@ function ajaxClearFilterLessons(request_data, urls, elements){
     $.ajax({
 
         type: 'get',
-        url: urls['all_lessons_in_public'],
+        url: urls['clear_filter_result'],
         data:{
-            is_all: request_data['is_filter_all'],
-            name: request_data['search_text']
+            //is_all: request_data['is_filter_all'],
+            search_text: request_data['search_text']
         },
         beforeSend: function(){
 
@@ -900,6 +910,7 @@ function generateLessonInLessonPage(lesson_obj, default_media_types, urls){
     }
 
     // url
+    var view_lesson_process_url = urls['view_lesson'].substring(1, urls['view_lesson'].lastIndexOf(':')) + id;
     var edit_lesson_process_url = urls['edit_lesson'].substring(1, urls['edit_lesson'].lastIndexOf(':')) + id;
 
     // combine all

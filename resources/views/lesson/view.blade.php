@@ -139,6 +139,7 @@
 
   @endfor
 
+  @if( $lesson['media']['num_of_media'] > 0 )
   <div class="references slide">
     <h4><strong>References</strong></h4>
 
@@ -149,7 +150,7 @@
       <h5>{{ $type }}</h5>
 
       <ul>
-        @foreach( $lesson['media'][$type] as $media )
+        @foreach( $lesson['media']['types'][$type] as $media )
           @if( $media->name == null )
             <li>
               <a target="_blank" href="{{ $media->url }}">
@@ -171,6 +172,7 @@
     </div>
 
   </div>
+  @endif
 </div>
 
 @endsection

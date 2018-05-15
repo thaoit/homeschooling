@@ -7,6 +7,7 @@ use App\Models\Lesson;
 use App\Services\LessonService;
 use App\Services\TopicService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LessonController extends Controller
 {
@@ -14,7 +15,7 @@ class LessonController extends Controller
 
     public function index(){
 
-        $lessons = LessonService::getAllByUser(1);
+        $lessons = LessonService::getAllByUser(Auth::user()->id);
         $topics = TopicService::getAllInOrder('asc');
 
         return view('lesson/index', compact('lessons', 'topics'));
@@ -79,9 +80,20 @@ class LessonController extends Controller
         $lessons = array();
 
         // check whether passing parameter exists
-        if( isset( $input['topics'] ) && isset( $input['lesson_ids'] ) ){
+        /*if( isset( $input['topics'] ) && isset( $input['lesson_ids']  ){
 
             $lessons = LessonService::getAllBelongsToTopics($input['topics'], $input['lesson_ids']);
+        }*/
+
+        if( isset( $input['topics'] ) ){
+
+            $search_text = isset( $input['search_text'] ) ? $input['search_text'] : '';
+            $user_id = Auth::user()->id;
+            $lessons = LessonService::getAllOfUserBelongsToTopicsAndNameHints(
+                                        $input['topics'],
+                                        $search_text,
+                                        $user_id
+                                      );
         }
 
         return $lessons;
@@ -93,7 +105,7 @@ class LessonController extends Controller
         $lessons = array();
 
         // check whether passing parameter exists
-        if( isset( $input['is_all'] ) ){
+        /*if( isset( $input['is_all'] ) ){
 
             if($input['is_all'] === "true"){
                 $lessons = LessonService::getAllInPublic();
@@ -101,6 +113,17 @@ class LessonController extends Controller
             else{
                 $lessons = LessonService::searchName($input['name']);
             }
+        }*/
+
+        $user_id = Auth::user()->id;
+
+        if( isset( $input['search_text'] ) ){
+
+            $lessons = LessonService::searchLessonNameOfUser($input['search_text'], $user_id);
+        }
+        else{
+
+            $lessons = LessonService::getAllByUser($user_id);
         }
 
         return $lessons;
@@ -134,7 +157,8 @@ class LessonController extends Controller
         if( isset( $input['q'] ) ){
 
             $search = $input['q'];
-            $lessons = LessonService::searchName($search);
+            $user_id = Auth::user()->id;
+            $lessons = LessonService::searchLessonNameOfUser($search, $user_id);
         }
 
         return view('lesson/index', compact('lessons', 'topics', 'search'));

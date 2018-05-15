@@ -16,9 +16,13 @@
         </span>
       </div>
     </form>-->
-    <form action="{{ action('LessonController@searchNameInLesson') }}" method="get" class="col-xs-12 col-sm-10 search-container">
-        <input class="form-control search-input" type="text" name="q" value="{{ isset($search) ? $search : '' }}" placeholder="Search here" required>
-    </form>
+
+    <div class="col-xs-12 col-sm-10 search-container">
+      <form action="{{ action('LessonController@searchNameInLesson') }}" method="get" class="">
+          <input class="form-control" type="text" name="q" value="{{ isset($search) ? $search : '' }}" placeholder="Search here" required>
+      </form>
+      <input class="search-input" type="hidden" value="{{ isset($_GET['q']) ? $_GET['q'] : '' }}">
+    </div>
 
     <div class="col-xs-12 col-sm-2 filter-create-container">
       <button type="button" name="filter" title="Filter lesson" class="filter-btn" data-toggle="filter-container" data-target="#filter-lesson">
@@ -566,6 +570,7 @@
             @endforeach
           </div>
         </div>
+        @if( Auth::user()->role != Config::get('constants.role.child') )
         <div class="col-xs-2 control-container">
           <button type="button">
             <a href="{{ action('LessonController@edit', $lesson['general']->id) }}"  title="Edit this lesson"><span class="glyphicon glyphicon-pencil"></span></a>
@@ -574,6 +579,7 @@
             &times;
           </button>
         </div>
+        @endif
         <div class="clearfix"></div>
       </div>
       <div class="content">
@@ -700,6 +706,7 @@
 
     .search-container{
       margin-bottom: 10px;
+      padding: 0;
     }
 
     button a{
@@ -823,7 +830,8 @@
           // data for filtering
           var data = [];
           data['chosen_topic_values'] = chosen_topic_values;
-          data['lesson_ids'] = lesson_ids;
+          data['search_text'] = $('.search-container .search-input').val();
+          //data['lesson_ids'] = lesson_ids;
           data['is_from_resource'] = false;
 
           // elements for completing filtering
@@ -837,7 +845,8 @@
           urls['find_lessons_by_topics'] = '{{ action('LessonController@filterLessonsByTopics') }}';
           urls['default_media_types'] = '{{ action('MediaController@getDefaultTypes') }}';
           urls['view_media_reference'] = '{{ action('MediaController@viewMediaReference', ':name') }}';
-          urls['edit_lesson'] = '{{ action('LessonController@edit', ':id') }}'
+          urls['view_lesson'] = '{{ action('LessonController@view', ':id') }}'
+          urls['edit_lesson'] = '{{ action('LessonController@edit', ':id') }}';
 
           // call function filter
           ajaxFilterLessons(
@@ -851,14 +860,14 @@
 
           // get searched lesson name
           var search_text = $('.search-container .search-input').val();
-          var is_filter_all = false;
+          //var is_filter_all = false;
 
-          if(search_text.trim().length === 0){
+          /*if(search_text.trim().length === 0){
               is_filter_all = true;
-          }
+          }*/
 
           var data = [];
-          data['is_filter_all'] = is_filter_all;
+          //data['is_filter_all'] = is_filter_all;
           data['search_text'] = search_text;
           data['is_from_resource'] = false;
 
@@ -868,10 +877,11 @@
           elements['filter_clear_button'] = $(this);
 
           var urls = [];
-          urls['all_lessons_in_public'] = '{{ action('LessonController@filterLessonsByName') }}';
+          urls['clear_filter_result'] = '{{ action('LessonController@filterLessonsByName') }}';
           urls['default_media_types'] = '{{ action('MediaController@getDefaultTypes') }}';
           urls['view_media_reference'] = '{{ action('MediaController@viewMediaReference', ':name') }}';
-          urls['edit_lesson'] = '{{ action('LessonController@edit', ':id') }}'
+          urls['view_lesson'] = '{{ action('LessonController@view', ':id') }}';
+          urls['edit_lesson'] = '{{ action('LessonController@edit', ':id') }}';
 
           ajaxClearFilterLessons(
               data,

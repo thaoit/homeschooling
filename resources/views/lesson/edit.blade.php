@@ -103,9 +103,16 @@
     </div>
 
     <div class="form-group" id="func-buttons">
-      <button id="preview" class="btn btn-default" type="submit" name="button">Preview</button>
-      <button id="save_as_draft" class="btn btn-default" type="submit" name="save_as_draft">Save as Draft</button>
-      <button id="publish" class="btn btn-default" type="submit" name="publish">Publish</button>
+      <button id="preview" class="btn btn-default" type="submit" name="button">
+        <a href="{{ action('LessonController@view', $lesson['general']->id) }}" target="_blank">Preview</a>
+      </button>
+      @if( $lesson['general']->status == Config::get('constants.lesson_status.draft') )
+        <button id="save_as_draft" class="btn btn-default chosen-button" type="submit" name="save_as_draft">Save as Draft</button>
+        <button id="publish" class="btn btn-default" type="submit" name="publish">Publish</button>
+      @else
+        <button id="save_as_draft" class="btn btn-default" type="submit" name="save_as_draft">Save as Draft</button>
+        <button id="publish" class="btn btn-default chosen-button" type="submit" name="publish">Publish</button>
+      @endif
     </div>
   </div>
 
@@ -661,7 +668,7 @@
       // open References modal
       $('.references-modal-btn').on('click', function(){
           // get current user id
-          user_id = 1;
+          user_id = {{ Auth::user()->id }};
           ajaxGetMediaReferencesByUser(user_id, '{{ action('MediaController@getMediaReferencesByUser') }}');
       })
 
@@ -679,7 +686,7 @@
               ajaxStoreAndAssignNewUploadMediaReferences(
                   new_media_refs[0],
                   references_container,
-                  1,
+                  {{ Auth::user()->id }},
                   '{{ action('MediaController@storeUploadMediaReferences') }}',
                   '{{ action('MediaController@viewMediaReference', 'url') }}'
               );
@@ -706,7 +713,7 @@
               ajaxStoreAndAssignNewUrlMediaReferences(
                   url_media_ref,
                   references_container,
-                  1,
+                  {{ Auth::user()->id }},
                   '{{ action('MediaController@storeUrlMediaReferences') }}',
                   '{{ action('MediaController@viewMediaReference', 'url') }}'
               );
@@ -734,19 +741,57 @@
       // save lesson
       $('#save_as_draft').on('click', function(){
 
-          ajaxSaveAllRelatingLesson(
-              false,
-              '{{ action('GeneralController@saveAllRelatingLesson') }}'
-          );
+          // request data
+          var data = [];
+          data['title'] = $('#title').val();
+          data['intro'] = $('#intro').val()
+          data['user-id'] = {{ Auth::user()->id }};
+          data['is-publish'] = false;
+
+          // process url
+          var url = '{{ action('GeneralController@saveAllRelatingLesson') }}';
+
+          // elements
+          var elements = [];
+          elements['new-outline-elements'] = $('.outline-container .outline:not([data-outline-id])');
+          elements['update-outline-elements'] = $('.outline-container .outline[data-outline-id]');
+          elements['new-topic-elements'] = $('#general .chosen-hints .chosen-hint:not([data-id])');
+          elements['update-topic-elements'] = $('#general .chosen-hints .chosen-hint[data-id]');
+          elements['media-reference-elements'] = $('#references-container .content li');
+          elements['general-container'] = $('#general');
+          elements['main-status-element'] = $(this);
+          elements['sub-status-element'] = $('#publish');
+          console.log(elements);
+          // process
+          ajaxSaveAllRelatingLesson(data, elements, url);
       })
 
       // publish lesson
       $('#publish').on('click', function(){
 
-          ajaxSaveAllRelatingLesson(
-              true,
-              '{{ action('GeneralController@saveAllRelatingLesson') }}'
-          );
+          // request data
+          var data = [];
+          data['title'] = $('#title').val();
+          data['intro'] = $('#intro').val()
+          data['user-id'] = {{ Auth::user()->id }};
+          data['is-publish'] = true;
+
+          // process url
+          var url = '{{ action('GeneralController@saveAllRelatingLesson') }}';
+
+          // elements
+          var elements = [];
+          elements['new-outline-elements'] = $('.outline-container .outline:not([data-outline-id])');
+          elements['update-outline-elements'] = $('.outline-container .outline[data-outline-id]');
+          elements['new-topic-elements'] = $('#general .chosen-hints .chosen-hint:not([data-id])');
+          elements['update-topic-elements'] = $('#general .chosen-hints .chosen-hint[data-id]');
+          elements['media-reference-elements'] = $('#references-container .content li');
+          elements['general-container'] = $('#general');
+          elements['main-status-element'] = $(this);
+          elements['sub-status-element'] = $('#save_as_draft');
+          console.log(elements);
+          // process
+          ajaxSaveAllRelatingLesson(data, elements, url);
       })
 
   });

@@ -135,7 +135,7 @@ class UserService{
         if($user == null)
             return null;
         else
-            $user->select('parent_id')->get();
+            return $user->parent_id;
     }
 
     public static function getChildFromParent($user_id){
