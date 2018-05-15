@@ -4,15 +4,15 @@ namespace App\Services;
 use Config;
 use Validator;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserService{
 
     public static function validate($input){
 
         $rules = [
-            'username' => 'required|unique:users|min:6',
-            'name' => 'required',
-            'email' => 'nullable|unique:users|email',
+            'username' => 'required|unique:users|min:6|max:255',
+            'email' => 'nullable|unique:users|email|max:255',
             'password' => 'required|min:6|confirmed'
         ];
 
@@ -31,7 +31,7 @@ class UserService{
         $user_id = $input['id'];
 
         $rules = [
-            'username' => "required_without:password|nullable|unique:users,username,$user_id|min:6",
+            'username' => "required_without:password|nullable|unique:users,username,$user_id|min:6|max:255",
             'password' => 'required_without:username|nullable|min:6|confirmed'
         ];
 
@@ -49,8 +49,8 @@ class UserService{
         $user_id = $input['id'];
 
         $rules = [
-            'name' => 'required',
-            'email' => "nullable|unique:users,email,$user_id|email"
+            'name' => 'nullable|max:255',
+            'email' => "nullable|unique:users,email,$user_id|email|max:255"
         ];
 
         $messages = [
@@ -66,7 +66,7 @@ class UserService{
         $child = new User;
         $child->name = $object['name'];
         $child->username = $object['username'];
-        $child->password = bcrypt($object['password']);
+        $child->password = Hash::make($object['password']);
         $child->birthday = $object['birthday'];
         $child->gender = $object['gender'];
         $child->parent_id = $parent_id;

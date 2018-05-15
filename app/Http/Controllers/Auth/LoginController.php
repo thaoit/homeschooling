@@ -25,7 +25,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -35,5 +35,16 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    // enable log in by username or email
+    public function username(){
+
+        $input = request()->input('username_email');
+        $field_type = filter_var($input, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        request()->merge([ $field_type => $input ]);
+
+        return $field_type;
     }
 }

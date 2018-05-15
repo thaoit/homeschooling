@@ -12,75 +12,95 @@
 */
 //URL::forceScheme('https');
 
-Route::get('/', function () {
-    return view('welcome');
+
+Auth::routes();
+
+Route::get('/', 'HomeController@index')->name('home');
+
+Route::middleware('auth')->prefix('/lessons')->group(function(){
+
+  Route::get('/', 'LessonController@index');
+
+  Route::get('/create', 'LessonController@create');
+
+  Route::post('/store', 'LessonController@store');
+
+  Route::post('/update', 'LessonController@update');
+
+  Route::post('/save-outlines', 'OutlineController@doStoreUpdateDelete');
+
+  Route::post('/save-all-relating', 'GeneralController@saveAllRelatingLesson');
+
+  Route::get('/filter-lessons-by-topics', 'LessonController@filterLessonsByTopics');
+
+  Route::get('/filter-lessons-by-name', 'LessonController@filterLessonsByName');
+
+  Route::get('/search', 'LessonController@searchNameInLesson');
+
+  Route::get('/love-lesson', 'LessonController@loveLesson');
+
+  Route::get('/unlove-lesson', 'LessonController@unloveLesson');
+
+  Route::get('/view/{id}', 'LessonController@view');
+
+  Route::get('/edit/{id}', 'LessonController@edit');
+
+  Route::get('/delete/{id}', 'LessonController@delete');
 });
 
-Route::get('/lessons', 'LessonController@index');
+Route::middleware('auth')->prefix('/tests')->group(function(){
 
-Route::get('/lessons/create', 'LessonController@create');
+  Route::get('/', function(){
+      return view('test.index');
+  });
 
-Route::post('/lessons/store', 'LessonController@store');
+  Route::get('/create', function(){
+      return view('test.create');
+  });
 
-Route::post('/lessons/update', 'LessonController@update');
-
-Route::post('lessons/save-outlines', 'OutlineController@doStoreUpdateDelete');
-
-Route::post('lessons/save-all-relating', 'GeneralController@saveAllRelatingLesson');
-
-Route::get('lessons/filter-lessons-by-topics', 'LessonController@filterLessonsByTopics');
-
-Route::get('lessons/filter-lessons-by-name', 'LessonController@filterLessonsByName');
-
-Route::get('lessons/search', 'LessonController@searchNameInLesson');
-
-Route::get('/lessons/love-lesson', 'LessonController@loveLesson');
-
-Route::get('/lessons/unlove-lesson', 'LessonController@unloveLesson');
-
-Route::get('/lessons/view/{id}', 'LessonController@view');
-
-Route::get('/lessons/edit/{id}', 'LessonController@edit');
-
-Route::get('/lessons/delete/{id}', 'LessonController@delete');
-
-Route::get('/tests', function(){
-    return view('test.index');
+  Route::get('/view', function(){
+      return view('test.view');
+  });
 });
 
-Route::get('/tests/create', function(){
-    return view('test.create');
+Route::prefix('/resources')->group(function(){
+
+  Route::get('/', 'LessonController@resources');
+
+  Route::get('/search', 'LessonController@searchNameInResource');
 });
 
-Route::get('/tests/view', function(){
-    return view('test.view');
+Route::prefix('/groups')->group(function(){
+
+  Route::get('/', 'PartnerPostController@index');
+
+  Route::post('/post', 'PartnerPostController@post');
+
+  Route::get('/search', 'PartnerPostController@search');
+
+  Route::post('/delete-post', 'PartnerPostController@delete');
 });
 
-Route::get('/resources', 'LessonController@resources');
+Route::middleware('auth')->prefix('/profile')->group(function(){
 
-Route::get('/resources/search', 'LessonController@searchNameInResource');
+  Route::get('/{username}', 'UserController@profile');
 
-Route::get('/groups', 'PartnerPostController@index');
+  Route::post('/add-child', 'UserController@storeChild');
 
-Route::post('/groups/post', 'PartnerPostController@post');
+  Route::post('/delete', 'UserController@delete');
 
-Route::get('/groups/search', 'PartnerPostController@search');
+  Route::post('/change-account', 'UserController@changeAccount');
 
-Route::post('/groups/delete-post', 'PartnerPostController@delete');
+  Route::post('/update-general-profile', 'UserController@updateGeneralProfile');
 
-Route::get('/profile/{username}', 'UserController@profile');
+});
 
-Route::post('/profile/add-child', 'UserController@storeChild');
+Route::prefix('/topics')->group(function(){
 
-Route::post('/profile/delete', 'UserController@delete');
+  Route::get('/search', 'TopicController@search');
 
-Route::post('/profile/change-account', 'UserController@changeAccount');
-
-Route::post('/profile/update-general-profile', 'UserController@updateGeneralProfile');
-
-Route::get('/topics/search', 'TopicController@search');
-
-Route::post('/topics/save-topics', 'TopicController@doStoreUpdateDelete');
+  Route::post('/save-topics', 'TopicController@doStoreUpdateDelete');
+});
 
 Route::post('/upload/media-references/new-upload', 'MediaController@storeUploadMediaReferences');
 
