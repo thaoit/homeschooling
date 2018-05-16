@@ -37,9 +37,19 @@ class LessonController extends Controller
 
     public function edit($id){
 
-        $lesson = LessonService::getAllRelatingLesson($id);
+        $user_id = Auth::user()->id;
+        $author_id = LessonService::getAuthorId($id);
 
-        return view('lesson/edit', compact('lesson'));
+        if( $user_id != $author_id ){
+
+            return redirect()->action('HomeController@index');
+        }
+        else{
+
+            $lesson = LessonService::getAllRelatingLesson($id);
+
+            return view('lesson/edit', compact('lesson'));
+        }
     }
 
     public function store(Request $request){
@@ -64,8 +74,18 @@ class LessonController extends Controller
 
     public function delete($id){
 
-        LessonService::delete($id);
-        return redirect()->action('LessonController@index');
+        $user_id = Auth::user()->id;
+        $author_id = LessonService::getAuthorId($id);
+
+        if( $user_id != $author_id ){
+
+            return redirect()->action('HomeController@index');
+        }
+        else{
+
+            LessonService::delete($id);
+            return redirect()->action('LessonController@index');
+        }
     }
 
     public function resources(Request $request){

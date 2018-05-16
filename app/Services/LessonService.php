@@ -234,7 +234,7 @@ class LessonService{
         return $lesson->author_id;
     }
 
-    public static function getAllRelatingLesson($lesson_id, $request_user_id){
+    public static function getAllRelatingLesson($lesson_id, $request_user_id = null){
 
         $lesson = Lesson::find($lesson_id);
 
