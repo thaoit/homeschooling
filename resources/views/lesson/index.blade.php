@@ -819,19 +819,10 @@
               chosen_topic_values.push(chosen_topic_elements.eq(i).val());
           }
 
-          // get lesson ids
-          var lesson_elements = $('.lesson-container .lesson');
-          var lesson_ids = [];
-
-          for(var i = 0; i < lesson_elements.length; i++){
-              lesson_ids.push( lesson_elements.eq(i).attr('data-id') );
-          }
-
           // data for filtering
           var data = [];
           data['chosen_topic_values'] = chosen_topic_values;
           data['search_text'] = $('.search-container .search-input').val();
-          //data['lesson_ids'] = lesson_ids;
           data['is_from_resource'] = false;
 
           // elements for completing filtering
@@ -858,17 +849,8 @@
 
       $('.filter-container .filter-clear').on('click', function(){
 
-          // get searched lesson name
-          var search_text = $('.search-container .search-input').val();
-          //var is_filter_all = false;
-
-          /*if(search_text.trim().length === 0){
-              is_filter_all = true;
-          }*/
-
           var data = [];
-          //data['is_filter_all'] = is_filter_all;
-          data['search_text'] = search_text;
+          data['search_text'] = $('.search-container .search-input').val();
           data['is_from_resource'] = false;
 
           var elements = [];

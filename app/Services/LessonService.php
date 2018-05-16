@@ -104,7 +104,7 @@ class LessonService{
         return $query;
     }
 
-    public static function getAllByUser($user_id){
+    public static function getAllByUserRequest($user_id){
 
         $query = LessonService::getLessonQueryByUser($user_id);
 
@@ -118,7 +118,7 @@ class LessonService{
 
         /*$role = UserService::getRole($user_id);
 
-        switch ($role) {
+        switc.h ($role) {
           case Config::get('constants.role.admin'):
 
               $lesson_id_array = Lesson::orderBy('created_at', 'desc')->pluck('id');
@@ -145,7 +145,7 @@ class LessonService{
             break;
         }*/
 
-        $lessons = LessonService::getAllRelatingArrayOfLessons($lesson_id_array);
+        $lessons = LessonService::getAllRelatingArrayOfLessons($lesson_id_array, $user_id);
 
         return $lessons;
     }
@@ -187,7 +187,7 @@ class LessonService{
         return $filter_lessons;
     }
 
-    public static function getAllOfUserBelongsToTopicsAndNameHints($topics, $name, $user_id){
+    public static function getAllBelongsToTopicsAndNameHintsByUserRequest($topics, $name, $user_id){
 
         $role = UserService::getRole($user_id);
         $filter_lesson_ids = array();
@@ -231,7 +231,7 @@ class LessonService{
                               ->pluck('lessons.id');
         }
 
-        $filter_lessons = LessonService::getAllRelatingArrayOfLessons($filter_lesson_ids->toArray());
+        $filter_lessons = LessonService::getAllRelatingArrayOfLessons($filter_lesson_ids->toArray(), $user_id);
 
         return $filter_lessons;
     }
@@ -241,7 +241,7 @@ class LessonService{
         return Lesson::find($lesson_id);
     }
 
-    public static function getAllRelatingLesson($lesson_id){
+    public static function getAllRelatingLesson($lesson_id, $request_user_id){
 
         $lesson = Lesson::find($lesson_id);
 
@@ -270,7 +270,17 @@ class LessonService{
         $topics = $lesson->topics()->get();
 
         // get favorite lessons of current user
-        $favorite = FavoriteLessonService::getArrayOfFavoriteLessonIDsByUser(1);
+        $favorite = FavoriteLessonService::getArrayOfFavoriteLessonIDsByUser($request_user_id);
+
+        // determine if request user can control the lesson
+        $request_user_role = UserService::getRole($request_user_id);
+
+        if($request_user_role == null || $request_user_role == Config::get('constants.role.child')){
+            $is_enable_control = false;
+        }
+        else{
+            $is_enable_control = true;
+        }
 
         return [
           'general' => $lesson,
@@ -278,17 +288,18 @@ class LessonService{
           'media' => $media,
           'topics' => $topics,
           'split_outline_contents' => $split_outline_contents,
+          'is_control' => $is_enable_control,
           'favorite_lesson_ids' => $favorite
         ];
     }
 
-    public static function getAllRelatingArrayOfLessons($lesson_ids){
+    public static function getAllRelatingArrayOfLessons($lesson_ids, $request_user_id){
 
         $lessons = array();
 
         foreach($lesson_ids as $id){
 
-            $lesson = LessonService::getAllRelatingLesson($id);
+            $lesson = LessonService::getAllRelatingLesson($id, $request_user_id);
 
             // check if there is info about this lesson
             if( count($lesson) > 0){
@@ -309,12 +320,13 @@ class LessonService{
                                   ->latest()
                                   ->pluck('id');
 
-        $lessons = LessonService::getAllRelatingArrayOfLessons($lesson_id_array);
+        $request_user_id = Auth::user()->id;
+        $lessons = LessonService::getAllRelatingArrayOfLessons($lesson_id_array, $request_user_id);
 
         return $lessons;
     }
 
-    public static function searchLessonNameOfUser($name, $user_id){
+    public static function searchLessonNameByUserRequest($name, $user_id){
 
         /*$role = UserService::getRole($user_id);
 
@@ -366,7 +378,8 @@ class LessonService{
                                       ->pluck('id');
         }
 
-        $lessons = LessonService::getAllRelatingArrayOfLessons($lesson_id_array);
+
+        $lessons = LessonService::getAllRelatingArrayOfLessons($lesson_id_array, $user_id);
 
         return $lessons;
     }

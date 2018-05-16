@@ -893,25 +893,24 @@ function generateLessonInLessonPage(lesson_obj, default_media_types, urls){
                           </div>`;
     }
 
-    // like button
-    var like_button;
-
-    if( lesson_obj['favorite_lesson_ids'].indexOf(id) >= 0 ){
-
-        like_button = `<button class="like-btn" type="button" name="" title="Remove this from my favourite lessons">
-                          <span class="glyphicon glyphicon-heart"></span>
-                       </button>`;
-    }
-    else{
-
-        like_button = `<button class="like-btn" type="button" name="" title="Like if this is useful!">
-                          <span class="glyphicon glyphicon-heart-empty"></span>
-                       </button>`;
-    }
-
     // url
     var view_lesson_process_url = urls['view_lesson'].substring(1, urls['view_lesson'].lastIndexOf(':')) + id;
     var edit_lesson_process_url = urls['edit_lesson'].substring(1, urls['edit_lesson'].lastIndexOf(':')) + id;
+
+    // control container, depending on user role
+    var control_container_html = '';
+
+    if( lesson_obj['is_control'] ){
+
+        control_container_html = `<div class="col-xs-2 control-container">
+                                    <button type="button">
+                                      <a href="` + edit_lesson_process_url + `" title="Edit this lesson"><span class="glyphicon glyphicon-pencil"></span></a>
+                                    </button>
+                                    <button class="delete-btn" type="button" data-toggle="modal" data-target="#delete-confirmation" title="Delete this lesson">
+                                      &times;
+                                    </button>
+                                  </div>`;
+    }
 
     // combine all
     var html =
@@ -924,16 +923,9 @@ function generateLessonInLessonPage(lesson_obj, default_media_types, urls){
                 topic_html +
                 `
               </div>
-            </div>
-            <div class="col-xs-2 control-container">
-              <button type="button">
-                <a href="` + edit_lesson_process_url + `" title="Edit this lesson"><span class="glyphicon glyphicon-pencil"></span></a>
-              </button>
-              <button class="delete-btn" type="button" data-toggle="modal" data-target="#delete-confirmation" title="Delete this lesson">
-                &times;
-              </button>
-            </div>
-            <div class="clearfix"></div>
+            </div>` +
+            control_container_html +
+            `<div class="clearfix"></div>
           </div>
           <div class="content">` +
                 outline_html +

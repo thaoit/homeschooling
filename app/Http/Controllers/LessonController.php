@@ -15,7 +15,7 @@ class LessonController extends Controller
 
     public function index(){
 
-        $lessons = LessonService::getAllByUser(Auth::user()->id);
+        $lessons = LessonService::getAllByUserRequest(Auth::user()->id);
         $topics = TopicService::getAllInOrder('asc');
 
         return view('lesson/index', compact('lessons', 'topics'));
@@ -89,7 +89,7 @@ class LessonController extends Controller
 
             $search_text = isset( $input['search_text'] ) ? $input['search_text'] : '';
             $user_id = Auth::user()->id;
-            $lessons = LessonService::getAllOfUserBelongsToTopicsAndNameHints(
+            $lessons = LessonService::getAllBelongsToTopicsAndNameHintsByUserRequest(
                                         $input['topics'],
                                         $search_text,
                                         $user_id
@@ -119,11 +119,11 @@ class LessonController extends Controller
 
         if( isset( $input['search_text'] ) ){
 
-            $lessons = LessonService::searchLessonNameOfUser($input['search_text'], $user_id);
+            $lessons = LessonService::searchLessonNameByUserRequest($input['search_text'], $user_id);
         }
         else{
 
-            $lessons = LessonService::getAllByUser($user_id);
+            $lessons = LessonService::getAllByUserRequest($user_id);
         }
 
         return $lessons;
@@ -158,7 +158,7 @@ class LessonController extends Controller
 
             $search = $input['q'];
             $user_id = Auth::user()->id;
-            $lessons = LessonService::searchLessonNameOfUser($search, $user_id);
+            $lessons = LessonService::searchLessonNameByUserRequest($search, $user_id);
         }
 
         return view('lesson/index', compact('lessons', 'topics', 'search'));
