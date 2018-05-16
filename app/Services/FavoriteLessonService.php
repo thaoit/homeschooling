@@ -20,13 +20,16 @@ class FavoriteLessonService{
         $favorite = new FavoriteLesson;
         $favorite->lesson_id = $object['lesson_id'];
         $favorite->user_id = $object['user_id'];
-        $b = $favorite->save();
+        $result = $favorite->save();
+
+        if(!$result){
+            return false;
+        }
 
         // inscrease no of love on lesson
         $lesson->no_of_love++;
-        $lesson->save();
 
-        return true;
+        return $lesson->save();
     }
 
     public static function delete($lesson_id, $user_id){

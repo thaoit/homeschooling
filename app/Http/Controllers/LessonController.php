@@ -15,7 +15,9 @@ class LessonController extends Controller
 
     public function index(){
 
-        $lessons = LessonService::getAllByUserRequest(Auth::user()->id);
+        $user_id = ( Auth::check() ) ? Auth::user()->id : null;
+
+        $lessons = LessonService::getAllByUserRequest($user_id);
         $topics = TopicService::getAllInOrder('asc');
 
         return view('lesson/index', compact('lessons', 'topics'));
@@ -68,7 +70,9 @@ class LessonController extends Controller
 
     public function resources(Request $request){
 
-        $lessons = LessonService::getAllInPublic();
+        $user_id = ( Auth::check() ) ? Auth::user()->id : null;
+
+        $lessons = LessonService::getAllInPublic($user_id);
         $topics = TopicService::getAllInOrder('asc');
 
         return view('community/resource', compact('lessons', 'topics'));
@@ -79,21 +83,28 @@ class LessonController extends Controller
         $input = $request->all();
         $lessons = array();
 
-        // check whether passing parameter exists
-        /*if( isset( $input['topics'] ) && isset( $input['lesson_ids']  ){
-
-            $lessons = LessonService::getAllBelongsToTopics($input['topics'], $input['lesson_ids']);
-        }*/
-
         if( isset( $input['topics'] ) ){
 
             $search_text = isset( $input['search_text'] ) ? $input['search_text'] : '';
-            $user_id = Auth::user()->id;
-            $lessons = LessonService::getAllBelongsToTopicsAndNameHintsByUserRequest(
-                                        $input['topics'],
-                                        $search_text,
-                                        $user_id
-                                      );
+            $user_id = ( Auth::check() ) ? Auth::user()->id : null;
+
+            // determine if request come from resource or not
+            if( isset( $input['is_getting_only_publish'] ) && $input['is_getting_only_publish'] ){
+
+                $lessons = LessonService::getAllBelongsToTopicsAndNameHintsInResource(
+                                              $input['topics'],
+                                              $search_text,
+                                              $user_id
+                                          );
+            }
+            else{
+
+                $lessons = LessonService::getAllBelongsToTopicsAndNameHintsByUserRequest(
+                                              $input['topics'],
+                                              $search_text,
+                                              $user_id
+                                          );
+            }
         }
 
         return $lessons;
@@ -103,27 +114,28 @@ class LessonController extends Controller
 
         $input = $request->all();
         $lessons = array();
+        $user_id = ( Auth::check() ) ? Auth::user()->id : null;
 
-        // check whether passing parameter exists
-        /*if( isset( $input['is_all'] ) ){
+        if( isset( $input['is_getting_only_publish'] ) ){
 
-            if($input['is_all'] === "true"){
-                $lessons = LessonService::getAllInPublic();
+            $is_only_publish = $input['is_getting_only_publish'];
+
+            if( $is_only_publish && isset( $input['search_text'] ) ){
+
+                $lessons = LessonService::searchLessonNameInPublic( $input['search_text'], $user_id );
+            }
+            else if( $is_only_publish && !isset( $input['search_text'] ) ){
+
+                $lessons = LessonService::getAllInPublic($user_id);
+            }
+            else if( !$is_only_publish && isset( $input['search_text'] ) ){
+
+                $lessons = LessonService::searchLessonNameByUserRequest($input['search_text'], $user_id);
             }
             else{
-                $lessons = LessonService::searchName($input['name']);
+
+                $lessons = LessonService::getAllByUserRequest($user_id);
             }
-        }*/
-
-        $user_id = Auth::user()->id;
-
-        if( isset( $input['search_text'] ) ){
-
-            $lessons = LessonService::searchLessonNameByUserRequest($input['search_text'], $user_id);
-        }
-        else{
-
-            $lessons = LessonService::getAllByUserRequest($user_id);
         }
 
         return $lessons;
@@ -140,7 +152,8 @@ class LessonController extends Controller
         if( isset( $input['q'] ) ){
 
             $search = $input['q'];
-            $lessons = LessonService::searchName($search);
+            $user_id = ( Auth::check() ) ? Auth::user()->id : null;
+            $lessons = LessonService::searchLessonNameInPublic($search, $user_id);
         }
 
         return view('community/resource', compact('lessons', 'topics', 'search'));
@@ -157,7 +170,7 @@ class LessonController extends Controller
         if( isset( $input['q'] ) ){
 
             $search = $input['q'];
-            $user_id = Auth::user()->id;
+            $user_id = ( Auth::check() ) ? Auth::user()->id : null;;
             $lessons = LessonService::searchLessonNameByUserRequest($search, $user_id);
         }
 
@@ -168,14 +181,31 @@ class LessonController extends Controller
 
         $input = $request->all();
         $result = false;
+        $message = array();
 
-        if( isset($input['lesson_id']) && isset($input['user_id']) ){
+        // check whether user logined in
+        if( Auth::check() ){
 
-            $result = LessonService::loveLesson( $input['lesson_id'], $input['user_id'] );
+            $user_id = Auth::user()->id;
+            if( isset($input['lesson_id']) ){
+
+                $author_id = LessonService::getAuthorId( $input['lesson_id'] );
+
+                if( $author_id != null && $user_id != $author_id ){
+                    $result = LessonService::loveLesson( $input['lesson_id'], $user_id );
+                }
+                else{
+                    $message[] = Config::get('constants.messages.unlike_ownself');
+                }
+            }
+        }
+        else{
+            $message[] = Config::get('constants.messages.authentication');
         }
 
         return [
-            'result' => $result
+            'result' => $result,
+            'errors' => $message
         ];
     }
 
@@ -183,14 +213,32 @@ class LessonController extends Controller
 
         $input = $request->all();
         $result = false;
+        $message = array();
 
-        if( isset($input['lesson_id']) && isset($input['user_id']) ){
+        // check whether user logined in
+        if( Auth::check() ){
 
-            $result = LessonService::unloveLesson( $input['lesson_id'], $input['user_id'] );
+            $user_id = Auth::user()->id;
+
+            if( isset($input['lesson_id']) ){
+
+                $author_id = LessonService::getAuthorId( $input['lesson_id'] );
+
+                if( $author_id != null && $user_id != $author_id ){
+                    $result = LessonService::unloveLesson( $input['lesson_id'], $user_id );
+                }
+                else{
+                    $message[] = Config::get('constants.messages.unlike_ownself');
+                }
+            }
+        }
+        else{
+            $message[] = Config::get('constants.messages.authentication');
         }
 
         return [
-            'result' => $result
+            'result' => $result,
+            'errors' => $message
         ];
     }
 }

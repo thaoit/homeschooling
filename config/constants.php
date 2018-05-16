@@ -52,6 +52,12 @@ return [
          'japan'      => [
                             'name' => 'Japan'
                           ]
+    ],
+
+    'messages' => [
+        'authentication' => 'You need to login to do action',
+        'like_ownself' => "You're only allowed to Like lesson from others",
+        'unlike_ownself' => "You're only allowed to Like lesson from others"
     ]
 ];
 

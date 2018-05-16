@@ -544,8 +544,8 @@ function ajaxFilterLessons(request_data, urls, elements){
         url: urls['find_lessons_by_topics'],
         data:{
           topics: request_data['chosen_topic_values'],
-          search_text: request_data['search_text']
-          //lesson_ids: request_data['lesson_ids']
+          search_text: request_data['search_text'],
+          is_getting_only_publish: request_data['is_from_resource']
         },
         beforeSend: function(){
 
@@ -569,8 +569,8 @@ function ajaxClearFilterLessons(request_data, urls, elements){
         type: 'get',
         url: urls['clear_filter_result'],
         data:{
-            //is_all: request_data['is_filter_all'],
-            search_text: request_data['search_text']
+            search_text: request_data['search_text'],
+            is_getting_only_publish: request_data['is_from_resource']
         },
         beforeSend: function(){
 
@@ -666,6 +666,12 @@ function generateLessonInResources(lesson_obj, default_media_types, urls){
     var id = lesson_obj['general']['id'];
     var title = lesson_obj['general']['title'];
     var no_of_love = lesson_obj['general']['no_of_love'];
+
+    // author
+    var author = lesson_obj['author']['username'];
+    var view_profile_process_url = urls['view_profile'].substring(1, urls['view_profile'].lastIndexOf(':')) + author;
+
+    var author_html = `<p>By <a href="` + view_profile_process_url + `">` + author + `</a></p>`;
 
     // topic info
     var topic_html = ``;
@@ -764,13 +770,17 @@ function generateLessonInResources(lesson_obj, default_media_types, urls){
                        </button>`;
     }
 
+    // url
+    var view_lesson_process_url = urls['view_lesson'].substring(1, urls['view_lesson'].lastIndexOf(':')) + id;
+
     // combine all
     var html =
     `<div class="lesson" data-id="` + id + `">
           <div class="head">
             <div class="col-xs-12 col-sm-9">
-              <h4 class="title"><a href="` + media_process_url + `">` + title  + `</a></h4>
-              <div class="topics">
+              <h4 class="title"><a href="` + view_lesson_process_url + `">` + title  + `</a></h4>` +
+              author_html +
+              `<div class="topics">
                 ` +
                 topic_html +
                 `
@@ -784,6 +794,7 @@ function generateLessonInResources(lesson_obj, default_media_types, urls){
             </div>
             <div class="clearfix"></div>
           </div>
+          <div class="alert-container"></div>
           <div class="content">` +
                 outline_html +
                 reference_html +
@@ -971,15 +982,14 @@ function showAfterCompleteClearingFilter(filter_button, filter_clear_button){
     filter_clear_button[0].innerText = 'Clear';
 }
 
-function ajaxLoveLesson(lesson_id, user_id, process_url, elements){
+function ajaxLoveLesson(lesson_id, process_url, elements){
 
     $.ajax({
 
         type: 'get',
         url: process_url,
         data: {
-          lesson_id: lesson_id,
-          user_id: user_id
+          lesson_id: lesson_id
         },
         success: function(data){
 
@@ -991,6 +1001,11 @@ function ajaxLoveLesson(lesson_id, user_id, process_url, elements){
               elements['number'].innerText = parseInt( elements['number'].innerText ) + 1;
               elements['like-btn'].attr('title', 'Remove this from my favourite lessons');
             }
+            else if( typeof data['errors'] !== "undefined" ){
+
+              var html = generateErrorInfo( data['errors'] );
+              elements['alert-container'].append(html);
+            }
         },
         error: function(data){
             console.log(data);
@@ -998,15 +1013,14 @@ function ajaxLoveLesson(lesson_id, user_id, process_url, elements){
     });
 }
 
-function ajaxUnloveLesson(lesson_id, user_id, process_url, elements){
+function ajaxUnloveLesson(lesson_id, process_url, elements){
 
     $.ajax({
 
         type: 'get',
         url: process_url,
         data: {
-          lesson_id: lesson_id,
-          user_id: user_id
+          lesson_id: lesson_id
         },
         success: function(data){
 
@@ -1017,6 +1031,11 @@ function ajaxUnloveLesson(lesson_id, user_id, process_url, elements){
               elements['icon'].addClass('glyphicon-heart-empty');
               elements['number'].innerText = parseInt( elements['number'].innerText ) - 1;
               elements['like-btn'].attr('title', 'Like if this is useful!');
+            }
+            else if( typeof data['errors'] !== "undefined" ){
+
+              var html = generateErrorInfo( data['errors'] );
+              elements['alert-container'].append(html);
             }
         },
         error: function(data){

@@ -71,7 +71,7 @@ class LessonService{
         $lesson->delete();
     }
 
-    public static function getLessonQueryByUser($user_id){
+    public static function getLessonQueryByUserRequest($user_id){
 
         $role = UserService::getRole($user_id);
         $query;
@@ -106,7 +106,7 @@ class LessonService{
 
     public static function getAllByUserRequest($user_id){
 
-        $query = LessonService::getLessonQueryByUser($user_id);
+        $query = LessonService::getLessonQueryByUserRequest($user_id);
 
         if($query == null){
             $lesson_id_array = array();
@@ -116,41 +116,12 @@ class LessonService{
                                       ->pluck('id');
         }
 
-        /*$role = UserService::getRole($user_id);
-
-        switc.h ($role) {
-          case Config::get('constants.role.admin'):
-
-              $lesson_id_array = Lesson::orderBy('created_at', 'desc')->pluck('id');
-              break;
-
-          case Config::get('constants.role.parent'):
-
-              $lesson_id_array = Lesson::where('author_id', $user_id)->latest()->pluck('id');
-              break;
-
-          case Config::get('constants.role.child'):
-
-              $parent_id = UserService::getParentId($user_id);
-              if($parent_id != null){
-                  $lesson_id_array = Lesson::where('author_id', $parent_id)
-                                            ->where('status', Config::get('constants.lesson_status.publish'))
-                                            ->latest()
-                                            ->pluck('id');
-              }
-              break;
-
-          default:
-              $lesson_id_array = array();
-            break;
-        }*/
-
         $lessons = LessonService::getAllRelatingArrayOfLessons($lesson_id_array, $user_id);
 
         return $lessons;
     }
 
-    public static function getAllInPublic(){
+    public static function getAllInPublic($request_user_id){
 
         // get all lesson ids having public status and,
         // ordered by the number of love and latest created time
@@ -159,34 +130,15 @@ class LessonService{
                                    ->latest()
                                    ->pluck('id');
 
-        $lesson = LessonService::getAllRelatingArrayOfLessons($lesson_id_array);
+        $lesson = LessonService::getAllRelatingArrayOfLessons($lesson_id_array, $request_user_id);
 
         return $lesson;
     }
 
-    public static function getAllBelongsToTopics($topics, $lesson_ids){
-
-        // get lessons have topics in the input and,
-        // order by the largest number of topics in the $topics input and,
-        // order by the no of love
-        // return array of lesson id
-        $filter_lesson_ids = DB::table('lesson_topics')
-                            ->join('lessons', 'lesson_topics.lesson_id', '=', 'lessons.id')
-                            ->join('topics', 'lesson_topics.topic_id', '=', 'topics.id')
-                            ->whereIn('topics.name', $topics)
-                            ->whereIn('lessons.id', $lesson_ids)
-                            ->where('lessons.status', Config::get('constants.lesson_status.publish'))
-                            ->groupBy('lessons.id')
-                            ->orderByRaw('count(*) desc')
-                            ->orderBy('lessons.no_of_love', 'desc')
-                            ->pluck('lessons.id');
-
-
-        $filter_lessons = LessonService::getAllRelatingArrayOfLessons($filter_lesson_ids->toArray());
-
-        return $filter_lessons;
-    }
-
+    // get all lessons which request user can access
+    // with role admin: access all,
+    // role parent: access only his/her own lessons
+    // children: access only his/her parent's lessons in publish status
     public static function getAllBelongsToTopicsAndNameHintsByUserRequest($topics, $name, $user_id){
 
         $role = UserService::getRole($user_id);
@@ -236,14 +188,58 @@ class LessonService{
         return $filter_lessons;
     }
 
+    // get all publish lessons, and
+    // not depending on user or user's role
+    public static function getAllBelongsToTopicsAndNameHintsInResource($topics, $name, $request_user_id){
+
+        $filter_lesson_ids = array();
+
+        $query =  DB::table('lesson_topics')
+                    ->join('lessons', 'lesson_topics.lesson_id', '=', 'lessons.id')
+                    ->join('topics', 'lesson_topics.topic_id', '=', 'topics.id')
+                    ->where('lessons.status', Config::get('constants.lesson_status.publish'));
+
+        // get lessons have topics in the input and,
+        // order by the largest number of topics in the $topics input and,
+        // order by the no of love
+        // return array of lesson id
+        if($query != null){
+
+          $filter_lesson_ids = $query->where('title', 'like', "%$name%")
+                              ->whereIn('topics.name', $topics)
+                              ->groupBy('lessons.id')
+                              ->orderByRaw('count(*) desc')
+                              ->orderBy('lessons.no_of_love', 'desc')
+                              ->pluck('lessons.id');
+        }
+
+        $filter_lessons = LessonService::getAllRelatingArrayOfLessons($filter_lesson_ids->toArray(), $request_user_id);
+
+        return $filter_lessons;
+    }
+
     public static function getById($lesson_id){
 
         return Lesson::find($lesson_id);
     }
 
+    public static function getAuthorId($lesson_id){
+
+        $lesson = Lesson::find($lesson_id);
+
+        if($lesson == null){
+            return null;
+        }
+
+        return $lesson->author_id;
+    }
+
     public static function getAllRelatingLesson($lesson_id, $request_user_id){
 
         $lesson = Lesson::find($lesson_id);
+
+        // author
+        $author = $lesson->user()->first();
 
         // check lesson existed or not
         if($lesson == null){
@@ -289,11 +285,12 @@ class LessonService{
           'topics' => $topics,
           'split_outline_contents' => $split_outline_contents,
           'is_control' => $is_enable_control,
-          'favorite_lesson_ids' => $favorite
+          'favorite_lesson_ids' => $favorite,
+          'author' => $author
         ];
     }
 
-    public static function getAllRelatingArrayOfLessons($lesson_ids, $request_user_id){
+    public static function getAllRelatingArrayOfLessons($lesson_ids, $request_user_id = null){
 
         $lessons = array();
 
@@ -310,64 +307,9 @@ class LessonService{
         return $lessons;
     }
 
-    public static function searchName($name){
-
-        $lesson_id_array =  Lesson::where([
-                                      ['status', '=', Config::get('constants.lesson_status.publish')],
-                                      ['title', 'like', "%$name%"]
-                                    ])
-                                  ->orderBy('no_of_love', 'desc')
-                                  ->latest()
-                                  ->pluck('id');
-
-        $request_user_id = Auth::user()->id;
-        $lessons = LessonService::getAllRelatingArrayOfLessons($lesson_id_array, $request_user_id);
-
-        return $lessons;
-    }
-
     public static function searchLessonNameByUserRequest($name, $user_id){
 
-        /*$role = UserService::getRole($user_id);
-
-        switch ($role) {
-          case Config::get('constants.role.admin'):
-
-              $lesson_id_array = Lesson::where('title', 'like', "%$name%")
-                                        ->orderBy('created_at', 'desc')
-                                        ->pluck('id');
-              break;
-
-          case Config::get('constants.role.parent'):
-
-              $lesson_id_array = Lesson::where([
-                                            ['author_id', '=', $user_id],
-                                            ['title', 'like', "%$name%"]
-                                         ])
-                                        ->latest()
-                                        ->pluck('id');
-              break;
-
-          case Config::get('constants.role.child'):
-
-              $parent_id = UserService::getParentId($user_id);
-              if($parent_id != null){
-                  $lesson_id_array = Lesson::where([
-                                                ['author_id', $parent_id],
-                                                ['title', 'like', "%$name%"],
-                                                ['status', '=', Config::get('constants.lesson_status.publish')]
-                                              ])
-                                            ->latest()
-                                            ->pluck('id');
-              }
-              break;
-
-          default:
-              $lesson_id_array = array();
-            break;
-        }*/
-
-        $query = LessonService::getLessonQueryByUser($user_id);
+        $query = LessonService::getLessonQueryByUserRequest($user_id);
 
         if($query == null){
             $lesson_id_array = array();
@@ -382,6 +324,21 @@ class LessonService{
         $lessons = LessonService::getAllRelatingArrayOfLessons($lesson_id_array, $user_id);
 
         return $lessons;
+    }
+
+    public static function searchLessonNameInPublic($name, $request_user_id){
+
+        // get all lesson ids having public status and,
+        // ordered by the number of love and latest created time
+        $lesson_id_array =  Lesson::where('status', Config::get('constants.lesson_status.publish'))
+                                   ->where('title', 'like', "%$name%")
+                                   ->orderBy('no_of_love', 'desc')
+                                   ->latest()
+                                   ->pluck('id');
+
+        $lesson = LessonService::getAllRelatingArrayOfLessons($lesson_id_array, $request_user_id);
+
+        return $lesson;
     }
 
     public static function loveLesson($lesson_id, $user_id){

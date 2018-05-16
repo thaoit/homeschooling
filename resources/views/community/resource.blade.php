@@ -4,14 +4,13 @@
 
 <div class="container">
   <div class="col-xs-12 form-group">
-    <form action="{{ action('LessonController@searchNameInResource') }}" method="get" class="col-xs-12 col-sm-10 search-container">
-      <!--<div class="input-group">-->
-        <input class="form-control search-input" type="text" name="q" value="{{ isset($search) ? $search : '' }}" placeholder="Search here" required>
-        <!--<span class="input-group-addon search-btn">
-          <span class="glyphicon glyphicon-search"></span>
-        </span>
-      </div>-->
-    </form>
+
+    <div class="col-xs-12 col-sm-10 search-container">
+      <form action="{{ action('LessonController@searchNameInResource') }}" method="get">
+          <input class="form-control" type="text" name="q" value="{{ isset($search) ? $search : '' }}" placeholder="Search here" required>
+      </form>
+      <input class="search-input" type="hidden" value="{{ isset($_GET['q']) ? $_GET['q'] : '' }}">
+    </div>
 
     <div class="col-xs-12 col-sm-2 filter-create-container">
       <button type="button" name="filter" title="Filter lesson" class="filter-btn" data-toggle="filter-container" data-target="#filter-lesson">
@@ -31,38 +30,8 @@
           {{ $topic->name }}
         </label>
         @endforeach
-        <!--<label class="col-xs-12 col-sm-3 col-md-2 checkbox-option">
-          <input type="checkbox" name="" value="art">
-          <span class="checkmark"></span>
-          Art
-        </label>
-        <label class="col-xs-12 col-sm-3 col-md-2 checkbox-option">
-          <input type="checkbox" name="" value="skill">
-          <span class="checkmark"></span>
-          Skill
-        </label>
-        <label class="col-xs-12 col-sm-3 col-md-2 checkbox-option">
-          <input type="checkbox" name="" value="ecosystem">
-          <span class="checkmark"></span>
-          Ecosystem
-        </label>-->
       </div>
     </div>
-    <!--<div class="filter-group">
-      <p class="filter-name">Time</p>
-      <div class="filter-options">
-        <label class="col-xs-12 col-sm-3 col-md-2 radio-option">
-          <input type="radio" name="time" value="lastly">
-          <span class="checkmark"></span>
-          Lastly
-        </label>
-        <label class="col-xs-12 col-sm-3 col-md-2 radio-option">
-          <input type="radio" name="time" value="oldest">
-          <span class="checkmark"></span>
-          Oldest
-        </label>
-      </div>
-    </div>-->
 
     <div class="alert alert-danger alert-dismissible" style="display: none">
       <a href="#" class="close" aria-label="close">&times;</a>
@@ -83,14 +52,17 @@
     @foreach($lessons as $lesson)
     <div class="lesson" data-id="{{ $lesson['general']->id }}">
       <div class="head">
+
         <div class="col-xs-12 col-sm-9">
           <h4 class="title"><a href="{{ action('LessonController@view', $lesson['general']->id) }}">{{ $lesson['general']->title }}</a></h4>
+          <p>By <a href="{{ action('UserController@profile', $lesson['author']->username) }}">{{ $lesson['author']->username }}</a></p>
           <div class="topics">
             @foreach($lesson['topics'] as $topic)
             <span>{{ $topic->name }}</span>
             @endforeach
           </div>
         </div>
+
         <div class="col-xs-12 col-sm-3">
           <h4 class="likes">
             <span class="number">{{ $lesson['general']->no_of_love }}</span>
@@ -105,8 +77,12 @@
             @endif
           </h4>
         </div>
+
         <div class="clearfix"></div>
       </div>
+
+      <div class="alert-container"></div>
+
       <div class="content">
         @if( count($lesson['outlines']) > 0 )
         <div>
@@ -237,31 +213,35 @@
           $(this).parent('.alert').hide();
       });
 
+      // Process like or unlike lesson
+      // only like / unlike 1 times
       $('.lesson-container').on('click', '.lesson .likes .like-btn', function(){
 
           var icon = $(this).children('span');
-          var lesson_id = $(this).parents('.lesson').attr('data-id');
-          var user_id = 1;
+          var lesson = $(this).parents('.lesson');
+          var lesson_id = lesson.attr('data-id');
 
           var elements = [];
           elements['icon'] = icon;
           elements['number'] = $(this).parents('.likes').find('.number')[0];
           elements['like-btn'] = $(this);
+          elements['alert-container'] = lesson.find('.alert-container');
 
           if(icon.hasClass('glyphicon-heart-empty')){
 
               var url = '{{ action('LessonController@loveLesson') }}';
 
-              ajaxLoveLesson(lesson_id, user_id, url, elements);
+              ajaxLoveLesson(lesson_id, url, elements);
           }
           else{
 
               var url = '{{ action('LessonController@unloveLesson') }}';
 
-              ajaxUnloveLesson(lesson_id, user_id, url, elements);
+              ajaxUnloveLesson(lesson_id, url, elements);
           }
       })
 
+      // Start to filter lessons by current search and chosen topics
       $('#filter-lesson .filter-ok').on('click', function(){
 
           var chosen_topic_elements = $('#filter-lesson input[name="filter_topics"]:checked');
@@ -278,18 +258,10 @@
               chosen_topic_values.push(chosen_topic_elements.eq(i).val());
           }
 
-          // get lesson ids
-          var lesson_elements = $('.lesson-container .lesson');
-          var lesson_ids = [];
-
-          for(var i = 0; i < lesson_elements.length; i++){
-              lesson_ids.push( lesson_elements.eq(i).attr('data-id') );
-          }
-
           // data for filtering
           var data = [];
           data['chosen_topic_values'] = chosen_topic_values;
-          data['lesson_ids'] = lesson_ids;
+          data['search_text'] = $('.search-container .search-input').val();
           data['is_from_resource'] = true;
 
           // elements for completing filtering
@@ -303,6 +275,8 @@
           urls['find_lessons_by_topics'] = '{{ action('LessonController@filterLessonsByTopics') }}';
           urls['default_media_types'] = '{{ action('MediaController@getDefaultTypes') }}';
           urls['view_media_reference'] = '{{ action('MediaController@viewMediaReference', ':name') }}';
+          urls['view_lesson'] = '{{ action('LessonController@view', ':id') }}';
+          urls['view_profile'] = '{{ action('UserController@profile', ':username') }}';
 
           // call function filter
           ajaxFilterLessons(
@@ -312,19 +286,12 @@
           );
       })
 
+      // Start to clear the last filter results
       $('.filter-container .filter-clear').on('click', function(){
 
-          // get searched lesson name
-          var search_text = $('.search-container .search-input').val();
-          var is_filter_all = false;
-
-          if(search_text.trim().length === 0){
-              is_filter_all = true;
-          }
-
+        // data for filterting
           var data = [];
-          data['is_filter_all'] = is_filter_all;
-          data['search_text'] = search_text;
+          data['search_text'] = $('.search-container .search-input').val();
           data['is_from_resource'] = true;
 
           var elements = [];
@@ -333,10 +300,12 @@
           elements['filter_clear_button'] = $(this);
 
           var urls = [];
-          urls['all_lessons_in_public'] = '{{ action('LessonController@filterLessonsByName') }}';
+          urls['clear_filter_result'] = '{{ action('LessonController@filterLessonsByName') }}';
           urls['default_media_types'] = '{{ action('MediaController@getDefaultTypes') }}';
           urls['view_media_reference'] = '{{ action('MediaController@viewMediaReference', ':name') }}';
-
+          urls['view_lesson'] = '{{ action('LessonController@view', ':id') }}';
+          urls['view_profile'] = '{{ action('UserController@profile', ':username') }}';
+          
           ajaxClearFilterLessons(
               data,
               urls,

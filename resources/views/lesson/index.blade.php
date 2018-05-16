@@ -803,6 +803,7 @@
           $(this).parent('.alert').hide();
       });
 
+      // Start to filter lessons by current search and chosen topics
       $('#filter-lesson .filter-ok').on('click', function(){
 
           var chosen_topic_elements = $('#filter-lesson input[name="filter_topics"]:checked');
@@ -847,17 +848,21 @@
           );
       })
 
+      // Start to clear the last filter results
       $('.filter-container .filter-clear').on('click', function(){
 
+          // data for filterting
           var data = [];
           data['search_text'] = $('.search-container .search-input').val();
           data['is_from_resource'] = false;
 
+          // elements
           var elements = [];
           elements['lesson_container'] = $('.lesson-container');
           elements['filter_button'] = $(this).siblings('.filter-ok');
           elements['filter_clear_button'] = $(this);
 
+          // urls
           var urls = [];
           urls['clear_filter_result'] = '{{ action('LessonController@filterLessonsByName') }}';
           urls['default_media_types'] = '{{ action('MediaController@getDefaultTypes') }}';
@@ -865,6 +870,7 @@
           urls['view_lesson'] = '{{ action('LessonController@view', ':id') }}';
           urls['edit_lesson'] = '{{ action('LessonController@edit', ':id') }}';
 
+          // process
           ajaxClearFilterLessons(
               data,
               urls,
