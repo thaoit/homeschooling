@@ -31,21 +31,26 @@ Route::middleware('auth')->prefix('/lessons')->group(function(){
 
   Route::post('/save-all-relating', 'GeneralController@saveAllRelatingLesson');
 
+  Route::get('/view/{id}', 'LessonController@view');
+
+  Route::get('/edit/{id}', 'LessonController@edit');
+
+  Route::get('/delete/{id}', 'LessonController@delete');
+});
+
+Route::prefix('/lessons')->group(function(){
+
   Route::get('/filter-lessons-by-topics', 'LessonController@filterLessonsByTopics');
 
   Route::get('/filter-lessons-by-name', 'LessonController@filterLessonsByName');
 
   Route::get('/search', 'LessonController@searchNameInLesson');
 
+  Route::get('/search', 'LessonController@searchNameInResource');
+
   Route::get('/love-lesson', 'LessonController@loveLesson');
 
   Route::get('/unlove-lesson', 'LessonController@unloveLesson');
-
-  Route::get('/view/{id}', 'LessonController@view');
-
-  Route::get('/edit/{id}', 'LessonController@edit');
-
-  Route::get('/delete/{id}', 'LessonController@delete');
 });
 
 Route::middleware('auth')->prefix('/tests')->group(function(){
@@ -66,8 +71,6 @@ Route::middleware('auth')->prefix('/tests')->group(function(){
 Route::prefix('/resources')->group(function(){
 
   Route::get('/', 'LessonController@resources');
-
-  Route::get('/search', 'LessonController@searchNameInResource');
 });
 
 Route::prefix('/groups')->group(function(){
