@@ -7,11 +7,14 @@
     <div class="main-profile-container">
       <div class="text-center">
         <h1 class="main-profile-username">{{ $user->username }}</h1>
+        @if( $user->id == Auth::user()->id )
         <button type="button" data-toggle="modal" data-target=".change-account-modal"><span>Change account</span></button>
+        @endif
       </div>
       <div class="profile">
         <form class="main-profile">
           <input type="hidden" name="id" value="{{ $user->id }}">
+          @if( $user->id == Auth::user()->id )
           <div class="form-group">
             <label for="">Name</label>
             <input class="form-control" type="text" name="name" value="{{ $user->name }}">
@@ -28,6 +31,24 @@
             <label for="">Other info</label>
             <textarea class="form-control" name="other_info" rows="3">{{ $user->other_info }}</textarea>
           </div>
+          @else
+          <div class="form-group">
+            <label for="">Name</label>
+            <p>{{ isset($user->name) ? $user->name : 'Empty' }}</p>
+          </div>
+          <div class="form-group">
+            <label for="">Email</label>
+            <p>{{ isset($user->email) ? $user->email : 'Empty' }}</p>
+          </div>
+          <div class="form-group">
+            <label for="">Address</label>
+            <p>{{ isset($user->address) ? $user->address : 'Empty' }}</p>
+          </div>
+          <div class="form-group">
+            <label for="">Other info</label>
+            <p>{{ isset($user->other_info) ? $user->other_info : 'Empty' }}</p>
+          </div>
+          @endif
         </form>
         @if( count($child_users) > 0 )
         <div class="table-responsive sub-profile-container">
@@ -36,20 +57,24 @@
             <thead>
               <th>Name</th>
               <th>Gender</th>
-              <th>Birthday</th>
+              <th>Age</th>
+              @if( $user->id == Auth::user()->id )
               <th></th>
+              @endif
             </thead>
             <tbody>
               @foreach( $child_users as $child_user )
               <tr class="sub-profile" data-user-id="{{ $child_user->id }}">
                 <td>{{ $child_user->name }}</td>
                 <td>{{ $child_user->gender }}</td>
-                <td>{{ $child_user->birthday }}</td>
+                <td>{{ date('Y') - date('Y', strtotime($child_user->birthday)) }}</td>
+                @if( $user->id == Auth::user()->id )
                 <td style="text-align: right">
                   <button class="delete-sub" type="button" data-toggle="modal" data-target=".delete-confirmation">
                     <span class="glyphicon glyphicon-remove" title="Delete"></span>
                   </button>
                 </td>
+                @endif
               </tr>
               @endforeach
             </tbody>
@@ -62,6 +87,7 @@
       </div>
     </div>
 
+    @if( $user->id == Auth::user()->id )
     <div class="control-container">
       <button type="button" title="Add 1 more children profile" data-toggle="modal" data-target=".add-profile-modal">
         <span class="glyphicon glyphicon-plus"></span>
@@ -72,6 +98,7 @@
         <span class="control-name">Save</span>
       </button>
     </div>
+    @endif
   </div>
 </div>
 

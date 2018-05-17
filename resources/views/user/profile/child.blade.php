@@ -7,11 +7,14 @@
     <div class="main-profile-container">
       <div class="text-center">
         <h1 class="main-profile-username">{{ $user->username }}</h1>
+        @if( $user->id == Auth::user()->id )
         <button type="button" data-toggle="modal" data-target=".change-account-modal"><span>Change account</span></button>
+        @endif
       </div>
       <div class="profile">
         <form class="main-profile">
           <input type="hidden" name="id" value="{{ $user->id }}">
+          @if( $user->id == Auth::user()->id )
           <div class="form-group">
             <label for="">Name</label>
             <input class="form-control" type="text" name="name" value="{{ $user->name }}">
@@ -28,6 +31,24 @@
             <label for="">Other info</label>
             <textarea class="form-control" name="other_info" rows="3">{{ $user->other_info }}</textarea>
           </div>
+          @else
+          <div class="form-group">
+            <label for="">Name</label>
+            <p>{{ isset($user->name) ? $user->name : 'Empty' }}</p>
+          </div>
+          <div class="form-group">
+            <label for="">Email</label>
+            <p>{{ isset($user->email) ? $user->email : 'Empty' }}</p>
+          </div>
+          <div class="form-group">
+            <label for="">Address</label>
+            <p>{{ isset($user->address) ? $user->address : 'Empty' }}</p>
+          </div>
+          <div class="form-group">
+            <label for="">Other info</label>
+            <p>{{ isset($user->other_info) ? $user->other_info : 'Empty' }}</p>
+          </div>
+          @endif
         </form>
       </div>
       <div class="alert-container">
@@ -35,12 +56,14 @@
       </div>
     </div>
 
+    @if( $user->id == Auth::user()->id)
     <div class="control-container">
       <button class="save-profile" type="button" title="Save">
         <span class="glyphicon glyphicon-floppy-disk"></span>
         <span class="control-name">Save</span>
       </button>
     </div>
+    @endif
   </div>
 </div>
 

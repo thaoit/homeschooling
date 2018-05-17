@@ -56,15 +56,13 @@
             @endif
           @endforeach
         </select>
-        
-        @if( isset($input['countries']) && $input['countries'] != 'All' )
+
         <select id="provinces" name="provinces">
           <option value="All">All</option>
           <option value="Ha noi">Ha Noi</option>
           <option value="Da Nang">Da Nang</option>
           <option value="Ho Chi Minh city">Ho Chi Minh city</option>
         </select>
-        @endif
       </p>
       <div>
         <p>Other info</p>
@@ -89,7 +87,7 @@
     @foreach( $not_own_posts as $post )
     <div class="post">
       <div class="head">
-        <p>From. <a href="">{{ $post->user_name }}</a></p>
+        <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a></p>
         <p>Wanna find partners for his/her 2 children with some requirements</p>
       </div>
       <div class="content">
@@ -213,7 +211,7 @@
     <div class="post" data-id="{{ $post->id }}">
       <div class="head">
         <div class="col-xs-10">
-          <p>From. <a href="">{{ $post->user_name }}</a></p>
+          <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a></p>
           <p>Wanna find partners for his/her 2 children with some requirements</p>
         </div>
         <div class="col-xs-2 delete-post-container">
@@ -381,6 +379,12 @@
 <script>
 
   $(document).ready(function(){
+
+      // init
+      var enable_provinces = {{ (isset($input['countries']) && $input['countries'] != 'All') ? 'true' : 'false' }};
+      if(!enable_provinces){
+          $('.group-container .info #provinces').hide();
+      }
 
       $('.typing-hint > input').on('keyup', function(e){
 

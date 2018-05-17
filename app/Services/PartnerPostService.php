@@ -36,12 +36,23 @@ class PartnerPostService{
         return $post->delete();
     }
 
+    public static function getAuthorId($post_id){
+
+        $post = PartnerPost::find($post_id);
+
+        if($post == null){
+            return null;
+        }
+
+        return $post->user_id;
+    }
+
     public static function getAllNotByUser($user_id){
 
         return DB::table('partner_posts')
                   ->join('users', 'partner_posts.user_id', '=', 'users.id')
                   ->where('users.id', '<>', $user_id)
-                  ->select('partner_posts.*', 'users.id as user_id', 'users.name as user_name')
+                  ->select('partner_posts.*', 'users.id as user_id', 'users.username as user_name')
                   ->latest()
                   ->get();
     }
@@ -51,7 +62,7 @@ class PartnerPostService{
         return DB::table('partner_posts')
                   ->join('users', 'partner_posts.user_id', '=', 'users.id')
                   ->where('users.id', '=', $user_id)
-                  ->select('partner_posts.*', 'users.id as user_id', 'users.name as user_name')
+                  ->select('partner_posts.*', 'users.id as user_id', 'users.username as user_name')
                   ->latest()
                   ->get();
     }

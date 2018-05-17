@@ -73,7 +73,7 @@ Route::prefix('/resources')->group(function(){
   Route::get('/', 'LessonController@resources');
 });
 
-Route::prefix('/groups')->group(function(){
+Route::middleware('auth')->prefix('/groups')->group(function(){
 
   Route::get('/', 'PartnerPostController@index');
 

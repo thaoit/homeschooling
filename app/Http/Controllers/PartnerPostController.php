@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Services\PartnerPostService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PartnerPostController extends Controller
 {
     //
     public function index(){
 
-        $own_posts = PartnerPostService::getAllByUser(1);
-        $not_own_posts = PartnerPostService::getAllNotByUser(1);
+        $user_id = Auth::user()->id;
+
+        $own_posts = PartnerPostService::getAllByUser($user_id);
+        $not_own_posts = PartnerPostService::getAllNotByUser($user_id);
 
         return view('community/group', compact('own_posts', 'not_own_posts'));
     }
@@ -23,7 +26,12 @@ class PartnerPostController extends Controller
 
         if( isset($input['id']) ){
 
-            $result = PartnerPostService::delete( $input['id'] );
+            $user_id = Auth::user()->id;
+            $author_id = PartnerPostService::getAuthorId( $input['id'] );
+
+            if($user_id == $author_id){
+                $result = PartnerPostService::delete( $input['id'] );
+            }
         }
 
         return [
@@ -34,8 +42,9 @@ class PartnerPostController extends Controller
     public function post(Request $request){
 
         $input = $request->input();
+
         // add current user id
-        $input['user_id'] = 1;
+        $input['user_id'] = Auth::user()->id;
 
         // save post
         PartnerPostService::store( $input );
@@ -53,8 +62,9 @@ class PartnerPostController extends Controller
           $topics = explode(', ', $input['favorite_topics']);
         }
 
-        $own_posts = PartnerPostService::searchPostByUser(1, $input);
-        $not_own_posts = PartnerPostService::searchPostNotByUser(1, $input);
+        $user_id = Auth::user()->id;
+        $own_posts = PartnerPostService::searchPostByUser($user_id, $input);
+        $not_own_posts = PartnerPostService::searchPostNotByUser($user_id, $input);
 
 
         return view('community/group', compact('own_posts', 'not_own_posts', 'input', 'topics'));

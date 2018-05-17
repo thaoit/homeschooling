@@ -86,6 +86,10 @@ textarea{
   font-size: 0.8em;
 }
 
+.profile-container .main-profile-container .profile .form-group p{
+  padding-top: 10px;
+}
+
 .table-responsive{
   border: none;
 }

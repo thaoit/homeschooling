@@ -266,8 +266,6 @@ function ajaxSaveAllRelatingLesson(request_data, elements, process_url){
             delete_medias = [];
 
             // change chosen
-            console.log(elements['main-status-element']);
-            console.log(elements['sub-status-element']);
             elements['main-status-element'].addClass('chosen-button');
             elements['sub-status-element'].removeClass('chosen-button');
         },
