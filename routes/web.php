@@ -44,9 +44,9 @@ Route::prefix('/lessons')->group(function(){
 
   Route::get('/filter-lessons-by-name', 'LessonController@filterLessonsByName');
 
-  Route::get('/search', 'LessonController@searchNameInLesson');
+  Route::get('/search-in-lesson', 'LessonController@searchNameInLesson');
 
-  Route::get('/search', 'LessonController@searchNameInResource');
+  Route::get('/search-in-resource', 'LessonController@searchNameInResource');
 
   Route::get('/love-lesson', 'LessonController@loveLesson');
 
@@ -82,6 +82,8 @@ Route::middleware('auth')->prefix('/groups')->group(function(){
   Route::get('/search', 'PartnerPostController@search');
 
   Route::post('/delete-post', 'PartnerPostController@delete');
+
+  Route::get('/get-provinces-by-country', 'ProvinceController@getAllByCountry');
 });
 
 Route::middleware('auth')->prefix('/profile')->group(function(){

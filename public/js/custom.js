@@ -1228,6 +1228,47 @@ function ajaxUpdateGeneralProfile(request_data, elements, process_url){
     });
 }
 
+function ajaxLoadProvinces(request_data, elements, process_url){
+
+    $.ajax({
+
+        type: 'get',
+        url: process_url['get_provinces'],
+        data:{
+          country: request_data['country_name']
+        },
+        success: function(data){
+            
+            if(typeof data['provinces'] !== "undefined"){
+
+                var html = generateOptionsInSelect( data['provinces'], true );
+
+                elements['provinces_element'].empty();
+                elements['provinces_element'].append(html);
+                elements['provinces_element'].show();
+            }
+        },
+        error: function(data){
+            console.log(data);
+        }
+    });
+}
+
+function generateOptionsInSelect(options, isHavingAllOption){
+
+    var html = '';
+
+    if( isHavingAllOption ){
+        html += '<option value="All">All</option>';
+    }
+
+    for(var i = 0; i < options.length; i++){
+        html += '<option value="' + options[i]['name'] + '">' + options[i]['name'] + '</option>';
+    }
+
+    return html;
+}
+
 function generateErrorInfo(errors){
 
     var html = '';

@@ -48,7 +48,8 @@
       </div>
       <p>Family comes from
         <select id="countries" name="countries">
-          @foreach( Config::get('constants.countries') as $country)
+          <option value="All">All</option>
+          @foreach( $countries as $country)
             @if( isset($input['countries']) && $input['countries'] == $country['name'] )
               <option value="{{ $country['name'] }}" selected>{{ $country['name'] }}</option>
             @else
@@ -486,15 +487,27 @@
 
           var country = $(this).val();
           var provinces_element = $(this).parents('.info').find('#provinces');
-          var url = '';
 
           if(country === 'All'){
               provinces_element.hide();
           }
           else{
-              provinces_element.show();
+              // data
+              var data = [];
+              data['country_name'] = country;
+
+              // process urls
+              var urls = [];
+              urls['get_provinces'] = '{{ action('ProvinceController@getAllByCountry') }}';
+
+              // elements
+              var elements = [];
+              elements['provinces_element'] = provinces_element;
+
+              // process
+              ajaxLoadProvinces(data, elements, urls);
           }
-          //ajaxLoadProvinces(country, provinces_element, url);
+
       })
   });
 

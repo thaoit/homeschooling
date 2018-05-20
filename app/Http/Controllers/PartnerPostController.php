@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\PartnerPostService;
+use App\Services\CountryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,8 +16,9 @@ class PartnerPostController extends Controller
 
         $own_posts = PartnerPostService::getAllByUser($user_id);
         $not_own_posts = PartnerPostService::getAllNotByUser($user_id);
+        $countries = CountryService::getAll();
 
-        return view('community/group', compact('own_posts', 'not_own_posts'));
+        return view('community/group', compact('own_posts', 'not_own_posts', 'countries'));
     }
 
     public function delete(Request $request){
@@ -65,8 +67,8 @@ class PartnerPostController extends Controller
         $user_id = Auth::user()->id;
         $own_posts = PartnerPostService::searchPostByUser($user_id, $input);
         $not_own_posts = PartnerPostService::searchPostNotByUser($user_id, $input);
+        $countries = CountryService::getAll();
 
-
-        return view('community/group', compact('own_posts', 'not_own_posts', 'input', 'topics'));
+        return view('community/group', compact('own_posts', 'not_own_posts', 'input', 'topics', 'countries'));
     }
 }

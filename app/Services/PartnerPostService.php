@@ -72,7 +72,7 @@ class PartnerPostService{
         $query = DB::table('partner_posts')
                     ->join('users', 'partner_posts.user_id', '=', 'users.id')
                     ->where('users.id', '<>', $user_id)
-                    ->select('partner_posts.*', 'users.id as user_id', 'users.name as user_name')
+                    ->select('partner_posts.*', 'users.id as user_id', 'users.username as user_name')
                     ->latest();
 
         PartnerPostService::queryAge($query, $object['age_from'], $object['age_to']);
@@ -88,7 +88,7 @@ class PartnerPostService{
         $query = DB::table('partner_posts')
                     ->join('users', 'partner_posts.user_id', '=', 'users.id')
                     ->where('users.id', '=', $user_id)
-                    ->select('partner_posts.*', 'users.id as user_id', 'users.name as user_name')
+                    ->select('partner_posts.*', 'users.id as user_id', 'users.username as user_name')
                     ->latest();
 
         PartnerPostService::queryAge($query, $object['age_from'], $object['age_to']);
