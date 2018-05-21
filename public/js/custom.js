@@ -13,7 +13,7 @@ function setupAjax(){
     });
 }
 
-function ajaxGetMediaReferencesByUser(user_id, process_url){
+function ajaxGetMediaReferencesByUser(process_url){
 
     // load uploaded references by current user
     $.ajax({
@@ -21,7 +21,6 @@ function ajaxGetMediaReferencesByUser(user_id, process_url){
         type: 'get',
         url: process_url,
         data: {
-            'user_id': user_id
         },
         success: function(data){
 
@@ -36,10 +35,9 @@ function ajaxGetMediaReferencesByUser(user_id, process_url){
     });
 }
 
-function ajaxStoreAndAssignNewUploadMediaReferences(new_media_refs, references_container, user_id, process_url, view_process_url){
+function ajaxStoreAndAssignNewUploadMediaReferences(new_media_refs, references_container, process_url, view_process_url){
 
     var formData = new FormData(new_media_refs);
-    formData.append('user_id', user_id);
 
     $.ajax({
         type: 'post',
@@ -59,7 +57,7 @@ function ajaxStoreAndAssignNewUploadMediaReferences(new_media_refs, references_c
     });
 }
 
-function ajaxStoreAndAssignNewUrlMediaReferences(url_media_ref, references_container, user_id, process_url, view_process_url){
+function ajaxStoreAndAssignNewUrlMediaReferences(url_media_ref, references_container, process_url, view_process_url){
 
     var url = url_media_ref.children('input').val();
     var html_data = generateReferenceAfterChosen(
@@ -75,8 +73,7 @@ function ajaxStoreAndAssignNewUrlMediaReferences(url_media_ref, references_conta
         type: 'post',
         url: process_url,
         data: {
-            url: url_media_ref.children('input').val(),
-            user_id: user_id
+            url: url_media_ref.children('input').val()
         },
         success: function(data){
 
@@ -201,7 +198,6 @@ function ajaxSaveAllRelatingLesson(request_data, elements, process_url){
         elements['general-container'].attr('data-lesson-id'),
         request_data['title'],
         request_data['intro'],
-        request_data['user-id'],
         request_data['is-publish']
     );
 
@@ -225,7 +221,7 @@ function ajaxSaveAllRelatingLesson(request_data, elements, process_url){
     $.ajax({
 
         type: 'post',
-        url: process_url,
+        url: process_url['save-lesson'],
         data:{
             'general': general,
             'outlines': outlines,
@@ -238,9 +234,18 @@ function ajaxSaveAllRelatingLesson(request_data, elements, process_url){
         },
         success: function(data){
 
-            if( !data['success'] ){
+            if( typeof data['errors'] !== "undefined" ){
+
+                var html = generateErrorInfo( data['errors'] );
+
+                elements['alert-container'].empty();
+                elements['alert-container'].append(html);
+                elements['alert-container'].show();
                 return;
             }
+
+            // hide alert
+            elements['alert-container'].hide();
 
             // assign lesson's id
             lesson_id = data['id'];
@@ -268,6 +273,18 @@ function ajaxSaveAllRelatingLesson(request_data, elements, process_url){
             // change chosen
             elements['main-status-element'].addClass('chosen-button');
             elements['sub-status-element'].removeClass('chosen-button');
+            elements['main-status-element'].blur();
+
+            // show preview element
+            if(typeof elements['preview-element'] !== "undefined"){
+
+                elements['preview-element'].attr(
+                  'href',
+                  process_url['preview-lesson'].substring(0, process_url['preview-lesson'].lastIndexOf(':')) + lesson_id
+                );
+
+                elements['preview-element'].show();
+            }
         },
         error: function(data){
           console.log(data);
@@ -279,13 +296,12 @@ function ajaxSaveAllRelatingLesson(request_data, elements, process_url){
     });
 }
 
-function getObjOfGeneralLesson(lesson_id, title, intro, author_id, is_publish){
+function getObjOfGeneralLesson(lesson_id, title, intro, is_publish){
 
     var array = {
         id: lesson_id,
         title: title,
         intro: intro,
-        author_id: author_id,
         is_publish: is_publish
     };
 
@@ -1238,7 +1254,7 @@ function ajaxLoadProvinces(request_data, elements, process_url){
           country: request_data['country_name']
         },
         success: function(data){
-            
+
             if(typeof data['provinces'] !== "undefined"){
 
                 var html = generateOptionsInSelect( data['provinces'], true );
@@ -1308,4 +1324,31 @@ function setCompleteStatus(element, message){
 
     element.innerText = message;
     element.readOnly = false;
+}
+
+function checkAges(age_from_input, age_to_input, message_element){
+
+    if( age_from_input.val().length === 0 || age_to_input.val().length === 0 ){
+        return true;
+    }
+
+    var age_from = parseInt( age_from_input.val() );
+    var age_to = parseInt( age_to_input.val() );
+
+    if( age_from > age_to ){
+
+        var errors = ['Age to needs to be larger than Age from'];
+        var html = generateErrorInfo(errors);
+
+        message_element.empty();
+        message_element.append(html);
+        message_element.show();
+
+        return false;
+    }
+    else{
+
+        message_element.hide();
+        return true;
+    }
 }

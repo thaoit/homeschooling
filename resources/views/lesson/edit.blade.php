@@ -2,90 +2,91 @@
 
 @section('content')
 
-  <div class="container-fluid" id="general" data-lesson-id="{{ $lesson['general']->id }}">
+  <div class="creating-lesson">
+    <div class="container-fluid" id="general" data-lesson-id="{{ $lesson['general']->id }}">
 
-    <div class="form-group">
-      <input class="form-control" id="title" type="text" name="title" placeholder="Title here" value="{{ $lesson['general']->title }}" required>
-    </div>
-    <div class="form-group">
-      <textarea id="intro" class="col-sm-6 col-sm-offset-3 col-xs-12" name="intro" rows="3" placeholder="Intro here">
-        {{ $lesson['general']->intro }}
-      </textarea>
-    </div>
-    <div class="chosen-hints">
-      <!--<span>
-        Science
-        <span class="close-chosen-hint">&times</span>
-      </span>
-      <span>
-        Art
-        <span class="close-chosen-hint">&times</span>
-      </span>-->
-      @foreach( $lesson['topics'] as $topic )
-      <span class="chosen-hint" data-id="{{ $topic->id }}">
-        {{ $topic->name }}
-        <span class="close-chosen-hint">&times</span>
-      </span>
-      @endforeach
-
-      <span>
-        Add
-        <span class="glyphicon glyphicon-plus" id="add-topic" data-toggle="modal" data-target="#topic-modal" title="Add more topics"></span>
-      </span>
-
-    </div>
-  </div>
-
-  <div class="col-xs-12 col-md-3">
-    <div class="form-group border outline-container" data-target="#outline-content" data-control-next="#nextstep">
-      <p>Outline</p>
-
-      @for( $i = 0; $i < count($lesson['outlines']); $i++ )
-        <div class="input-group">
-          <span class="input-group-addon step-index">Step {{ $i + 1 }} - </span>
-          <input class="form-control outline" type="text" value="{{ $lesson['outlines'][$i]->name }}" data-id="{{ $i + 1 }}" data-outline-id="{{ $lesson['outlines'][$i]->id }}">
-          <span class='input-group-addon close-outline' data-toggle="modal" data-target="#confirmation-modal">&times;</span>
-        </div>
-      @endfor
-
-    </div>
-    <div class="form-group border" id="references-container">
-      <p>References</p>
-      <div class="content">
-
-        @foreach( $lesson['media']['types'] as $media_type )
-          @foreach( $media_type as $media )
-            <li data-id="{{ $media->id }}">
-              <a href="{{ $media->url }}" target="_blank">
-                {{ $media->origin_name }}
-              </a>
-              <span class="close-reference" title="Close this reference">&times;</span>
-            </li>
-          @endforeach
+      <div class="form-group">
+        <input class="form-control" id="title" type="text" name="title" placeholder="Title here" value="{{ $lesson['general']->title }}" required>
+      </div>
+      <div class="form-group">
+        <textarea id="intro" class="col-sm-6 col-sm-offset-3 col-xs-12" name="intro" rows="3" placeholder="Intro here">
+          {{ $lesson['general']->intro }}
+        </textarea>
+      </div>
+      <div class="chosen-hints">
+        <!--<span>
+          Science
+          <span class="close-chosen-hint">&times</span>
+        </span>
+        <span>
+          Art
+          <span class="close-chosen-hint">&times</span>
+        </span>-->
+        @foreach( $lesson['topics'] as $topic )
+        <span class="chosen-hint" data-id="{{ $topic->id }}">
+          {{ $topic->name }}
+          <span class="close-chosen-hint">&times</span>
+        </span>
         @endforeach
 
-      </div>
-      <button class="references-modal-btn" type="button" name="" title="Add references" data-toggle="modal" data-target="#references-modal">
-        <span class="glyphicon glyphicon-plus"></span>
-      </button>
-    </div>
-    <div class="form-group border test-container">
-      <p>Attached Tests</p>
-      <div class="content">
-        <!--<li>Test discovery about the Earth
-          <span class="from"> - My resource</span>
-        </li>
-        <li>How do animals sleep in the winter? What is a greate question!
-          <span class="from"> - Community</span>
-        </li>-->
-      </div>
-      <button class="test-modal-btn" type="button" name="" title="Add tests" data-toggle="modal" data-target="#test-modal">
-        <span class="glyphicon glyphicon-plus"></span>
-      </button>
-    </div>
-  </div>
+        <span>
+          Add
+          <span class="glyphicon glyphicon-plus" id="add-topic" data-toggle="modal" data-target="#topic-modal" title="Add more topics"></span>
+        </span>
 
-  <div class="col-xs-12 col-md-9">
+      </div>
+    </div>
+
+    <div class="col-xs-12 col-md-3">
+      <div class="form-group border outline-container" data-target="#outline-content" data-control-next="#nextstep">
+        <p>Outline</p>
+
+        @for( $i = 0; $i < count($lesson['outlines']); $i++ )
+          <div class="input-group">
+            <span class="input-group-addon step-index">Step {{ $i + 1 }} - </span>
+            <input class="form-control outline" type="text" value="{{ $lesson['outlines'][$i]->name }}" data-id="{{ $i + 1 }}" data-outline-id="{{ $lesson['outlines'][$i]->id }}">
+            <span class='input-group-addon close-outline' data-toggle="modal" data-target="#confirmation-modal">&times;</span>
+          </div>
+        @endfor
+
+      </div>
+      <div class="form-group border" id="references-container">
+        <p>References</p>
+        <div class="content">
+
+          @foreach( $lesson['media']['types'] as $media_type )
+            @foreach( $media_type as $media )
+              <li data-id="{{ $media->id }}">
+                <a href="{{ $media->url }}" target="_blank">
+                  {{ $media->origin_name }}
+                </a>
+                <span class="close-reference" title="Close this reference">&times;</span>
+              </li>
+            @endforeach
+          @endforeach
+
+        </div>
+        <button class="references-modal-btn" type="button" name="" title="Add references" data-toggle="modal" data-target="#references-modal">
+          <span class="glyphicon glyphicon-plus"></span>
+        </button>
+      </div>
+      <div class="form-group border test-container">
+        <p>Attached Tests</p>
+        <div class="content">
+          <!--<li>Test discovery about the Earth
+            <span class="from"> - My resource</span>
+          </li>
+          <li>How do animals sleep in the winter? What is a greate question!
+            <span class="from"> - Community</span>
+          </li>-->
+        </div>
+        <button class="test-modal-btn" type="button" name="" title="Add tests" data-toggle="modal" data-target="#test-modal">
+          <span class="glyphicon glyphicon-plus"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="col-xs-12 col-md-9">
     <!--<textarea id="outline-content" name="outline-content" rows="8"></textarea>-->
     <div id="step-nav" data-outline-index=0>
       <p>
@@ -101,11 +102,11 @@
       @endforeach
 
     </div>
-
+    <div class="alert-container"></div>
     <div class="form-group" id="func-buttons">
-      <button id="preview" class="btn btn-default" type="submit" name="button">
-        <a href="{{ action('LessonController@view', $lesson['general']->id) }}" target="_blank">Preview</a>
-      </button>
+      <a id="preview" href="{{ action('LessonController@view', $lesson['general']->id) }}" target="_blank">
+        <button class="btn btn-default" type="submit" name="button">Preview</button>
+      </a>
       @if( $lesson['general']->status == Config::get('constants.lesson_status.draft') )
         <button id="save_as_draft" class="btn btn-default chosen-button" type="submit" name="save_as_draft">Save as Draft</button>
         <button id="publish" class="btn btn-default" type="submit" name="publish">Publish</button>
@@ -115,7 +116,7 @@
       @endif
     </div>
   </div>
-
+  </div>
   <!-- Topic Modal -->
   <div id="topic-modal" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -259,8 +260,8 @@
           <li class="option">
             <p class="option-name">Your existed uploaded references</p>
             <ul class="option-content uploaded-refs">
-              <li class="uploaded-ref">All in the Earth.doc</li>
-              <li class="uploaded-ref">Who change your life?.pdf</li>
+              <!--<li class="uploaded-ref">All in the Earth.doc</li>
+              <li class="uploaded-ref">Who change your life?.pdf</li>-->
             </ul>
 
           </li>
@@ -667,9 +668,8 @@
 
       // open References modal
       $('.references-modal-btn').on('click', function(){
-          // get current user id
-          user_id = {{ Auth::user()->id }};
-          ajaxGetMediaReferencesByUser(user_id, '{{ action('MediaController@getMediaReferencesByUser') }}');
+
+          ajaxGetMediaReferencesByUser('{{ action('MediaController@getMediaReferencesByUser') }}');
       })
 
       // actions after closing the modal
@@ -686,7 +686,6 @@
               ajaxStoreAndAssignNewUploadMediaReferences(
                   new_media_refs[0],
                   references_container,
-                  {{ Auth::user()->id }},
                   '{{ action('MediaController@storeUploadMediaReferences') }}',
                   '{{ action('MediaController@viewMediaReference', 'url') }}'
               );
@@ -713,7 +712,6 @@
               ajaxStoreAndAssignNewUrlMediaReferences(
                   url_media_ref,
                   references_container,
-                  {{ Auth::user()->id }},
                   '{{ action('MediaController@storeUrlMediaReferences') }}',
                   '{{ action('MediaController@viewMediaReference', 'url') }}'
               );
@@ -744,12 +742,12 @@
           // request data
           var data = [];
           data['title'] = $('#title').val();
-          data['intro'] = $('#intro').val()
-          data['user-id'] = {{ Auth::user()->id }};
-          data['is-publish'] = false;
+          data['intro'] = $('#intro').val();
+          data['is-publish'] = 'false';
 
           // process url
-          var url = '{{ action('GeneralController@saveAllRelatingLesson') }}';
+          var urls = [];
+          urls['save-lesson'] = '{{ action('GeneralController@saveAllRelatingLesson') }}';
 
           // elements
           var elements = [];
@@ -761,9 +759,10 @@
           elements['general-container'] = $('#general');
           elements['main-status-element'] = $(this);
           elements['sub-status-element'] = $('#publish');
-          console.log(elements);
+          elements['alert-container'] = $('.creating-lesson .alert-container');
+
           // process
-          ajaxSaveAllRelatingLesson(data, elements, url);
+          ajaxSaveAllRelatingLesson(data, elements, urls);
       })
 
       // publish lesson
@@ -772,12 +771,12 @@
           // request data
           var data = [];
           data['title'] = $('#title').val();
-          data['intro'] = $('#intro').val()
-          data['user-id'] = {{ Auth::user()->id }};
-          data['is-publish'] = true;
+          data['intro'] = $('#intro').val();
+          data['is-publish'] = 'true';
 
           // process url
-          var url = '{{ action('GeneralController@saveAllRelatingLesson') }}';
+          var urls = [];
+          urls['save-lesson'] = '{{ action('GeneralController@saveAllRelatingLesson') }}';
 
           // elements
           var elements = [];
@@ -789,9 +788,10 @@
           elements['general-container'] = $('#general');
           elements['main-status-element'] = $(this);
           elements['sub-status-element'] = $('#save_as_draft');
-          console.log(elements);
+          elements['alert-container'] = $('.creating-lesson .alert-container');
+
           // process
-          ajaxSaveAllRelatingLesson(data, elements, url);
+          ajaxSaveAllRelatingLesson(data, elements, urls);
       })
 
   });

@@ -6,11 +6,14 @@ use App\Services\OutlineService;
 use App\Services\TopicService;
 use App\Services\LessonTopicService;
 use App\Services\ReferenceService;
+use Illuminate\Support\Facades\Auth;
 
 class GeneralService{
 
     // return lesson id
     public static function saveGeneral($general){
+
+        $general['author_id'] = Auth::user()->id;
 
         if( !isset( $general['id'] ) ){
             $lesson_id = LessonService::store( $general );

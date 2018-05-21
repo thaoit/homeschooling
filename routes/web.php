@@ -107,11 +107,15 @@ Route::prefix('/topics')->group(function(){
   Route::post('/save-topics', 'TopicController@doStoreUpdateDelete');
 });
 
-Route::post('/upload/media-references/new-upload', 'MediaController@storeUploadMediaReferences');
+Route::middleware('auth')->prefix('/upload')->group(function(){
 
-Route::post('/upload/media-references/new-url', 'MediaController@storeUrlMediaReferences');
+  Route::post('/media-references/new-upload', 'MediaController@storeUploadMediaReferences');
 
-Route::get('/upload/media-references-by-user', 'MediaController@getMediaReferencesByUser');
+  Route::post('/media-references/new-url', 'MediaController@storeUrlMediaReferences');
+
+  Route::get('/media-references-by-user', 'MediaController@getMediaReferencesByUser');
+
+});
 
 Route::get('/upload/media-references/view/{name}', 'MediaController@viewMediaReference');
 

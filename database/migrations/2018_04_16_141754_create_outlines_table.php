@@ -15,8 +15,8 @@ class CreateOutlinesTable extends Migration
     {
         Schema::create('outlines', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->longText('content');
+            $table->string('name')->nullable();
+            $table->longText('content')->nullable();
             $table->bigInteger('lesson_id')->unsigned();
 
             $table->foreign('lesson_id')->references('id')->on('lessons');

@@ -17,6 +17,8 @@ class CreateLessonTopicsTable extends Migration
             $table->bigInteger('lesson_id')->unsigned();
             $table->bigInteger('topic_id')->unsigned();
 
+            $table->primary(['lesson_id', 'topic_id']);
+
             $table->foreign('lesson_id')->references('id')->on('lessons');
             $table->foreign('topic_id')->references('id')->on('topics');
         });

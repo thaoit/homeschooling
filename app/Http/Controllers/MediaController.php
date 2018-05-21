@@ -9,6 +9,7 @@ use PDF;
 use App\Models\Media;
 use App\Services\MediaService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MediaController extends Controller
 {
@@ -28,7 +29,7 @@ class MediaController extends Controller
 
         // get files
         $media_refs = $request->file('new-media-refs');
-        $user_id = $request->input('user_id');
+        $user_id = Auth::user()->id;
         //$folder = "media-references";
 
         // save files and save the generated paths
@@ -58,10 +59,7 @@ class MediaController extends Controller
 
     public function getMediaReferencesByUser(Request $request){
 
-        $user_id = $request->input('user_id');
-
-        if($user_id == null)
-          return [];
+        $user_id = Auth::user()->id;
 
         return Media::where('user_id', $user_id)
                     ->whereNotNull('name')
@@ -72,7 +70,7 @@ class MediaController extends Controller
     public function storeUrlMediaReferences(Request $request){
 
         $url = $request->input('url');
-        $user_id = $request->input('user_id');
+        $user_id = Auth::user()->id;
         $origin_name = substr($url, strrpos($url, "/") + 1);
 
         if($url == null || $user_id == null)

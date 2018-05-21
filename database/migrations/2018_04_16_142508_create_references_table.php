@@ -17,6 +17,8 @@ class CreateReferencesTable extends Migration
             $table->bigInteger('lesson_id')->unsigned();
             $table->bigInteger('media_id')->unsigned();
 
+            $table->primary(['lesson_id', 'media_id']);
+
             $table->foreign('lesson_id')->references('id')->on('lessons');
             $table->foreign('media_id')->references('id')->on('medias');
         });

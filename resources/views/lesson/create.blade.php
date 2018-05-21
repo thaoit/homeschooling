@@ -2,10 +2,11 @@
 
 @section('content')
 
+  <div class="creating-lesson">
   <div class="container-fluid" id="general">
 
     <div class="form-group">
-      <input class="form-control" id="title" type="text" name="title" placeholder="Title here" value="Title here" required>
+      <input class="form-control" id="title" type="text" name="title" placeholder="Title here">
     </div>
     <div class="form-group">
       <textarea id="intro" class="col-sm-6 col-sm-offset-3 col-xs-12" name="intro" rows="3" placeholder="Intro here"></textarea>
@@ -33,7 +34,7 @@
       <p>Outline</p>
       <div class="input-group">
         <span class="input-group-addon step-index">Step 1 - </span>
-        <input class="form-control outline" type="text" value="Hi World" data-id="1">
+        <input class="form-control outline" type="text" value="New outline" data-id="1">
         <span class='input-group-addon close-outline' data-toggle="modal" data-target="#confirmation-modal">&times;</span>
       </div>
     </div>
@@ -77,12 +78,15 @@
 
       </div>
     </div>
-
+    <div class="alert-container"></div>
     <div class="form-group" id="func-buttons">
-      <button id="preview" class="btn btn-default" type="submit" name="button">Preview</button>
+      <a id="preview" href="" style="display: none" target="_blank">
+        <button class="btn btn-default" type="submit" name="button">Preview</button>
+      </a>
       <button id="save_as_draft" class="btn btn-default" type="submit" name="save_as_draft">Save as Draft</button>
       <button id="publish" class="btn btn-default" type="submit" name="publish">Publish</button>
     </div>
+  </div>
   </div>
 
   <!-- Topic Modal -->
@@ -228,8 +232,8 @@
           <li class="option">
             <p class="option-name">Your existed uploaded references</p>
             <ul class="option-content uploaded-refs">
-              <li class="uploaded-ref">All in the Earth.doc</li>
-              <li class="uploaded-ref">Who change your life?.pdf</li>
+              <!--<li class="uploaded-ref">All in the Earth.doc</li>
+              <li class="uploaded-ref">Who change your life?.pdf</li>-->
             </ul>
 
           </li>
@@ -636,7 +640,6 @@
               ajaxStoreAndAssignNewUploadMediaReferences(
                   new_media_refs[0],
                   references_container,
-                  {{ Auth::user()->id }},
                   '{{ action('MediaController@storeUploadMediaReferences') }}',
                   '{{ action('MediaController@viewMediaReference', 'url') }}'
               );
@@ -663,7 +666,6 @@
               ajaxStoreAndAssignNewUrlMediaReferences(
                   url_media_ref,
                   references_container,
-                  {{ Auth::user()->id }},
                   '{{ action('MediaController@storeUrlMediaReferences') }}',
                   '{{ action('MediaController@viewMediaReference', 'url') }}'
               );
@@ -694,12 +696,13 @@
           // request data
           var data = [];
           data['title'] = $('#title').val();
-          data['intro'] = $('#intro').val()
-          data['user-id'] = {{ Auth::user()->id }};
-          data['is-publish'] = false;
+          data['intro'] = $('#intro').val();
+          data['is-publish'] = 'false';
 
           // process url
-          var url = '{{ action('GeneralController@saveAllRelatingLesson') }}';
+          var urls = [];
+          urls['save-lesson'] = '{{ action('GeneralController@saveAllRelatingLesson') }}';
+          urls['preview-lesson'] = '{{ action('LessonController@view', ':id') }}';
 
           // elements
           var elements = [];
@@ -711,9 +714,11 @@
           elements['general-container'] = $('#general');
           elements['main-status-element'] = $(this);
           elements['sub-status-element'] = $('#publish');
-          console.log(elements);
+          elements['alert-container'] = $('.creating-lesson .alert-container');
+          elements['preview-element'] = $('#func-buttons #preview');
+
           // process
-          ajaxSaveAllRelatingLesson(data, elements, url);
+          ajaxSaveAllRelatingLesson(data, elements, urls);
       })
 
       // publish lesson
@@ -722,12 +727,13 @@
           // request data
           var data = [];
           data['title'] = $('#title').val();
-          data['intro'] = $('#intro').val()
-          data['user-id'] = {{ Auth::user()->id }};
-          data['is-publish'] = true;
+          data['intro'] = $('#intro').val();
+          data['is-publish'] = 'true';
 
           // process url
-          var url = '{{ action('GeneralController@saveAllRelatingLesson') }}';
+          var urls = [];
+          urls['save-lesson'] = '{{ action('GeneralController@saveAllRelatingLesson') }}';
+          urls['preview-lesson'] = '{{ action('LessonController@view', ':id') }}';
 
           // elements
           var elements = [];
@@ -739,9 +745,11 @@
           elements['general-container'] = $('#general');
           elements['main-status-element'] = $(this);
           elements['sub-status-element'] = $('#save_as_draft');
-          console.log(elements);
+          elements['alert-container'] = $('.creating-lesson .alert-container');
+          elements['preview-element'] = $('#func-buttons #preview');
+
           // process
-          ajaxSaveAllRelatingLesson(data, elements, url);
+          ajaxSaveAllRelatingLesson(data, elements, urls);
       })
 
   });

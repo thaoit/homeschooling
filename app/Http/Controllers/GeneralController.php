@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\GeneralService;
+use App\Services\LessonService;
 
 use Illuminate\Http\Request;
 
@@ -12,7 +13,17 @@ class GeneralController extends Controller
 
         $input = $request->all();
 
-        // variables for returning
+        // validate input
+        $validator = LessonService::validate( $input['general'] );
+
+        if( $validator->fails() ){
+
+            return [
+                'errors' => $validator->errors()->all()
+            ];
+        }
+
+        // validate ok, variables for returning
         $success = true;
         $lesson_id;
         $new_outlines_id = array();

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Config;
+use Validator;
 use App\Models\Lesson;
 use App\Models\User;
 use App\Models\LessonTopic;
@@ -16,7 +17,11 @@ class LessonService{
 
     public static function validate($input){
 
+        $rules = [
+            'title' => 'required'
+        ];
 
+        return Validator::make($input, $rules);
     }
 
     public static function store($object){

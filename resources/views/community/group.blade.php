@@ -9,9 +9,10 @@
     </div>
     <form class="content">
       <p>Children's age from
-        <input type="number" name="age_from" value="{{ isset($input['age_from']) ? $input['age_from'] : '' }}">
+        <input class="age-from" type="number" name="age_from" min="1" value="{{ isset($input['age_from']) ? $input['age_from'] : '' }}">
         to
-        <input type="number" name="age_to" value="{{ isset($input['age_to']) ? $input['age_to'] : '' }}">
+        <input class="age-to" type="number" name="age_to" min="1" value="{{ isset($input['age_to']) ? $input['age_to'] : '' }}">
+        <span class="alert-container"></span>
       </p>
       <p>Gender
         <select name="gender">
@@ -407,54 +408,66 @@
 
       $('.info .post-btn').on('click', function(){
 
-          var form = $(this).parents('.info').find('.content').serialize();
-          var other_info = '&other_info=' + $(this).parents('.info').find('.other-info').val();
-          var favorite_topic_elements = $('.favourite-topics .chosen-hint');
-          var favorite_topics = '';
+          var info = $(this).parents('.info');
+          var checkInput = checkAges( info.find('.age-from'), info.find('.age-to'), info.find('.alert-container') );
 
-          for(var i = 0; i < favorite_topic_elements.length; i++){
+          if( checkInput ){
+            
+              var form = $(this).parents('.info').find('.content').serialize();
+              var other_info = '&other_info=' + $(this).parents('.info').find('.other-info').val();
+              var favorite_topic_elements = $('.favourite-topics .chosen-hint');
+              var favorite_topics = '';
 
-              var text = favorite_topic_elements[i].innerText;
-              var close_text = favorite_topic_elements.eq(i).children('.close-chosen-hint')[0].innerText;
+              for(var i = 0; i < favorite_topic_elements.length; i++){
 
-              favorite_topics += text.substr( 0, text.length - close_text.length );
+                  var text = favorite_topic_elements[i].innerText;
+                  var close_text = favorite_topic_elements.eq(i).children('.close-chosen-hint')[0].innerText;
 
-              if(i < favorite_topic_elements.length - 1){
-                  favorite_topics += ', ';
+                  favorite_topics += text.substr( 0, text.length - close_text.length );
+
+                  if(i < favorite_topic_elements.length - 1){
+                      favorite_topics += ', ';
+                  }
               }
+              favorite_topics = '&favorite_topics=' + favorite_topics;
+
+              url = '{{ action('PartnerPostController@post') }}'
+
+              ajaxPartnerPost(form + other_info + favorite_topics, url);
           }
-          favorite_topics = '&favorite_topics=' + favorite_topics;
-
-          url = '{{ action('PartnerPostController@post') }}'
-
-          ajaxPartnerPost(form + other_info + favorite_topics, url);
       });
 
       $('.info .search-btn').on('click', function(){
 
-          var form = $(this).parents('.info').find('.content').serialize();
-          var other_info = '&other_info=' + $(this).parents('.info').find('.other-info').val();
-          var favorite_topic_elements = $('.favourite-topics .chosen-hint');
-          var favorite_topics = '';
+          var info = $(this).parents('.info');
+          var checkInput = checkAges( info.find('.age-from'), info.find('.age-to'), info.find('.alert-container') );
 
-          for(var i = 0; i < favorite_topic_elements.length; i++){
+          if( checkInput ){
 
-              var text = favorite_topic_elements[i].innerText;
-              var close_text = favorite_topic_elements.eq(i).children('.close-chosen-hint')[0].innerText;
+              var form = $(this).parents('.info').find('.content').serialize();
+              var other_info = '&other_info=' + $(this).parents('.info').find('.other-info').val();
+              var favorite_topic_elements = $('.favourite-topics .chosen-hint');
+              var favorite_topics = '';
 
-              favorite_topics += text.substr( 0, text.length - close_text.length );
+              for(var i = 0; i < favorite_topic_elements.length; i++){
 
-              if(i < favorite_topic_elements.length - 1){
-                  favorite_topics += ', ';
+                  var text = favorite_topic_elements[i].innerText;
+                  var close_text = favorite_topic_elements.eq(i).children('.close-chosen-hint')[0].innerText;
+
+                  favorite_topics += text.substr( 0, text.length - close_text.length );
+
+                  if(i < favorite_topic_elements.length - 1){
+                      favorite_topics += ', ';
+                  }
               }
+              favorite_topics = '&favorite_topics=' + favorite_topics;
+
+              url = '{{ action('PartnerPostController@search') }}'
+
+              //ajaxPartnerSearch(form + other_info + favorite_topics, url);
+              var query = form + other_info + favorite_topics;
+              window.location.href = url + '?' + query;
           }
-          favorite_topics = '&favorite_topics=' + favorite_topics;
-
-          url = '{{ action('PartnerPostController@search') }}'
-
-          //ajaxPartnerSearch(form + other_info + favorite_topics, url);
-          var query = form + other_info + favorite_topics;
-          window.location.href = url + '?' + query;
       });
 
       $('.own-posts .delete-post').on('click', function(){
@@ -509,6 +522,15 @@
           }
 
       })
+
+      $('.group-container .info input[type=number]').on('keypress', function(e){
+
+          // only accept positive numbers ( >= 1)
+          if( e.key === "-" || e.key === "+" || ($(this).val().length === 0 && e.key === "0")){
+              return false;
+          }
+      })
+
   });
 
 </script>
