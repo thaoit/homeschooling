@@ -1,3 +1,8 @@
+h1, h2, h3, h4, h5{
+  font-family: "Comic Sans MS", sans-serif;
+  color: #666600;
+}
+
 button{
   border: none;
   outline: none;
@@ -6,6 +11,85 @@ button{
 
 textarea{
   resize: vertical;
+}
+
+a{
+  color: #000;
+}
+
+header > .navbar{
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+  background-color: #C2DB99;
+  border-color: #C2DB99;
+  border-radius: 0;
+  top: 0;
+}
+
+header > .navbar a{
+  color: #fff;
+  font-family: "Comic Sans MS", sans-serif;
+  display: inline-block;
+}
+
+header > .navbar .brand{
+  float: left;
+  height: 50px;
+}
+
+header > .navbar .brand img{
+  height: 40px;
+  margin-top: -20px;
+}
+
+header > .navbar .brand a{
+  font-size: 20px;
+  margin-top: 15px;
+}
+
+header .navbar-default .navbar-nav>li>a{
+  color: #fff;
+}
+
+header > .navbar .dropdown-menu{
+  background-color: #C2DB99;
+}
+
+header > .navbar .dropdown-menu a{
+  display: block;
+  padding: 4px 15px;
+}
+
+header .navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus{
+  background-color: transparent;
+}
+
+header .navbar-default .navbar-toggle{
+  border-color: transparent;
+}
+
+header .navbar-default .navbar-toggle .icon-bar{
+  background-color: #fff;
+}
+
+footer{
+  clear: both;
+  background-color: #C2DB99;
+}
+
+.main-background{
+  background-color: #F0F4B9;
+}
+
+.welcome-background{
+  /*background-image: url('../img/slating lines background.png');
+  background-repeat: no-repeat;
+  background-size: cover;*/
+}
+
+.full-width{
+  width: 100%;
 }
 
 .clearfix{
@@ -92,4 +176,50 @@ textarea{
 
 .table-responsive{
   border: none;
+}
+
+.slide-updown-container{
+  position: relative;
+}
+
+.slide-updown-container .slide-updown{
+  position: absolute;
+  top: 0;
+}
+
+.slide-updown-transition{
+  transition: top 1s;
+}
+
+.slide-updown-container .slide-updown .slide-item a{
+  border: 1px solid #697A10;
+  border-radius: 4px;
+  padding: 8px;
+  color: #697A10;
+  display: inline-block;
+  background-color: #fff;
+}
+
+#recommend-lesson-container .title{
+  margin-bottom: 25px;
+  display: none;
+  text-align: right;
+}
+
+#welcome{
+  margin-top: 80px;
+  padding: 25px 0
+}
+
+#welcome .intro-container{
+  margin-top: 50px;
+}
+
+#welcome .intro-container .intro{
+  margin-bottom: 50px;
+}
+
+#welcome .intro-container .intro h4{
+  text-align: right;
+  margin-bottom: 25px;
 }
