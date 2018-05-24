@@ -32,23 +32,19 @@
         <h4 class="title" style="">Some lessons</h4>
         <div class="col-xs-3 col-sm-4 main-lesson-boundary slide-updown-container">
           <div class="slide-updown sub-lesson-boundary" style="right: 0">
-            <p class="slide-item"><a href="">1. Discovery about the Earth</a></p>
-            <p class="slide-item"><a href="">2. Moon night</a></p>
-            <p class="slide-item"><a href="">3. Discovery about the Earth</a></p>
-            <p class="slide-item"><a href="">4. Moon night</a></p>
-            <p class="slide-item"><a href="">5. Discovery about the Earth</a></p>
-            <p class="slide-item"><a href="">6. Moon night</a></p>
-            <p class="slide-item"><a href="">7. Discovery about the Earth</a></p>
-            <p class="slide-item"><a href="">8. Moon night</a></p>
+            @for( $i = 0; $i < $divider; $i++ )
+              <p class="slide-item"><a href="{{ action('LessonController@view', $lessons[$i]['general']->id) }}">{{ $lessons[$i]['general']->title }}</a></p>
+            @endfor
+            <!--<p class="slide-item"><a href="">1. Discovery about the Earth</a></p>
+            <p class="slide-item"><a href="">2. Moon night</a></p>-->
           </div>
         </div>
         <div class="col-xs-6 col-sm-4"></div>
         <div class="col-xs-3 col-sm-4 main-lesson-boundary slide-updown-container" style="position: relative">
           <div class="slide-updown sub-lesson-boundary" style="left: 0">
-            <p class="slide-item"><a href="">1. Discovery about the Earth</a></p>
-            <p class="slide-item"><a href="">2. Moon night</a></p>
-            <p class="slide-item"><a href="">3. Discovery about the Earth</a></p>
-            <p class="slide-item"><a href="">4. Moon night</a></p>
+            @for( $i = $divider; $i < count($lessons); $i++ )
+              <p class="slide-item"><a href="{{ action('LessonController@view', $lessons[$i]['general']->id) }}">{{ $lessons[$i]['general']->title }}</a></p>
+            @endfor
           </div>
         </div>
       </div>

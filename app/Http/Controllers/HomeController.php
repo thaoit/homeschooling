@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\LessonService;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +24,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('welcome');
+        $lessons = LessonService::getAllInPublic(null, 12);
+        $divider = round( count($lessons) / 2 );
+
+        return view('welcome', compact('lessons', 'divider'));
     }
 }
