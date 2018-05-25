@@ -2,6 +2,7 @@
 
 @section('content')
 
+<div class="content-page">
 <div class="container">
   <div class="col-xs-12 form-group">
 
@@ -38,7 +39,7 @@
         You need to choose at least 1 topic for fiter!
     </div>
 
-    <div class="filter-group">
+    <div class="filter-group text-center">
       <button class="filter-control filter-ok" type="button" name="filter_ok" title="Start filter">OK</button>
       <button class="filter-control" type="button" name="filter_cancel" title="Close filter pane" data-dismiss="filter-container">Cancel</button>
       <button class="filter-control filter-clear" type="button" title="Clear filter results" style="display: none">Clear</button>
@@ -189,12 +190,12 @@
   </div>
 
 </div>
+</div>
 
 @endsection
 
 @section('styles')
 
-<link rel="stylesheet" href="{{ asset('css/lesson-resource.css') }}">
 <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
 
 @endsection
@@ -305,7 +306,7 @@
           urls['view_media_reference'] = '{{ action('MediaController@viewMediaReference', ':name') }}';
           urls['view_lesson'] = '{{ action('LessonController@view', ':id') }}';
           urls['view_profile'] = '{{ action('UserController@profile', ':username') }}';
-          
+
           ajaxClearFilterLessons(
               data,
               urls,

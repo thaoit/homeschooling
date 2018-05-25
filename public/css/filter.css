@@ -100,11 +100,11 @@
 }
 
 .filter-container .filter-group .filter-options .checkbox-option input:checked ~ .checkmark{
-  background-color: blue;
+  background-color: #697A10;
 }
 
 .filter-container .filter-group .filter-options .radio-option input:checked ~ .checkmark{
-  border-color: blue;
+  border-color: #697A10;
 }
 
 .filter-container .filter-group .filter-options .checkbox-option input:checked ~ .checkmark::after{

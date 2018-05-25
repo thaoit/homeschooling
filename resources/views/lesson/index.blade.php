@@ -3,10 +3,10 @@
 
 @section('content')
 
-<div class="container">
+<div class="content-page">
+  <div class="container">
 
-
-  <h3>Your journal</h3>
+  <h3 class="text-center">Your journal</h3>
   <div class="col-xs-12 form-group">
     <!--<form action="" method="get" class="col-xs-12 col-sm-10 search-container">
       <div class="input-group">
@@ -28,7 +28,7 @@
       <button type="button" name="filter" title="Filter lesson" class="filter-btn" data-toggle="filter-container" data-target="#filter-lesson">
         <span class="glyphicon glyphicon-filter"></span>
       </button>
-      <button type="button" name="creating_lesson" title="Create new lesson" class="btn btn-default">
+      <button type="button" name="creating_lesson" title="Create new lesson" class="btn">
         <a href="{{ action('LessonController@create') }}"><span class="glyphicon glyphicon-plus"></span></a>
       </button>
     </div>
@@ -83,55 +83,10 @@
         You need to choose at least 1 topic for fiter!
     </div>
 
-    <div class="filter-group">
+    <div class="filter-group text-center">
       <button class="filter-control filter-ok" type="button" name="filter_ok" title="Start filter">OK</button>
       <button class="filter-control" type="button" name="filter_cancel" title="Close filter pane" data-dismiss="filter-container">Cancel</button>
       <button class="filter-control filter-clear" type="button" title="Clear filter results" style="display: none">Clear</button>
-    </div>
-  </div><div id="filter-lesson" class="filter-container">
-    <div class="filter-group">
-      <p class="filter-name">Topics</p>
-      <div class="filter-options">
-        <label class="col-xs-12 col-sm-3 col-md-2 checkbox-option">
-          <input type="checkbox" name="" value="science">
-          <span class="checkmark"></span>
-          Science
-        </label>
-        <label class="col-xs-12 col-sm-3 col-md-2 checkbox-option">
-          <input type="checkbox" name="" value="art">
-          <span class="checkmark"></span>
-          Art
-        </label>
-        <label class="col-xs-12 col-sm-3 col-md-2 checkbox-option">
-          <input type="checkbox" name="" value="skill">
-          <span class="checkmark"></span>
-          Skill
-        </label>
-        <label class="col-xs-12 col-sm-3 col-md-2 checkbox-option">
-          <input type="checkbox" name="" value="ecosystem">
-          <span class="checkmark"></span>
-          Ecosystem
-        </label>
-      </div>
-    </div>
-    <div class="filter-group">
-      <p class="filter-name">Time</p>
-      <div class="filter-options">
-        <label class="col-xs-12 col-sm-3 col-md-2 radio-option">
-          <input type="radio" name="time" value="lastly">
-          <span class="checkmark"></span>
-          Lastly
-        </label>
-        <label class="col-xs-12 col-sm-3 col-md-2 radio-option">
-          <input type="radio" name="time" value="oldest">
-          <span class="checkmark"></span>
-          Oldest
-        </label>
-      </div>
-    </div>
-    <div class="filter-group">
-      <button class="filter-control" type="button" name="filter_ok" title="Start filter">OK</button>
-      <button class="filter-control" type="button" name="filter_cancel" title="Close filter pane" data-dismiss="filter-container">Cancel</button>
     </div>
   </div>
 
@@ -656,72 +611,19 @@
     </div>
   </div>
 </div>
+</div>
 
 @endsection
 
 @section('styles')
   <!--<link rel="stylesheet" href="{{ asset('css/roadlist.css') }}">
   <link rel="stylesheet" href="{{ asset('css/search.css') }}">-->
-  <link rel="stylesheet" href="{{ asset('css/lesson-resource.css') }}">
   <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
 
   <style media="screen">
-    #outline-container{
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      padding: 10px;
-    }
-
-    #outline-container > p{
-
-    }
-
-    #outline-container > .input-group > .input-group-addon{
-      color: #ccc;
-      background-color: #fff;
-      border: none;
-    }
-
-    #outline-container > .input-group > input{
-      border: none;
-      box-shadow: none;
-      border-bottom: 1px solid #ccc;
-    }
-
-    .modal-header > #title{
-      font-size: 2em;
-      font-weight: bold;
-      border: none;
-      box-shadow: none;
-      border-bottom: 1px solid #ccc;
-    }
-    /* search + others*/
-    .container{
-      text-align: center;
-    }
 
     h3{
       margin-bottom: 30px;
-    }
-
-    .search-container{
-      margin-bottom: 10px;
-      padding: 0;
-    }
-
-    button a{
-      color: #000;
-    }
-
-    button a:hover, button a:active{
-      color: #000;
-      text-decoration: none;
-    }
-
-    /* Add - Filter */
-
-    .filter-create-container button{
-      border: none;
     }
 
     .lesson .control-container .delete-btn{

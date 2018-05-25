@@ -1,11 +1,6 @@
 .typing-hint{
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.typing-hint > input{
-  border: none;
-  box-shadow: none;
+  /*border: 1px solid #ccc;
+  border-radius: 4px;*/
 }
 
 .hints{
@@ -37,7 +32,8 @@
 
 .chosen-hints > span{
   border-radius: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #697A10;
+  color: #697A10;
   padding: 5px;
   margin: 0 3px;
 }

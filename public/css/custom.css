@@ -1,6 +1,6 @@
 h1, h2, h3, h4, h5{
   font-family: "Comic Sans MS", sans-serif;
-  color: #666600;
+  color: #697A10;
 }
 
 button{
@@ -9,12 +9,25 @@ button{
   background: none;
 }
 
+button:focus, button:hover{
+  background: none;
+}
+
 textarea{
   resize: vertical;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 a{
-  color: #000;
+  color: #697A10;
+}
+
+label{
+  color: #697A10;
+  font-weight: normal;
+  font-size: 0.9em;
 }
 
 header > .navbar{
@@ -78,14 +91,9 @@ footer{
   background-color: #C2DB99;
 }
 
-.main-background{
-  background-color: #F0F4B9;
-}
-
-.welcome-background{
-  /*background-image: url('../img/slating lines background.png');
-  background-repeat: no-repeat;
-  background-size: cover;*/
+.content-page{
+  margin-top: 100px;
+  overflow: auto;
 }
 
 .full-width{
@@ -96,26 +104,234 @@ footer{
   clear: both;
 }
 
-.text-center{
+.chosen-button{
+  color: #fff;
+  background-color: #697A10;
+  border-color: #697A10;
+}
+
+.border-no-background-button{
+  border: 1px solid #697A10;
+  color: #697A10;
+}
+
+.border-wrapper{
+  border: 1px solid #697A10;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.top-style-border-wrapper{
+  border: 1px solid #697A10;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.message{
+  font-size: 0.85em;
+  margin-top: 20px;
+  padding-left: 5px;
+  font-style: italic;
+  display: none;
+}
+
+.outlines .index{
+  color: #697A10;
+  padding-right: 10px;
+}
+
+#outline-content .note-editor.note-frame{
+  border: 1px solid #697A10;
+}
+
+.outline-container > .input-group > .input-group-addon{
+  color: #697A10;
+  background-color: #fff;
+  border: none;
+}
+
+.outline-container .close-outline{
+  cursor: pointer;
+}
+
+.option-container{
+  list-style: none;
+}
+
+.option-container .option{
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.option-container .option .option-name{
+  cursor: pointer;
+  padding: 10px;
+  margin-bottom: 0;
+}
+
+.option-container .option .option-name:hover{
+  background-color: #ccc;
+  color: #fff;
+}
+
+.option-container .option .option-content{
+  display: none;
+  margin-top: 15px;
+}
+
+.option-name-clicked{
+  background-color: #ccc;
+  color: #fff;
+}
+
+.make-color{
+    color: #697A10;
+}
+
+.details .outline .contents{
+  margin-bottom: 30px;
+}
+
+.details .outline .contents .video-container{
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+}
+
+.details .outline .contents .video-container .video{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.slide-container{
+  position: relative;
+  max-height: 1000px;
+  overflow: hidden;
+}
+
+.slide-container .slide{
+  position: absolute;
+  width: 100%;
+}
+
+.slide-container .slide p{
+  margin-bottom: 30px;
+}
+
+.slide-container h3,
+.slide-container h4,
+.slide-container h5{
   text-align: center;
 }
 
-.chosen-button{
-  color: #fff;
-  background-color: #333;
+.slide-container h4{
+  margin-bottom: 40px;
+}
+
+.slide-container .slide-back, .slide-container .slide-next{
+  color: #697A10;
+  border: 1px solid #697A10;
+  height: 28px;
+}
+
+.slide-container .slide-back span,
+.slide-container .slide-next span{
+  width: 14px;
+  height: 14px;
+}
+
+.slide-container .slide-back,
+.slide-container .slide-next{
+  position: fixed;
+  background-color: #fff;
+  border-radius: 50%;
+  z-index: 100;
+  outline: none;
+  margin: 15px;
+}
+
+.slide-container .slide-back{
+  left: 0;
+}
+
+.slide-container .slide-next{
+  right: 0;
+}
+
+.group-container .info, .post-container{
+  background-color: #F0F4B9;
+  padding: 15px;
+  margin-bottom: 45px;
+}
+
+.group-container .head, .group-container .foot{
+  text-align: center;
+}
+
+.group-container .head, .group-container .content{
+  margin-bottom: 30px;
+}
+
+.post-container{
+  overflow: auto;
+}
+
+.post-container .post{
+  padding: 0 15px;
+  max-width: 500px;
+  margin-bottom: 45px;
+  margin-left: auto;
+  margin-right: auto;
+  border-left: 3px solid #697A10;
+}
+
+.post-container .post .head,
+.post-container .post .content{
+  border-bottom: 1px solid #C2DB99;
+  margin-bottom: 15px;
+  overflow: auto;
+  text-align: left;
+}
+
+.post .content p:nth-child(2n + 1){
+  padding-left: 0;
+}
+
+.post .content p:nth-child(2n){
+  text-align: right;
+  padding-right: 0;
+}
+
+.post-container .delete-post-container{
+  padding: 0;
+  text-align: right;
+}
+
+.post-container .delete-post-container .delete-post{
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 1.3em;
 }
 
 .form-control{
   border: none;
   box-shadow: none;
   outline: none;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #C2DB99;
   border-radius: 0;
+  padding: 6px 0;
 }
 
 .form-control:focus {
   -webkit-box-shadow: none;
   box-shadow: none;
+  border-color: #697A10;
 }
 
 .profile-container .form-group{
@@ -126,8 +342,8 @@ footer{
   padding: 20px 0;
 }
 
-.profile-container label, .profile-container span{
-  color: #ccc;
+.profile-container span{
+  color: #697A10;
   font-weight: normal;
   font-size: 0.9em;
 }
@@ -200,26 +416,71 @@ footer{
   background-color: #fff;
 }
 
-#recommend-lesson-container .title{
-  margin-bottom: 25px;
-  display: none;
+.lesson-container{
+  margin-top: 45px;
+  text-align: left;
+}
+
+.lesson{
+  background-color: #F0F4B9;
+  padding: 15px 25px;
+  margin-bottom: 15px;
+}
+
+.lesson .head{
+  padding-bottom: 15px;
+  border-bottom: 1px solid #fff;
+}
+
+.lesson .head .topics{
+  padding: 5px 0;
+}
+
+.lesson .head .likes{
+  float: right;
+}
+
+.lesson .head .likes .like-btn{
+  border: none;
+  outline: none;
+}
+
+.lesson .head .likes .glyphicon{
+  color: #FA8072;
+}
+
+.lesson .content{
+  padding: 15px 15px 0 15px;
+}
+
+.lesson .outlines,
+.lesson .references{
+  list-style: none;
+}
+
+.lesson .outlines > li,
+.lesson .references > li{
+  margin-bottom: 15px;
+  padding-left: 0;
+}
+
+.lesson .references{
+  overflow: auto;
+}
+
+.lesson .control-container{
   text-align: right;
 }
 
-#welcome{
-  margin-top: 80px;
-  padding: 25px 0
+.lesson .topics > span {
+    border-radius: 10px;
+    border: 1px solid #697A10;
+    color: #697A10;
+    padding: 5px;
+    margin: 0 3px;
 }
 
-#welcome .intro-container{
-  margin-top: 50px;
-}
-
-#welcome .intro-container .intro{
-  margin-bottom: 50px;
-}
-
-#welcome .intro-container .intro h4{
-  text-align: right;
-  margin-bottom: 25px;
+.login-title{
+  text-align: center;
+  margin-bottom: 45px;
 }

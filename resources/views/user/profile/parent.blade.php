@@ -2,7 +2,8 @@
 
 @section('content')
 
-<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+<div class="content-page">
+  <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
   <div class="profile-container">
     <div class="main-profile-container">
       <div class="text-center">
@@ -100,6 +101,7 @@
     </div>
     @endif
   </div>
+</div>
 </div>
 
 <div class="clearfix"></div>

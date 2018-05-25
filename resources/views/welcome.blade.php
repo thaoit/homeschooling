@@ -68,6 +68,38 @@
 
 @endsection
 
+@section('styles')
+
+<style>
+
+  #recommend-lesson-container .title{
+    margin-bottom: 25px;
+    display: none;
+    text-align: right;
+  }
+
+  #welcome{
+    margin-top: 80px;
+    padding: 25px 0
+  }
+
+  #welcome .intro-container{
+    margin-top: 50px;
+  }
+
+  #welcome .intro-container .intro{
+    margin-bottom: 50px;
+  }
+
+  #welcome .intro-container .intro h4{
+    text-align: right;
+    margin-bottom: 25px;
+  }
+
+</style>
+
+@endsection
+
 @section('scripts')
 
 <script>
@@ -156,6 +188,8 @@ $(document).ready(function(){
                     var top_move = containers.eq(i).position().top - first_item.outerHeight(true);
                     containers.eq(i).addClass('slide-updown-transition');
                     containers.eq(i).css('top', top_move);
+                    console.log(i + ': ' + top_move);
+                    console.log('<<' + containers.eq(i).css('top') + '>>');
                 }
             }
 
@@ -175,15 +209,19 @@ $(document).ready(function(){
 
                         var html = first_item[0].outerHTML;
 
-                        var top_move = containers.eq(i).position().top + first_item.outerHeight(true);
+                        //var top_move = containers.eq(i).position().top + first_item.outerHeight(true);
+                        var top_move = 0;
 
                         first_item.remove();
                         containers.eq(i).append(html);
+                        console.log(i + ': ' + containers.eq(i).css('top'));
 
                         containers.eq(i).removeClass('slide-updown-transition');
                         containers.eq(i).css('top', top_move);
+                        console.log('>>' + containers.eq(i).css('top'));
                     }
                 }
+                console.log('-----');
             }, transition_duration * 1000);
 
         }, 4000);

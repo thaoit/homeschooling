@@ -2,26 +2,20 @@
 
 @section('content')
 
-  <div class="creating-lesson">
-    <div class="container-fluid" id="general" data-lesson-id="{{ $lesson['general']->id }}">
+  <div class="content-page">
+    <div class="creating-lesson">
+    <div class="container-fluid general text-center" data-lesson-id="{{ $lesson['general']->id }}">
 
       <div class="form-group">
-        <input class="form-control" id="title" type="text" name="title" placeholder="Title here" value="{{ $lesson['general']->title }}" required>
+        <input class="form-control title text-center" type="text" name="title" placeholder="Title here" value="{{ $lesson['general']->title }}" required>
       </div>
       <div class="form-group">
-        <textarea id="intro" class="col-sm-6 col-sm-offset-3 col-xs-12" name="intro" rows="3" placeholder="Intro here">
+        <textarea class="intro text-center" class="col-sm-6 col-sm-offset-3 col-xs-12" name="intro" rows="3" placeholder="Intro here">
           {{ $lesson['general']->intro }}
         </textarea>
       </div>
       <div class="chosen-hints">
-        <!--<span>
-          Science
-          <span class="close-chosen-hint">&times</span>
-        </span>
-        <span>
-          Art
-          <span class="close-chosen-hint">&times</span>
-        </span>-->
+
         @foreach( $lesson['topics'] as $topic )
         <span class="chosen-hint" data-id="{{ $topic->id }}">
           {{ $topic->name }}
@@ -38,7 +32,7 @@
     </div>
 
     <div class="col-xs-12 col-md-3">
-      <div class="form-group border outline-container" data-target="#outline-content" data-control-next="#nextstep">
+      <div class="form-group border-wrapper outline-container" data-target="#outline-content" data-control-next="#nextstep">
         <p>Outline</p>
 
         @for( $i = 0; $i < count($lesson['outlines']); $i++ )
@@ -50,7 +44,7 @@
         @endfor
 
       </div>
-      <div class="form-group border" id="references-container">
+      <div class="form-group border-wrapper" id="references-container">
         <p>References</p>
         <div class="content">
 
@@ -70,7 +64,7 @@
           <span class="glyphicon glyphicon-plus"></span>
         </button>
       </div>
-      <div class="form-group border test-container">
+      <div class="form-group border-wrapper test-container">
         <p>Attached Tests</p>
         <div class="content">
           <!--<li>Test discovery about the Earth
@@ -88,7 +82,7 @@
 
     <div class="col-xs-12 col-md-9">
     <!--<textarea id="outline-content" name="outline-content" rows="8"></textarea>-->
-    <div id="step-nav" data-outline-index=0>
+    <div id="step-nav" class="top-style-border-wrapper text-center" data-outline-index=0>
       <p>
       <button class="btn btn-default" type="button" id="backstep">Back</button>
       <span>Step here</span>
@@ -115,6 +109,7 @@
         <button id="publish" class="btn btn-default chosen-button" type="submit" name="publish">Publish</button>
       @endif
     </div>
+  </div>
   </div>
   </div>
   <!-- Topic Modal -->
@@ -287,59 +282,22 @@
 
 <style media="screen">
 
-  .outline-container > .input-group > .input-group-addon{
-    color: #ccc;
-    background-color: #fff;
-    border: none;
-  }
-
-  .outline-container > .input-group > input{
-    border: none;
-    box-shadow: none;
-    border-bottom: 1px solid #ccc;
-  }
-
-  .outline-container .close-outline{
-    cursor: pointer;
-  }
-
-
-  #general{
-    text-align: center;
-  }
-
-  #title{
+  .title{
     font-size: 2em;
     font-weight: bold;
     border: none;
-    box-shadow: none;
-    text-align: center;
-    border-radius: 0;
   }
 
-  #intro{
-    border: none;
-    box-shadow: none;
-    text-align: center;
-    border-radius: 0;
+  .intro{
     margin-bottom: 30px;
-    resize: vertical;
   }
 
-  #general .chosen-hints{
+  .general .chosen-hints{
     clear: both;
     margin-bottom: 30px;
   }
 
   /*step navigation*/
-
-  #step-nav{
-    border: 1px solid #ccc;
-
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    text-align: center;
-  }
 
   #step-nav > p > button{
     border: none;
@@ -359,47 +317,11 @@
     cursor: pointer;
   }
 
-  .message{
-    font-size: 0.85em;
-    margin-top: 20px;
-    padding-left: 5px;
-    font-style: italic;
-    display: none;
-  }
   /* references */
-  .option-container{
-    list-style: none;
-  }
-
-  .option-container .option{
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
-  }
-
-  .option-container .option .option-name{
-    cursor: pointer;
-    padding: 10px;
-    margin-bottom: 0;
-  }
-
-  .option-container .option .option-name:hover{
-    background-color: #ccc;
-    color: #fff;
-  }
-
-  .option-container .option .option-content{
-    display: none;
-    margin-top: 15px;
-  }
 
   .uploaded-refs .uploaded-ref{
     cursor: pointer;
     margin-bottom: 10px;
-  }
-
-  .option-name-clicked{
-    background-color: #ccc;
-    color: #fff;
   }
 
   .selected{
@@ -425,12 +347,6 @@
   /* */
   #func-buttons{
     float: right;
-  }
-
-  .border{
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 10px;
   }
 
   .test-container button,
@@ -657,7 +573,7 @@
       })
 
       // save the deleted topics which is existed in db
-      $('#general .chosen-hints').on('click', '.close-chosen-hint', function(){
+      $('.general .chosen-hints').on('click', '.close-chosen-hint', function(){
 
           var topic_id = $(this).parent('.chosen-hint').attr('data-id');
 
@@ -741,8 +657,8 @@
 
           // request data
           var data = [];
-          data['title'] = $('#title').val();
-          data['intro'] = $('#intro').val();
+          data['title'] = $('.title').val();
+          data['intro'] = $('.intro').val();
           data['is-publish'] = 'false';
 
           // process url
@@ -753,10 +669,10 @@
           var elements = [];
           elements['new-outline-elements'] = $('.outline-container .outline:not([data-outline-id])');
           elements['update-outline-elements'] = $('.outline-container .outline[data-outline-id]');
-          elements['new-topic-elements'] = $('#general .chosen-hints .chosen-hint:not([data-id])');
-          elements['update-topic-elements'] = $('#general .chosen-hints .chosen-hint[data-id]');
+          elements['new-topic-elements'] = $('.general .chosen-hints .chosen-hint:not([data-id])');
+          elements['update-topic-elements'] = $('.general .chosen-hints .chosen-hint[data-id]');
           elements['media-reference-elements'] = $('#references-container .content li');
-          elements['general-container'] = $('#general');
+          elements['general-container'] = $('.general');
           elements['main-status-element'] = $(this);
           elements['sub-status-element'] = $('#publish');
           elements['alert-container'] = $('.creating-lesson .alert-container');
@@ -770,8 +686,8 @@
 
           // request data
           var data = [];
-          data['title'] = $('#title').val();
-          data['intro'] = $('#intro').val();
+          data['title'] = $('.title').val();
+          data['intro'] = $('.intro').val();
           data['is-publish'] = 'true';
 
           // process url
@@ -782,10 +698,10 @@
           var elements = [];
           elements['new-outline-elements'] = $('.outline-container .outline:not([data-outline-id])');
           elements['update-outline-elements'] = $('.outline-container .outline[data-outline-id]');
-          elements['new-topic-elements'] = $('#general .chosen-hints .chosen-hint:not([data-id])');
-          elements['update-topic-elements'] = $('#general .chosen-hints .chosen-hint[data-id]');
+          elements['new-topic-elements'] = $('.general .chosen-hints .chosen-hint:not([data-id])');
+          elements['update-topic-elements'] = $('.general .chosen-hints .chosen-hint[data-id]');
           elements['media-reference-elements'] = $('#references-container .content li');
-          elements['general-container'] = $('#general');
+          elements['general-container'] = $('.general');
           elements['main-status-element'] = $(this);
           elements['sub-status-element'] = $('#save_as_draft');
           elements['alert-container'] = $('.creating-lesson .alert-container');

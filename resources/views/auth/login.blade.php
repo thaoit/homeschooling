@@ -1,11 +1,13 @@
 @extends('master.master')
 
 @section('content')
-<div class="container">
+
+<div class="content-page">
+  <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+                <h4 class="login-title">{{ __('Login') }}</h4>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
@@ -14,7 +16,7 @@
                         <div class="form-group row">
                             <label for="username_email" class="col-sm-4 col-form-label text-md-right">{{ __('Username or Email') }}</label>
 
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <input id="username_email" type="text" class="form-control{{ $errors->has('username_email') ? ' is-invalid' : '' }}" name="username_email" value="{{ old('username_email') }}" required autofocus>
 
                                 @if ($errors->has('username_email'))
@@ -28,7 +30,7 @@
                         <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
 
                                 @if ($errors->has('password'))
@@ -40,7 +42,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <div class="col-md-6 offset-md-4">
+                            <div class="col-xs-12">
                                 <div class="checkbox">
                                     <label>
                                         <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}> {{ __('Remember Me') }}
@@ -49,16 +51,18 @@
                             </div>
                         </div>
 
-                        <div class="form-group row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
+                        <div class="form-group row mb-0 text-center">
+
+                                <button type="submit" class="btn border-no-background-button">
                                     {{ __('Login') }}
                                 </button>
 
-                                <a class="btn btn-link" href="{{ route('password.request') }}">
-                                    {{ __('Forgot Your Password?') }}
-                                </a>
-                            </div>
+                                <div>
+                                  <a class="btn btn-link make-color" href="{{ route('password.request') }}">
+                                      {{ __('Forgot Your Password?') }}
+                                  </a>
+                                </div>
+
                         </div>
                     </form>
                 </div>
@@ -66,4 +70,6 @@
         </div>
     </div>
 </div>
+</div>
+
 @endsection

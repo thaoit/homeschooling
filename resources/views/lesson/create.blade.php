@@ -2,71 +2,64 @@
 
 @section('content')
 
+<div class="content-page">
   <div class="creating-lesson">
-  <div class="container-fluid" id="general">
+    <div class="container-fluid general text-center">
 
-    <div class="form-group">
-      <input class="form-control" id="title" type="text" name="title" placeholder="Title here">
-    </div>
-    <div class="form-group">
-      <textarea id="intro" class="col-sm-6 col-sm-offset-3 col-xs-12" name="intro" rows="3" placeholder="Intro here"></textarea>
-    </div>
-    <div class="chosen-hints">
-      <!--<span>
-        Science
-        <span class="close-chosen-hint">&times</span>
-      </span>
-      <span>
-        Art
-        <span class="close-chosen-hint">&times</span>
-      </span>-->
+      <div class="form-group">
+        <input class="form-control title text-center" type="text" name="title" placeholder="Title here">
+      </div>
+      <div class="form-group">
+        <textarea class="intro text-center" class="col-sm-6 col-sm-offset-3 col-xs-12" name="intro" rows="3" placeholder="Intro here"></textarea>
+      </div>
+      <div class="chosen-hints">
 
-      <span>
-        Add
-        <span class="glyphicon glyphicon-plus" id="add-topic" data-toggle="modal" data-target="#topic-modal" title="Add more topics"></span>
-      </span>
+        <span>
+          Add
+          <span class="glyphicon glyphicon-plus" id="add-topic" data-toggle="modal" data-target="#topic-modal" title="Add more topics"></span>
+        </span>
 
-    </div>
-  </div>
-
-  <div class="col-xs-12 col-md-3">
-    <div class="form-group border outline-container" data-target="#outline-content" data-control-next="#nextstep">
-      <p>Outline</p>
-      <div class="input-group">
-        <span class="input-group-addon step-index">Step 1 - </span>
-        <input class="form-control outline" type="text" value="New outline" data-id="1">
-        <span class='input-group-addon close-outline' data-toggle="modal" data-target="#confirmation-modal">&times;</span>
       </div>
     </div>
-    <div class="form-group border" id="references-container">
-      <p>References</p>
-      <div class="content">
-        <!--<li data-path="" data-origin-name="" title="Close this reference">Zoom_in.png<span class="close-reference">&times;</span></li>
-        <li data-path="" data-origin-name="" title="Close this reference">wrox-professional-java-development-with-the-spring-framework.pdf<span class="close-reference">&times;</span></li>-->
-      </div>
-      <button class="references-modal-btn" type="button" name="" title="Add references" data-toggle="modal" data-target="#references-modal">
-        <span class="glyphicon glyphicon-plus"></span>
-      </button>
-    </div>
-    <div class="form-group border test-container">
-      <p>Attached Tests</p>
-      <div class="content">
-        <!--<li>Test discovery about the Earth
-          <span class="from"> - My resource</span>
-        </li>
-        <li>How do animals sleep in the winter? What is a greate question!
-          <span class="from"> - Community</span>
-        </li>-->
-      </div>
-      <button class="test-modal-btn" type="button" name="" title="Add tests" data-toggle="modal" data-target="#test-modal">
-        <span class="glyphicon glyphicon-plus"></span>
-      </button>
-    </div>
-  </div>
 
-  <div class="col-xs-12 col-md-9">
+    <div class="col-xs-12 col-md-3">
+      <div class="form-group border-wrapper outline-container" data-target="#outline-content" data-control-next="#nextstep">
+        <p>Outline</p>
+        <div class="input-group">
+          <span class="input-group-addon step-index">Step 1 - </span>
+          <input class="form-control outline" type="text" value="New outline" data-id="1">
+          <span class='input-group-addon close-outline' data-toggle="modal" data-target="#confirmation-modal">&times;</span>
+        </div>
+      </div>
+      <div class="form-group border-wrapper" id="references-container">
+        <p>References</p>
+        <div class="content">
+          <!--<li data-path="" data-origin-name="" title="Close this reference">Zoom_in.png<span class="close-reference">&times;</span></li>
+          <li data-path="" data-origin-name="" title="Close this reference">wrox-professional-java-development-with-the-spring-framework.pdf<span class="close-reference">&times;</span></li>-->
+        </div>
+        <button class="references-modal-btn" type="button" name="" title="Add references" data-toggle="modal" data-target="#references-modal">
+          <span class="glyphicon glyphicon-plus"></span>
+        </button>
+      </div>
+      <div class="form-group border-wrapper test-container">
+        <p>Attached Tests</p>
+        <div class="content">
+          <!--<li>Test discovery about the Earth
+            <span class="from"> - My resource</span>
+          </li>
+          <li>How do animals sleep in the winter? What is a greate question!
+            <span class="from"> - Community</span>
+          </li>-->
+        </div>
+        <button class="test-modal-btn" type="button" name="" title="Add tests" data-toggle="modal" data-target="#test-modal">
+          <span class="glyphicon glyphicon-plus"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="col-xs-12 col-md-9">
     <!--<textarea id="outline-content" name="outline-content" rows="8"></textarea>-->
-    <div id="step-nav" data-outline-index=0>
+    <div id="step-nav" class="top-style-border-wrapper text-center" data-outline-index=0>
       <p>
       <button class="btn btn-default" type="button" id="backstep">Back</button>
       <span>Step here</span>
@@ -88,6 +81,7 @@
     </div>
   </div>
   </div>
+</div>
 
   <!-- Topic Modal -->
   <div id="topic-modal" class="modal fade" role="dialog">
@@ -259,59 +253,22 @@
 
 <style media="screen">
 
-  .outline-container > .input-group > .input-group-addon{
-    color: #ccc;
-    background-color: #fff;
-    border: none;
-  }
-
-  .outline-container > .input-group > input{
-    border: none;
-    box-shadow: none;
-    border-bottom: 1px solid #ccc;
-  }
-
-  .outline-container .close-outline{
-    cursor: pointer;
-  }
-
-
-  #general{
-    text-align: center;
-  }
-
-  #title{
+  .title{
     font-size: 2em;
     font-weight: bold;
     border: none;
-    box-shadow: none;
-    text-align: center;
-    border-radius: 0;
   }
 
-  #intro{
-    border: none;
-    box-shadow: none;
-    text-align: center;
-    border-radius: 0;
+  .intro{
     margin-bottom: 30px;
-    resize: vertical;
   }
 
-  #general .chosen-hints{
+  .general .chosen-hints{
     clear: both;
     margin-bottom: 30px;
   }
 
   /*step navigation*/
-
-  #step-nav{
-    border: 1px solid #ccc;
-
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    text-align: center;
-  }
 
   #step-nav > p > button{
     border: none;
@@ -331,47 +288,10 @@
     cursor: pointer;
   }
 
-  .message{
-    font-size: 0.85em;
-    margin-top: 20px;
-    padding-left: 5px;
-    font-style: italic;
-    display: none;
-  }
   /* references */
-  .option-container{
-    list-style: none;
-  }
-
-  .option-container .option{
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
-  }
-
-  .option-container .option .option-name{
-    cursor: pointer;
-    padding: 10px;
-    margin-bottom: 0;
-  }
-
-  .option-container .option .option-name:hover{
-    background-color: #ccc;
-    color: #fff;
-  }
-
-  .option-container .option .option-content{
-    display: none;
-    margin-top: 15px;
-  }
-
-  .uploaded-refs .uploaded-ref{
+    .uploaded-refs .uploaded-ref{
     cursor: pointer;
     margin-bottom: 10px;
-  }
-
-  .option-name-clicked{
-    background-color: #ccc;
-    color: #fff;
   }
 
   .selected{
@@ -397,12 +317,6 @@
   /* */
   #func-buttons{
     float: right;
-  }
-
-  .border{
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 10px;
   }
 
   .test-container button,
@@ -610,7 +524,7 @@
       })
 
       // save the deleted topics which is existed in db
-      $('#general .chosen-hints').on('click', '.close-chosen-hint', function(){
+      $('.general .chosen-hints').on('click', '.close-chosen-hint', function(){
 
           var topic_id = $(this).parent('.chosen-hint').attr('data-id');
 
@@ -695,8 +609,8 @@
 
           // request data
           var data = [];
-          data['title'] = $('#title').val();
-          data['intro'] = $('#intro').val();
+          data['title'] = $('.title').val();
+          data['intro'] = $('.intro').val();
           data['is-publish'] = 'false';
 
           // process url
@@ -708,10 +622,10 @@
           var elements = [];
           elements['new-outline-elements'] = $('.outline-container .outline:not([data-outline-id])');
           elements['update-outline-elements'] = $('.outline-container .outline[data-outline-id]');
-          elements['new-topic-elements'] = $('#general .chosen-hints .chosen-hint:not([data-id])');
-          elements['update-topic-elements'] = $('#general .chosen-hints .chosen-hint[data-id]');
+          elements['new-topic-elements'] = $('.general .chosen-hints .chosen-hint:not([data-id])');
+          elements['update-topic-elements'] = $('.general .chosen-hints .chosen-hint[data-id]');
           elements['media-reference-elements'] = $('#references-container .content li');
-          elements['general-container'] = $('#general');
+          elements['general-container'] = $('.general');
           elements['main-status-element'] = $(this);
           elements['sub-status-element'] = $('#publish');
           elements['alert-container'] = $('.creating-lesson .alert-container');
@@ -726,8 +640,8 @@
 
           // request data
           var data = [];
-          data['title'] = $('#title').val();
-          data['intro'] = $('#intro').val();
+          data['title'] = $('.title').val();
+          data['intro'] = $('.intro').val();
           data['is-publish'] = 'true';
 
           // process url
@@ -739,10 +653,10 @@
           var elements = [];
           elements['new-outline-elements'] = $('.outline-container .outline:not([data-outline-id])');
           elements['update-outline-elements'] = $('.outline-container .outline[data-outline-id]');
-          elements['new-topic-elements'] = $('#general .chosen-hints .chosen-hint:not([data-id])');
-          elements['update-topic-elements'] = $('#general .chosen-hints .chosen-hint[data-id]');
+          elements['new-topic-elements'] = $('.general .chosen-hints .chosen-hint:not([data-id])');
+          elements['update-topic-elements'] = $('.general .chosen-hints .chosen-hint[data-id]');
           elements['media-reference-elements'] = $('#references-container .content li');
-          elements['general-container'] = $('#general');
+          elements['general-container'] = $('.general');
           elements['main-status-element'] = $(this);
           elements['sub-status-element'] = $('#save_as_draft');
           elements['alert-container'] = $('.creating-lesson .alert-container');

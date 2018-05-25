@@ -2,279 +2,280 @@
 
 @section('content')
 
-<div class="container group-container">
-  <div class="info">
-    <div class="head">
-      <h4>Wanna find some partners for yours and your children?</h4>
-    </div>
-    <form class="content">
-      <p>Children's age from
-        <input class="age-from" type="number" name="age_from" min="1" value="{{ isset($input['age_from']) ? $input['age_from'] : '' }}">
-        to
-        <input class="age-to" type="number" name="age_to" min="1" value="{{ isset($input['age_to']) ? $input['age_to'] : '' }}">
-        <span class="alert-container"></span>
-      </p>
-      <p>Gender
-        <select name="gender">
-          @foreach( Config::get('constants.gender') as $gender )
-            @if( isset($input['gender']) && $input['gender'] == $gender )
-              <option value="{{ $gender }}" selected>{{ $gender }}</option>
-            @else
-              <option value="{{ $gender }}">{{ $gender }}</option>
-            @endif
-          @endforeach
-        </select>
-      </p>
-      <div class="favourite-topics hint-chosen-panel">
-        <p>Favourite topics</p>
-
-        <div class="chosen-hints">
-          @if( isset($topics) )
-            @foreach( $topics as $topic )
-              <span class="chosen-hint">
-                {{ $topic }}
-                <span class="close-chosen-hint">&times;</span>
-              </span>
-            @endforeach
-          @endif
-        </div>
-        <div class="typing-hint">
-          <input class="form-control" type="text" name="topic-typing-hint" placeholder="Type some topics here">
-        </div>
-        <div class="hints"></div>
-
-        <p class="message" style="display: none">
-          Press <strong>Enter</strong> to add the topic.</em>
+<div class="content-page">
+  <div class="container group-container">
+    <div class="info">
+      <div class="head">
+        <h4>Wanna find some partners for yours and your children?</h4>
+      </div>
+      <form class="content">
+        <p>Children's age from
+          <input class="age-from" type="number" name="age_from" min="1" value="{{ isset($input['age_from']) ? $input['age_from'] : '' }}">
+          to
+          <input class="age-to" type="number" name="age_to" min="1" value="{{ isset($input['age_to']) ? $input['age_to'] : '' }}">
+          <div class="alert-container"></div>
         </p>
-      </div>
-      <p>Family comes from
-        <select id="countries" name="countries">
-          <option value="All">All</option>
-          @foreach( $countries as $country)
-            @if( isset($input['countries']) && $input['countries'] == $country['name'] )
-              <option value="{{ $country['name'] }}" selected>{{ $country['name'] }}</option>
-            @else
-              <option value="{{ $country['name'] }}">{{ $country['name'] }}</option>
-            @endif
-          @endforeach
-        </select>
+        <p>Gender
+          <select name="gender">
+            @foreach( Config::get('constants.gender') as $gender )
+              @if( isset($input['gender']) && $input['gender'] == $gender )
+                <option value="{{ $gender }}" selected>{{ $gender }}</option>
+              @else
+                <option value="{{ $gender }}">{{ $gender }}</option>
+              @endif
+            @endforeach
+          </select>
+        </p>
+        <div class="favourite-topics hint-chosen-panel">
+          <p>Favourite topics</p>
 
-        <select id="provinces" name="provinces">
-          <option value="All">All</option>
-          <option value="Ha noi">Ha Noi</option>
-          <option value="Da Nang">Da Nang</option>
-          <option value="Ho Chi Minh city">Ho Chi Minh city</option>
-        </select>
-      </p>
-      <div>
-        <p>Other info</p>
-          <textarea class="form-control other-info" rows="4" placeholder="Type some other requirements here" name="other_info">
-            @if( isset($input['other_info']) )
-              {{ $input['other_info'] }}
+          <div class="chosen-hints">
+            @if( isset($topics) )
+              @foreach( $topics as $topic )
+                <span class="chosen-hint">
+                  {{ $topic }}
+                  <span class="close-chosen-hint">&times;</span>
+                </span>
+              @endforeach
             @endif
-          </textarea>
-      </div>
-    </form>
-    <div class="foot">
-      <button class="btn btn-default search-btn" type="button" name="search" value="search">Search</button>
-      <button class="btn btn-default post-btn" type="button" name="post" value="post">Post</button>
-    </div>
-  </div>
+          </div>
+          <div class="typing-hint">
+            <input class="form-control" type="text" name="topic-typing-hint" placeholder="Type some topics here">
+          </div>
+          <div class="hints"></div>
 
-  @if( count($not_own_posts) > 0)
-  <div class="post-container not-own-posts">
-    <div class="head">
-      <h4>Try to find some partners here!</h4>
-    </div>
-    @foreach( $not_own_posts as $post )
-    <div class="post">
-      <div class="head">
-        <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a></p>
-        <p>Wanna find partners for his/her 2 children with some requirements</p>
-      </div>
-      <div class="content">
-        <div class="col-xs-12">
-          <p class="col-xs-4">Age</p>
-          <p class="col-xs-8">
-            @if($post->age_from == null && $post->age_to == null)
-              Any ages
-            @elseif($post->age_from == null)
-              <= {{ $post->age_to }} years old
-            @elseif($post->age_to == null)
-              >= {{ $post->age_from }} years old
-            @else
-              {{ $post->age_from }} - {{ $post->age_to }} years old
-            @endif
+          <p class="message" style="display: none">
+            Press <strong>Enter</strong> to add the topic.</em>
           </p>
         </div>
-        <div class="col-xs-12">
-          <p class="col-xs-4">Gender</p>
-          <p class="col-xs-8">{{ $post->gender }}</p>
-        </div>
-        <div class="col-xs-12">
-          <p class="col-xs-4">Favourite topics</p>
-          <p class="col-xs-8">
-            @if($post->favorite_topics == null)
-              Any topics
-            @else
-              {{ $post->favorite_topics }}
-            @endif
-          </p>
-        </div>
-        <div class="col-xs-12">
-          <p class="col-xs-4">Living in</p>
-          <p class="col-xs-8">
-            @if( $post->country == 'All' )
-              Anywhere
-            @elseif( $post->province == 'All' )
-              {{ $post->country }}
-            @else
-              {{ $post->province }}, {{ $post->country }}
-            @endif
-          </p>
-        </div>
+        <p>Family comes from
+          <select id="countries" name="countries">
+            <option value="All">All</option>
+            @foreach( $countries as $country)
+              @if( isset($input['countries']) && $input['countries'] == $country['name'] )
+                <option value="{{ $country['name'] }}" selected>{{ $country['name'] }}</option>
+              @else
+                <option value="{{ $country['name'] }}">{{ $country['name'] }}</option>
+              @endif
+            @endforeach
+          </select>
 
-        @if( $post->other_info != null)
-        <div class="col-xs-12">
-          <p class="col-xs-4">Others info</p>
-          <p class="col-xs-8">{{ $post->other_info }}</p>
+          <select id="provinces" name="provinces">
+            <option value="All">All</option>
+            <option value="Ha noi">Ha Noi</option>
+            <option value="Da Nang">Da Nang</option>
+            <option value="Ho Chi Minh city">Ho Chi Minh city</option>
+          </select>
+        </p>
+        <div>
+          <p>Other info</p>
+            <textarea class="form-control other-info" rows="4" placeholder="Type some other requirements here" name="other_info">
+              @if( isset($input['other_info']) )
+                {{ $input['other_info'] }}
+              @endif
+            </textarea>
         </div>
-        @endif
+      </form>
+      <div class="foot">
+        <button class="btn btn-default search-btn" type="button" name="search" value="search">Search</button>
+        <button class="btn btn-default post-btn" type="button" name="post" value="post">Post</button>
       </div>
     </div>
-    @endforeach
-    <!--<div class="col-xs-12 col-sm-6 col-md-3 post">
-      <div class="head">
-        <p>From. <a href="">Anna Leo</a></p>
-        <p>Wanna find partners for his/her 2 children with some requirements</p>
-      </div>
-      <div class="content">
-        <div class="col-xs-12">
-          <p class="col-xs-4">Age</p>
-          <p class="col-xs-8">5 - 10 years old</p>
-        </div>
-        <div class="col-xs-12">
-          <p class="col-xs-4">Gender</p>
-          <p class="col-xs-8">Girl</p>
-        </div>
-        <div class="col-xs-12">
-          <p class="col-xs-4">Favourite topics</p>
-          <p class="col-xs-8">Science, Music</p>
-        </div>
-        <div class="col-xs-12">
-          <p class="col-xs-4">Living in</p>
-          <p class="col-xs-8">US</p>
-        </div>
-        <div class="col-xs-12">
-          <p class="col-xs-4">Others</p>
-          <p class="col-xs-8">no</p>
-        </div>
-      </div>
-      </div>
-    </div>
-    <div class="col-xs-12 col-sm-6 col-md-3 post">
-      <div class="head">
-        <p>From. <a href="">Anna Leo</a></p>
-        <p>Wanna find partners for his/her 2 children with some requirements</p>
-      </div>
-      <div class="content">
-        <div class="col-xs-12">
-          <p class="col-xs-4">Age</p>
-          <p class="col-xs-8">5 - 10 years old</p>
-        </div>
-        <div class="col-xs-12">
-          <p class="col-xs-4">Gender</p>
-          <p class="col-xs-8">Girl</p>
-        </div>
-        <div class="col-xs-12">
-          <p class="col-xs-4">Favourite topics</p>
-          <p class="col-xs-8">Science, Music</p>
-        </div>
-        <div class="col-xs-12">
-          <p class="col-xs-4">Living in</p>
-          <p class="col-xs-8">US</p>
-        </div>
-        <div class="col-xs-12">
-          <p class="col-xs-4">Others</p>
-          <p class="col-xs-8">no</p>
-        </div>
-      </div>
-    </div>-->
 
-  </div>
-  @endif
-
-  @if( count($own_posts) > 0)
-  <div class="post-container own-posts">
-    <div class="head">
-      <h4>Your posts here!</h4>
-    </div>
-    @foreach( $own_posts as $post )
-    <div class="post" data-id="{{ $post->id }}">
+    @if( count($not_own_posts) > 0)
+    <div class="post-container not-own-posts">
       <div class="head">
-        <div class="col-xs-10">
+        <h4>Try to find some partners here!</h4>
+      </div>
+      @foreach( $not_own_posts as $post )
+      <div class="post">
+        <div class="head">
           <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a></p>
           <p>Wanna find partners for his/her 2 children with some requirements</p>
         </div>
-        <div class="col-xs-2 delete-post-container">
-          <button type="button" class="delete-post" title="Delete this post" data-toggle="modal" data-target="#delete-confirmation">&times;</button>
-        </div>
-      </div>
-      <div class="content">
-        <div class="col-xs-12">
-          <p class="col-xs-4">Age</p>
-          <p class="col-xs-8">
-            @if($post->age_from == null && $post->age_to == null)
-              Any ages
-            @elseif($post->age_from == null)
-              <= {{ $post->age_to }} years old
-            @elseif($post->age_to == null)
-              >= {{ $post->age_from }} years old
-            @else
-              {{ $post->age_from }} - {{ $post->age_to }} years old
-            @endif
-          </p>
-        </div>
-        <div class="col-xs-12">
-          <p class="col-xs-4">Gender</p>
-          <p class="col-xs-8">{{ $post->gender }}</p>
-        </div>
-        <div class="col-xs-12">
-          <p class="col-xs-4">Favourite topics</p>
-          <p class="col-xs-8">
-            @if($post->favorite_topics == null)
-              Any topics
-            @else
-              {{ $post->favorite_topics }}
-            @endif
-          </p>
-        </div>
-        <div class="col-xs-12">
-          <p class="col-xs-4">Living in</p>
-          <p class="col-xs-8">
-            @if( $post->country == 'All' )
-              Anywhere
-            @elseif( $post->province == 'All' )
-              {{ $post->country }}
-            @else
-              {{ $post->province }}, {{ $post->country }}
-            @endif
-          </p>
-        </div>
+        <div class="content">
+          <div class="col-xs-12">
+            <p class="col-xs-4">Age</p>
+            <p class="col-xs-8">
+              @if($post->age_from == null && $post->age_to == null)
+                Any ages
+              @elseif($post->age_from == null)
+                <= {{ $post->age_to }} years old
+              @elseif($post->age_to == null)
+                >= {{ $post->age_from }} years old
+              @else
+                {{ $post->age_from }} - {{ $post->age_to }} years old
+              @endif
+            </p>
+          </div>
+          <div class="col-xs-12">
+            <p class="col-xs-4">Gender</p>
+            <p class="col-xs-8">{{ $post->gender }}</p>
+          </div>
+          <div class="col-xs-12">
+            <p class="col-xs-4">Favourite topics</p>
+            <p class="col-xs-8">
+              @if($post->favorite_topics == null)
+                Any topics
+              @else
+                {{ $post->favorite_topics }}
+              @endif
+            </p>
+          </div>
+          <div class="col-xs-12">
+            <p class="col-xs-4">Living in</p>
+            <p class="col-xs-8">
+              @if( $post->country == 'All' )
+                Anywhere
+              @elseif( $post->province == 'All' )
+                {{ $post->country }}
+              @else
+                {{ $post->province }}, {{ $post->country }}
+              @endif
+            </p>
+          </div>
 
-        @if( $post->other_info != null)
-        <div class="col-xs-12">
-          <p class="col-xs-4">Others info</p>
-          <p class="col-xs-8">{{ $post->other_info }}</p>
+          @if( $post->other_info != null)
+          <div class="col-xs-12">
+            <p class="col-xs-4">Others info</p>
+            <p class="col-xs-8">{{ $post->other_info }}</p>
+          </div>
+          @endif
         </div>
-        @endif
       </div>
+      @endforeach
+      <!--<div class="col-xs-12 col-sm-6 col-md-3 post">
+        <div class="head">
+          <p>From. <a href="">Anna Leo</a></p>
+          <p>Wanna find partners for his/her 2 children with some requirements</p>
+        </div>
+        <div class="content">
+          <div class="col-xs-12">
+            <p class="col-xs-4">Age</p>
+            <p class="col-xs-8">5 - 10 years old</p>
+          </div>
+          <div class="col-xs-12">
+            <p class="col-xs-4">Gender</p>
+            <p class="col-xs-8">Girl</p>
+          </div>
+          <div class="col-xs-12">
+            <p class="col-xs-4">Favourite topics</p>
+            <p class="col-xs-8">Science, Music</p>
+          </div>
+          <div class="col-xs-12">
+            <p class="col-xs-4">Living in</p>
+            <p class="col-xs-8">US</p>
+          </div>
+          <div class="col-xs-12">
+            <p class="col-xs-4">Others</p>
+            <p class="col-xs-8">no</p>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-3 post">
+        <div class="head">
+          <p>From. <a href="">Anna Leo</a></p>
+          <p>Wanna find partners for his/her 2 children with some requirements</p>
+        </div>
+        <div class="content">
+          <div class="col-xs-12">
+            <p class="col-xs-4">Age</p>
+            <p class="col-xs-8">5 - 10 years old</p>
+          </div>
+          <div class="col-xs-12">
+            <p class="col-xs-4">Gender</p>
+            <p class="col-xs-8">Girl</p>
+          </div>
+          <div class="col-xs-12">
+            <p class="col-xs-4">Favourite topics</p>
+            <p class="col-xs-8">Science, Music</p>
+          </div>
+          <div class="col-xs-12">
+            <p class="col-xs-4">Living in</p>
+            <p class="col-xs-8">US</p>
+          </div>
+          <div class="col-xs-12">
+            <p class="col-xs-4">Others</p>
+            <p class="col-xs-8">no</p>
+          </div>
+        </div>
+      </div>-->
+
     </div>
-    @endforeach
-  </div>
-  @endif
+    @endif
 
-  <div id="delete-confirmation" class="modal fade" role="dialog">
+    @if( count($own_posts) > 0)
+    <div class="post-container own-posts">
+      <div class="head">
+        <h4>Your posts here!</h4>
+      </div>
+      @foreach( $own_posts as $post )
+      <div class="post" data-id="{{ $post->id }}">
+        <div class="head">
+          <div class="col-xs-10">
+            <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a></p>
+            <p>Wanna find partners for his/her 2 children with some requirements</p>
+          </div>
+          <div class="col-xs-2 delete-post-container">
+            <button type="button" class="delete-post" title="Delete this post" data-toggle="modal" data-target="#delete-confirmation">&times;</button>
+          </div>
+        </div>
+        <div class="content">
+          <div class="col-xs-12">
+            <p class="col-xs-4">Age</p>
+            <p class="col-xs-8">
+              @if($post->age_from == null && $post->age_to == null)
+                Any ages
+              @elseif($post->age_from == null)
+                <= {{ $post->age_to }} years old
+              @elseif($post->age_to == null)
+                >= {{ $post->age_from }} years old
+              @else
+                {{ $post->age_from }} - {{ $post->age_to }} years old
+              @endif
+            </p>
+          </div>
+          <div class="col-xs-12">
+            <p class="col-xs-4">Gender</p>
+            <p class="col-xs-8">{{ $post->gender }}</p>
+          </div>
+          <div class="col-xs-12">
+            <p class="col-xs-4">Favourite topics</p>
+            <p class="col-xs-8">
+              @if($post->favorite_topics == null)
+                Any topics
+              @else
+                {{ $post->favorite_topics }}
+              @endif
+            </p>
+          </div>
+          <div class="col-xs-12">
+            <p class="col-xs-4">Living in</p>
+            <p class="col-xs-8">
+              @if( $post->country == 'All' )
+                Anywhere
+              @elseif( $post->province == 'All' )
+                {{ $post->country }}
+              @else
+                {{ $post->province }}, {{ $post->country }}
+              @endif
+            </p>
+          </div>
+
+          @if( $post->other_info != null)
+          <div class="col-xs-12">
+            <p class="col-xs-4">Others info</p>
+            <p class="col-xs-8">{{ $post->other_info }}</p>
+          </div>
+          @endif
+        </div>
+      </div>
+      @endforeach
+    </div>
+    @endif
+
+    <div id="delete-confirmation" class="modal fade" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content hint-chosen-panel">
         <div class="modal-header">
@@ -292,6 +293,7 @@
       </div>
     </div>
   </div>
+  </div>
 </div>
 
 @endsection
@@ -301,73 +303,10 @@
 <link rel="stylesheet" href="{{ asset('css/hint-chosen-panel.css') }}">
 <style>
 
-  .info, .post-container{
-    background-color: #eee;
-    padding: 15px;
-    margin-bottom: 45px;
-  }
-
-  .group-container .head, .group-container .foot{
-    text-align: center;
-  }
-
-  .group-container .head, .group-container .content{
-    margin-bottom: 30px;
-  }
-
-  .post-container{
-    overflow: auto;
-  }
-
-  .post-container .post{
-    padding: 0 15px;
-    max-width: 500px;
-    margin-bottom: 45px;
-    margin-left: auto;
-    margin-right: auto;
-    border-left: 3px solid green;
-  }
-
-  .post-container .post .head,
-  .post-container .post .content{
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 15px;
-    overflow: auto;
-    text-align: left;
-  }
-
-  .post .content p:nth-child(2n + 1){
-    padding-left: 0;
-  }
-
-  .post .content p:nth-child(2n){
-    text-align: right;
-    padding-right: 0;
-  }
-
-  .message{
-    font-size: 0.85em;
-    margin-top: 20px;
-    padding-left: 5px;
-    font-style: italic;
-    display: none;
-  }
-
   .favourite-topics{
     margin-bottom: 15px;
   }
 
-  .delete-post-container{
-    padding: 0;
-    text-align: right;
-  }
-
-  .delete-post-container .delete-post{
-    background: none;
-    border: none;
-    outline: none;
-    font-size: 1.3em;
-  }
 
 </style>
 
@@ -412,7 +351,7 @@
           var checkInput = checkAges( info.find('.age-from'), info.find('.age-to'), info.find('.alert-container') );
 
           if( checkInput ){
-            
+
               var form = $(this).parents('.info').find('.content').serialize();
               var other_info = '&other_info=' + $(this).parents('.info').find('.other-info').val();
               var favorite_topic_elements = $('.favourite-topics .chosen-hint');
