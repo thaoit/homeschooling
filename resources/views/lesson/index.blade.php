@@ -562,7 +562,7 @@
                   @case( Config::get('constants.media_type.image') )
                     <span class="glyphicon glyphicon-picture"></span>
                     @break
-                  @case( Config::get('constants.media_type.video') )
+                  @case( Config::get('constants.media_type.audio_video') )
                     <span class="glyphicon glyphicon-film"></span>
                     @break
                   @case( Config::get('constants.media_type.document') )

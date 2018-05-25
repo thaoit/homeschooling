@@ -18,7 +18,8 @@ class MediaService{
 
         case 'mp3':
         case 'mp4':
-          return Config::get('constants.media_type.video');
+        case 'wav':
+          return Config::get('constants.media_type.audio_video');
 
         case 'doc':
         case 'docx':
@@ -30,7 +31,7 @@ class MediaService{
           return Config::get('constants.media_type.document');
 
         default:
-          return Config::get('constants.media_type.undefined');
+          return Config::get('constants.media_type.others');
       }
   }
 
@@ -45,31 +46,31 @@ class MediaService{
 
       // get each media type
       $image_name = Config::get('constants.media_type.image');
-      $video_name = Config::get('constants.media_type.video');
+      $audio_video_name = Config::get('constants.media_type.audio_video');
       $document_name = Config::get('constants.media_type.document');
-      $undefined_name = Config::get('constants.media_type.undefined');
+      $undefined_name = Config::get('constants.media_type.others');
       $count_name = 'num_of_media';
 
       // find media with each type
       $image     = $lesson->medias()->where('media_type', $image_name)
                                     ->get();
-      $video     = $lesson->medias()->where('media_type', $video_name)
+      $audio_video     = $lesson->medias()->where('media_type', $audio_video_name)
                                     ->get();
       $document  = $lesson->medias()->where('media_type', $document_name)
                                     ->get();
       $undefined = $lesson->medias()->where('media_type', $undefined_name)
                                     ->get();
 
-      $count = $image->count() + $video->count() + $document->count() + $undefined->count();
+      $count = $image->count() + $audio_video->count() + $document->count() + $undefined->count();
       $image = ($image->count() > 0) ? $image: array();
-      $video = ($video->count() > 0) ? $video:array();
+      $audio_video = ($audio_video->count() > 0) ? $audio_video:array();
       $document = ($document->count() > 0) ? $document: array();
       $undefined = ($undefined->count() > 0) ? $undefined: array();
 
       return [
         'types' =>    [
                         $image_name => $image,
-                        $video_name => $video,
+                        $audio_video_name => $audio_video,
                         $document_name => $document,
                         $undefined_name => $undefined
                       ],

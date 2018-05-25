@@ -17,9 +17,9 @@ return [
 
     'media_type' => [
         'image'     => 'Image',
-        'video'     => 'Video',
+        'audio_video'     => 'Audio / Video',
         'document'  => 'Document',
-        'undefined' => 'Undefined'
+        'others' => 'Others'
     ],
 
     'lesson_status' => [
