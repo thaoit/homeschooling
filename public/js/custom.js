@@ -515,10 +515,7 @@ function getArrayOfObjFromTopics(topic_elements){
 function getObjFromTopic(topic_element){
 
     var id = topic_element.attr('data-id');
-
-    var name = topic_element[0].innerText;
-    var close_name = topic_element.children('.close-chosen-hint')[0].innerText;
-    var name = name.substr(0, name.length - close_name.length);
+    var name = topic_element.find('.name')[0].innerText;
 
     return {
       id: id,

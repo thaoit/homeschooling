@@ -15,14 +15,12 @@
         </textarea>
       </div>
       <div class="chosen-hints">
-
         @foreach( $lesson['topics'] as $topic )
         <span class="chosen-hint" data-id="{{ $topic->id }}">
-          {{ $topic->name }}
+          <span class="name">{{ $topic->name }}</span>
           <span class="close-chosen-hint">&times</span>
         </span>
         @endforeach
-
         <span>
           Add
           <span class="glyphicon glyphicon-plus" id="add-topic" data-toggle="modal" data-target="#topic-modal" title="Add more topics"></span>
@@ -117,7 +115,14 @@
     <div class="modal-dialog">
       <div class="modal-content hint-chosen-panel">
         <div class="modal-header">
-            <div class="chosen-hints"></div>
+            <div class="chosen-hints">
+              @foreach( $lesson['topics'] as $topic )
+              <span class="chosen-hint" data-id="{{ $topic->id }}" style="display: none">
+                <span class="name">{{ $topic->name }}</span>
+                <span class="close-chosen-hint">&times</span>
+              </span>
+              @endforeach
+            </div>
         </div>
 
         <div class="modal-body">

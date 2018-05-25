@@ -34,7 +34,7 @@ $('.typing-hint > input').on('keyup', function(e){
       message.hide();
       return true;
     }
-    
+
     if(e.key === "Enter" && hints.children().length === 0){
 
         var hint = $(this).val();
@@ -86,12 +86,14 @@ function generateHint(hint, id){
     var hint_html = '';
 
     if(typeof id === "undefined" || id === null){
-        hint_html =   "<span class='chosen-hint'>" + hint +
+        hint_html =   "<span class='chosen-hint'>" +
+                        "<span class='name'>" + hint + "</span>" +
                         "<span class='close-chosen-hint'>&times</span>" +
                       "</span>";
     }
     else{
-      hint_html =   "<span class='chosen-hint' data-id=" + id + ">" + hint +
+      hint_html =   "<span class='chosen-hint' data-id=" + id + ">" +
+                      "<span class='name'>" + hint + "</span>" +
                       "<span class='close-chosen-hint'>&times</span>" +
                     "</span>";
     }
@@ -101,18 +103,13 @@ function generateHint(hint, id){
 
 function isHintChosen(hint, chosen_hints_container){
 
-    var chosen_hints = chosen_hints_container.find('.close-chosen-hint').parent();
+    var chosen_hints = chosen_hints_container.find('.chosen-hint .name');
     for(var i = 0; i < chosen_hints.length; i++){
 
-        var chosen_hint = chosen_hints[i].innerText;
+        var chosen_hint = chosen_hints[i].innerText.trim();
 
-        if(chosen_hint.length > 1){
-
-            chosen_hint = chosen_hint.substring(0, chosen_hint.length - 1);
-
-            if(chosen_hint === hint){
-                return true;
-            }
+        if(chosen_hint.toLowerCase() === hint.toLowerCase()){
+            return true;
         }
     }
 
