@@ -82,9 +82,9 @@
     <!--<textarea id="outline-content" name="outline-content" rows="8"></textarea>-->
     <div id="step-nav" class="top-style-border-wrapper text-center" data-outline-index=0>
       <p>
-      <button class="btn btn-default" type="button" id="backstep">Back</button>
+      <button class="btn" type="button" id="backstep">Back</button>
       <span>Step here</span>
-      <button class="btn btn-default" type="button" id="nextstep">Next</button>
+      <button class="btn" type="button" id="nextstep">Next</button>
       </p>
     </div>
     <div id="outline-content">
@@ -303,9 +303,9 @@
   }
 
   /*step navigation*/
-
-  #step-nav > p > button{
-    border: none;
+  #step-nav > p{
+    overflow: auto;
+    margin-bottom: 0;
   }
 
   #step-nav > p > button:first-child{
@@ -543,6 +543,22 @@
               });
 
               new_content.next().hide();
+          }
+      })
+
+      // update the title for outline content
+      $('.outline-container').on('keyup', '.outline', function(e){
+
+          if(e.key !== "Enter"){
+
+              var editing_outline_index = parseInt( $(this).attr('data-id') ) - 1;
+              var current_outline_index = parseInt( $('#step-nav').attr('data-outline-index') );
+
+              if(editing_outline_index === current_outline_index){
+
+                  var title = $(this).val();
+                  $('#step-nav > p > span')[0].textContent = title;
+              }
           }
       })
 
