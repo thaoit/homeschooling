@@ -188,8 +188,6 @@ $(document).ready(function(){
                     var top_move = containers.eq(i).position().top - first_item.outerHeight(true);
                     containers.eq(i).addClass('slide-updown-transition');
                     containers.eq(i).css('top', top_move);
-                    console.log(i + ': ' + top_move);
-                    console.log('<<' + containers.eq(i).css('top') + '>>');
                 }
             }
 
@@ -214,14 +212,11 @@ $(document).ready(function(){
 
                         first_item.remove();
                         containers.eq(i).append(html);
-                        console.log(i + ': ' + containers.eq(i).css('top'));
 
                         containers.eq(i).removeClass('slide-updown-transition');
                         containers.eq(i).css('top', top_move);
-                        console.log('>>' + containers.eq(i).css('top'));
                     }
                 }
-                console.log('-----');
             }, transition_duration * 1000);
 
         }, 4000);

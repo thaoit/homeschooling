@@ -140,15 +140,15 @@ class LessonController extends Controller
 
             $is_only_publish = $input['is_getting_only_publish'];
 
-            if( $is_only_publish && isset( $input['search_text'] ) ){
+            if( $is_only_publish == "true" && isset( $input['search_text'] ) ){
 
                 $lessons = LessonService::searchLessonNameInPublic( $input['search_text'], $user_id );
             }
-            else if( $is_only_publish && !isset( $input['search_text'] ) ){
+            else if( $is_only_publish == "true" && !isset( $input['search_text'] ) ){
 
                 $lessons = LessonService::getAllInPublic($user_id);
             }
-            else if( !$is_only_publish && isset( $input['search_text'] ) ){
+            else if( $is_only_publish == "false" && isset( $input['search_text'] ) ){
 
                 $lessons = LessonService::searchLessonNameByUserRequest($input['search_text'], $user_id);
             }
