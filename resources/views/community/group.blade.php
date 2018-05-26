@@ -91,7 +91,7 @@
       <div class="post">
         <div class="head">
           <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a></p>
-          <p>Wanna find partners for his/her 2 children with some requirements</p>
+          <p>Wanna find partners for his/her children with some requirements</p>
         </div>
         <div class="content">
           <div class="col-xs-12">
@@ -215,7 +215,7 @@
         <div class="head">
           <div class="col-xs-10">
             <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a></p>
-            <p>Wanna find partners for his/her 2 children with some requirements</p>
+            <p>Wanna find partners for his/her children with some requirements</p>
           </div>
           <div class="col-xs-2 delete-post-container">
             <button type="button" class="delete-post" title="Delete this post" data-toggle="modal" data-target="#delete-confirmation">&times;</button>

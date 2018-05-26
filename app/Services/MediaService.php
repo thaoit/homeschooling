@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use Config;
+use App\Models\Media;
 use App\Models\Lesson;
 
 class MediaService{
@@ -76,5 +77,21 @@ class MediaService{
                       ],
         'num_of_media' => $count
       ];
+  }
+
+  public static function delete($id){
+
+      $media = Media::find($id);
+
+      if($media != null){
+          $media->delete();
+      }
+  }
+
+  public static function deleteArr($array){
+
+      for($i = 0; $i < count($array); $i++){
+          MediaService::delete( $array[$i] );
+      }
   }
 }

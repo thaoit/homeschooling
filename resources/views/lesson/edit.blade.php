@@ -48,12 +48,16 @@
 
           @foreach( $lesson['media']['types'] as $media_type )
             @foreach( $media_type as $media )
-              <li data-id="{{ $media->id }}">
-                <a href="{{ $media->url }}" target="_blank">
-                  {{ $media->origin_name }}
-                </a>
-                <span class="close-reference" title="Close this reference">&times;</span>
-              </li>
+              @if( isset($media->name) )
+                <li data-id="{{ $media->id }}" >
+              @else
+                <li data-id="{{ $media->id }}" data-type="url">
+              @endif
+                  <a href="{{ $media->url }}" target="_blank">
+                    {{ $media->origin_name }}
+                  </a>
+                  <span class="close-reference" title="Close this reference">&times;</span>
+                </li>
             @endforeach
           @endforeach
 
@@ -466,8 +470,12 @@
 
           // store delete references
           var id = $(this).parents('.content li').attr('data-id');
+          var is_delete_media_completely = $(this).parents('.content li').attr('data-type');
 
           if(typeof id !== "undefined"){
+              delete_media_refs.push(id);
+          }
+          if(typeof is_delete_media_completely != "undefined"){
               delete_medias.push(id);
           }
 

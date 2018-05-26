@@ -1,5 +1,6 @@
 var delete_outlines = [];
 var delete_topics = [];
+var delete_media_refs = [];
 var delete_medias = [];
 
 setupAjax();
@@ -60,13 +61,6 @@ function ajaxStoreAndAssignNewUploadMediaReferences(new_media_refs, references_c
 function ajaxStoreAndAssignNewUrlMediaReferences(url_media_ref, references_container, process_url, view_process_url){
 
     var url = url_media_ref.children('input').val();
-    var html_data = generateReferenceAfterChosen(
-        '',
-        url,
-        url.substr(url.lastIndexOf('/') + 1),
-        false,
-        view_process_url
-    );
 
     $.ajax({
 
@@ -131,7 +125,7 @@ function generateReferenceAfterChosen(id, path, origin_name, isUploaded, view_pr
 
     var data_id = 'data-id="' + id + '"';
 
-    return '<li ' + data_id + ' data-path="' + path + '" >' +
+    return '<li ' + data_id + ' data-path="' + path + '" data-type="url">' +
               link +
               '<span class="close-reference" title="Close this reference">&times;</span>' +
             '</li>';
@@ -213,7 +207,7 @@ function ajaxSaveAllRelatingLesson(request_data, elements, process_url){
         delete_topics
     );
 
-    var media_references = getObjOfMediaReferences(media_reference_elements, delete_medias);
+    var media_references = getObjOfMediaReferences(media_reference_elements, delete_media_refs, delete_medias);
 
     var last_status = elements['main-status-element'][0].innerText;
 
@@ -268,6 +262,7 @@ function ajaxSaveAllRelatingLesson(request_data, elements, process_url){
             // remove the delete outlines / topics / medias
             delete_outlines = [];
             delete_topics = [];
+            delete_media_refs = [];
             delete_medias = [];
 
             // change chosen
@@ -336,13 +331,14 @@ function getObjOfTopics(new_topic_elements, update_topic_elements, delete_topics
     return array;
 }
 
-function getObjOfMediaReferences(new_media_reference_elements, delete_media_refs){
+function getObjOfMediaReferences(new_media_reference_elements, delete_media_refs, delete_medias){
 
     var new_media_refs = getArrayOfObjFromMediaReferences(new_media_reference_elements);
 
     var array = {
       new: new_media_refs,
-      delete: delete_media_refs
+      delete: delete_media_refs,  /* delete reference to media*/
+      delete_media: delete_medias /* delete completely media */
     }
 
     return array;

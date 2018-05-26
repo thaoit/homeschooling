@@ -412,8 +412,12 @@
 
           // store delete references
           var id = $(this).parents('.content li').attr('data-id');
+          var is_delete_media_completely = $(this).parents('.content li').attr('data-type');
 
           if(typeof id !== "undefined"){
+              delete_media_refs.push(id);
+          }
+          if(typeof is_delete_media_completely != "undefined"){
               delete_medias.push(id);
           }
 

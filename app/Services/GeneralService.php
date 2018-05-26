@@ -5,6 +5,7 @@ use App\Services\LessonService;
 use App\Services\OutlineService;
 use App\Services\TopicService;
 use App\Services\LessonTopicService;
+use App\Services\MediaService;
 use App\Services\ReferenceService;
 use Illuminate\Support\Facades\Auth;
 
@@ -115,6 +116,12 @@ class GeneralService{
 
             $reference = ReferenceService::getArrayOfReferencesFromMediaId($media_refs['delete'], $lesson_id);
             ReferenceService::deleteArr( $reference );
+        }
+
+        // delete completely medias
+        if(isset( $media_refs['delete_media'] )){
+
+            MediaService::deleteArr( $media_refs['delete_media'] );
         }
     }
 
