@@ -82,6 +82,25 @@ $(document).ready(function(){
         }
     })
 
+    $(document).on('keyup', function(e){
+
+        switch (e.key) {
+          case 'ArrowRight':
+          case 'Right':
+
+            var slide_next_element = $('.slide-next');
+            slide_next_element.click();
+            break;
+            
+          case 'ArrowLeft':
+          case 'Left':
+
+            var slide_back_element = $('.slide-back');
+            slide_back_element.click();
+            break;
+        }
+    })
+
     function init(){
 
         var elements = $('.slide-container:first').children('.slide');
@@ -230,7 +249,7 @@ $(document).ready(function(){
         var element = slides_all.eq(current_index).prev('.slide');
 
         if(element.length === 0){
-            console.log('undefined----------');
+
             var i = current_index;
 
             while (element.length === 0) {
@@ -294,7 +313,7 @@ $(document).ready(function(){
             var siblings_after = slides_out[i].nextAll('.slide');
 
             for(var j = 0; j < siblings_after.length; j++){
-                
+
                 slideToTheLeftBrowser(siblings_after.eq(j), 0);
             }
         }

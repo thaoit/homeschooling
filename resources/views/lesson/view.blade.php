@@ -16,6 +16,7 @@
       <h3 class="no_steps">{{ count( $lesson['outlines'] ) }} Steps</h3>
       <h3 class="prefix">to</h3>
       <h3 class="name">{{ $lesson['general']->title }}</h3>
+      <h5 style="margin-top: 150px"> By. {{ $lesson['author']->username }}</h5>
     </div>
 
     @if( $lesson['general']->intro != null )
