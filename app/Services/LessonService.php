@@ -109,7 +109,7 @@ class LessonService{
         return $query;
     }
 
-    public static function getAllByUserRequest($user_id){
+    public static function getAllByUserRequest($user_id, $offset, $limit){
 
         $query = LessonService::getLessonQueryByUserRequest($user_id);
 
@@ -118,6 +118,8 @@ class LessonService{
         }
         else{
             $lesson_id_array = $query->orderBy('created_at', 'desc')
+                                      ->offset($offset)
+                                      ->limit($limit)
                                       ->pluck('id');
         }
 
@@ -126,13 +128,15 @@ class LessonService{
         return $lessons;
     }
 
-    public static function getAllInPublic($request_user_id, $limit = null){
+    public static function getAllInPublic($request_user_id, $offset, $limit){
 
         // get all lesson ids having public status and,
         // ordered by the number of love and latest created time
         $lesson_id_array =  Lesson::where('status', Config::get('constants.lesson_status.publish'))
                                    ->orderBy('no_of_love', 'desc')
-                                   ->latest();
+                                   ->latest()
+                                   ->offset($offset)
+                                   ->limit($limit);
 
         if( $limit != null ){
             $lesson_id_array = $lesson_id_array->limit( $limit );
@@ -317,7 +321,7 @@ class LessonService{
         return $lessons;
     }
 
-    public static function searchLessonNameByUserRequest($name, $user_id){
+    public static function searchLessonNameByUserRequest($name, $user_id, $offset, $limit){
 
         $query = LessonService::getLessonQueryByUserRequest($user_id);
 
@@ -327,6 +331,8 @@ class LessonService{
         else{
             $lesson_id_array = $query->where('title', 'like', "%$name%")
                                       ->orderBy('created_at', 'desc')
+                                      ->offset($offset)
+                                      ->limit($limit)
                                       ->pluck('id');
         }
 
@@ -336,7 +342,7 @@ class LessonService{
         return $lessons;
     }
 
-    public static function searchLessonNameInPublic($name, $request_user_id){
+    public static function searchLessonNameInPublic($name, $request_user_id, $offset, $limit){
 
         // get all lesson ids having public status and,
         // ordered by the number of love and latest created time
@@ -344,6 +350,8 @@ class LessonService{
                                    ->where('title', 'like', "%$name%")
                                    ->orderBy('no_of_love', 'desc')
                                    ->latest()
+                                   ->offset($offset)
+                                   ->limit($limit)
                                    ->pluck('id');
 
         $lesson = LessonService::getAllRelatingArrayOfLessons($lesson_id_array, $request_user_id);

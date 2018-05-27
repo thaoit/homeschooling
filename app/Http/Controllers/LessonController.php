@@ -17,7 +17,7 @@ class LessonController extends Controller
 
         $user_id = ( Auth::check() ) ? Auth::user()->id : null;
 
-        $lessons = LessonService::getAllByUserRequest($user_id);
+        $lessons = LessonService::getAllByUserRequest($user_id, 0, Config::get('constants.max_loading_num'));
         $topics = TopicService::getAllInOrder('asc');
 
         return view('lesson/index', compact('lessons', 'topics'));
@@ -92,7 +92,7 @@ class LessonController extends Controller
 
         $user_id = ( Auth::check() ) ? Auth::user()->id : null;
 
-        $lessons = LessonService::getAllInPublic($user_id);
+        $lessons = LessonService::getAllInPublic($user_id, 0, Config::get('constants.max_loading_num'));
         $topics = TopicService::getAllInOrder('asc');
 
         return view('community/resource', compact('lessons', 'topics'));
@@ -142,19 +142,29 @@ class LessonController extends Controller
 
             if( $is_only_publish == "true" && isset( $input['search_text'] ) ){
 
-                $lessons = LessonService::searchLessonNameInPublic( $input['search_text'], $user_id );
+                $lessons = LessonService::searchLessonNameInPublic(
+                    $input['search_text'],
+                    $user_id,
+                    0,
+                    Config::get('constants.max_loading_num')
+                );
             }
             else if( $is_only_publish == "true" && !isset( $input['search_text'] ) ){
 
-                $lessons = LessonService::getAllInPublic($user_id);
+                $lessons = LessonService::getAllInPublic($user_id, 0, Config::get('constants.max_loading_num'));
             }
             else if( $is_only_publish == "false" && isset( $input['search_text'] ) ){
 
-                $lessons = LessonService::searchLessonNameByUserRequest($input['search_text'], $user_id);
+                $lessons = LessonService::searchLessonNameByUserRequest(
+                    $input['search_text'],
+                    $user_id,
+                    0,
+                    Config::get('constants.max_loading_num')
+                  );
             }
             else{
 
-                $lessons = LessonService::getAllByUserRequest($user_id);
+                $lessons = LessonService::getAllByUserRequest($user_id, 0, Config::get('constants.max_loading_num'));
             }
         }
 
@@ -173,7 +183,7 @@ class LessonController extends Controller
 
             $search = $input['q'];
             $user_id = ( Auth::check() ) ? Auth::user()->id : null;
-            $lessons = LessonService::searchLessonNameInPublic($search, $user_id);
+            $lessons = LessonService::searchLessonNameInPublic($search, $user_id, 0, Config::get('constants.max_loading_num'));
         }
 
         return view('community/resource', compact('lessons', 'topics', 'search'));
@@ -191,7 +201,12 @@ class LessonController extends Controller
 
             $search = $input['q'];
             $user_id = ( Auth::check() ) ? Auth::user()->id : null;;
-            $lessons = LessonService::searchLessonNameByUserRequest($search, $user_id);
+            $lessons = LessonService::searchLessonNameByUserRequest(
+                          $search,
+                          $user_id,
+                          0,
+                          Config::get('constants.max_loading_num')
+                        );
         }
 
         return view('lesson/index', compact('lessons', 'topics', 'search'));
@@ -260,5 +275,41 @@ class LessonController extends Controller
             'result' => $result,
             'errors' => $message
         ];
+    }
+
+    public function loadMoreFromLesson(Request $request){
+
+        $input = $request->all();
+        $lessons = array();
+
+        if( isset($input['offset']) ){
+
+            $user_id = Auth::user()->id;
+            $lessons = LessonService::getAllByUserRequest(
+                            $user_id,
+                            $input['offset'],
+                            Config::get('constants.max_loading_num')
+                      );
+        }
+
+        return $lessons;
+    }
+
+    public function loadMoreFromResource(Request $request){
+
+          $input = $request->all();
+          $lessons = array();
+
+          if( isset($input['offset']) ){
+
+              $user_id = Auth::user()->id;
+              $lessons = LessonService::getAllInPublic(
+                              $user_id,
+                              $input['offset'],
+                              Config::get('constants.max_loading_num')
+                        );
+          }
+
+          return $lessons;
     }
 }

@@ -24,7 +24,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $lessons = LessonService::getAllInPublic(null, 12);
+        $lessons = LessonService::getAllInPublic(null, 0, 12);
         $divider = round( count($lessons) / 2 );
 
         return view('welcome', compact('lessons', 'divider'));

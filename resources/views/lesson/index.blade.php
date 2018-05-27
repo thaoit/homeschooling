@@ -593,6 +593,10 @@
     @endforeach
   </div>
 
+  <div class="text-center">
+    <button class="border-wrapper more-lesson-btn" type="button" name="">More</button>
+  </div>
+
   <div id="delete-confirmation" class="modal fade" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -778,6 +782,31 @@
               urls,
               elements
           );
+      })
+
+      $('.more-lesson-btn').on('click', function(){
+
+          // request data
+          var data = [];
+          data['offset'] = $('.lesson-container .lesson').length;
+          data['is_from_resource'] = false;
+          data['last_status'] = $(this)[0].innerText;
+
+          // elements
+          var elements = [];
+          elements['lesson_container'] = $('.lesson-container');
+          elements['status_element'] = $(this);
+
+          // urls
+          var urls = [];
+          urls['load'] = '{{ action('LessonController@loadMoreFromLesson') }}'
+          urls['default_media_types'] = '{{ action('MediaController@getDefaultTypes') }}';
+          urls['view_media_reference'] = '{{ action('MediaController@viewMediaReference', ':name') }}';
+          urls['view_lesson'] = '{{ action('LessonController@view', ':id') }}'
+          urls['edit_lesson'] = '{{ action('LessonController@edit', ':id') }}';
+
+          // process
+          ajaxLoadMoreFromLesson(data, urls, elements);
       })
 
     });

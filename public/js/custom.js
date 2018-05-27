@@ -593,6 +593,30 @@ function ajaxClearFilterLessons(request_data, urls, elements){
     });
 }
 
+// load more
+function ajaxLoadMoreFromLesson(request_data, urls, elements){
+
+    $.ajax({
+
+        type: 'get',
+        url: urls['load'],
+        data:{
+          offset: request_data['offset']
+        },
+        beforeSend: function(){
+
+            setProcessStatus(elements['status_element'][0], 'Loading...')
+        },
+        success: function(data){
+
+            ajaxAddLessonsAfterBasicLoading(data, urls, elements, request_data);
+        },
+        error: function(data){
+            console.log(data);
+        }
+    });
+}
+
 function ajaxResetLessonsAfterFilter(lesson_objs, urls, elements, is_from_resource){
 
     $.ajax({
@@ -610,6 +634,32 @@ function ajaxResetLessonsAfterFilter(lesson_objs, urls, elements, is_from_resour
         complete: function(){
 
               showAfterCompleteFilter(elements['filter_button'], elements['filter_clear_button']);
+        }
+    });
+}
+
+function ajaxAddLessonsAfterBasicLoading(lesson_objs, urls, elements, request_data){
+
+    $.ajax({
+
+        type: 'get',
+        url: urls['default_media_types'],
+        data: {},
+        success: function(data){
+
+            if(lesson_objs.length > 0){
+                addLessonElements(lesson_objs, data, urls, elements, request_data['is_from_resource']);
+            }
+            else{
+                elements['status_element'].hide();
+            }
+        },
+        error: function(data){
+            console.log(data);
+        },
+        complete: function(){
+
+            setCompleteStatus(elements['status_element'][0], request_data['last_status']);
         }
     });
 }
@@ -655,6 +705,23 @@ function resetLessonElements(lesson_objs, default_media_types, urls, elements, i
 
 }
 
+function addLessonElements(lesson_objs, default_media_types, urls, elements, is_from_resource){
+
+    var lesson_container = elements['lesson_container'];
+
+    // get html from lesson objs
+    if(is_from_resource){
+      var html = generateLessonsInResources(lesson_objs, default_media_types, urls);
+    }
+    else{
+      var html = generateLessonsInLessonPage(lesson_objs, default_media_types, urls);
+    }
+
+    // append new lessons
+    lesson_container.append(html);
+
+}
+
 function generateLessonsInResources(lesson_objs, default_media_types, urls){
 
     var html = ``;
@@ -676,7 +743,7 @@ function generateLessonInResources(lesson_obj, default_media_types, urls){
 
     // author
     var author = lesson_obj['author']['username'];
-    var view_profile_process_url = urls['view_profile'].substring(1, urls['view_profile'].lastIndexOf(':')) + author;
+    var view_profile_process_url = urls['view_profile'].substring(0, urls['view_profile'].lastIndexOf(':')) + author;
 
     var author_html = `<p>By <a href="` + view_profile_process_url + `">` + author + `</a></p>`;
 
@@ -708,7 +775,7 @@ function generateLessonInResources(lesson_obj, default_media_types, urls){
 
     // reference info
     var reference_html = ``;
-    var media_process_url = urls['view_media_reference'].substring(1, urls['view_media_reference'].lastIndexOf(':'));
+    var media_process_url = urls['view_media_reference'].substring(0, urls['view_media_reference'].lastIndexOf(':'));
 
     if( lesson_obj['media']['num_of_media'] > 0 ){
 
@@ -778,7 +845,7 @@ function generateLessonInResources(lesson_obj, default_media_types, urls){
     }
 
     // url
-    var view_lesson_process_url = urls['view_lesson'].substring(1, urls['view_lesson'].lastIndexOf(':')) + id;
+    var view_lesson_process_url = urls['view_lesson'].substring(0, urls['view_lesson'].lastIndexOf(':')) + id;
 
     // combine all
     var html =
@@ -858,7 +925,7 @@ function generateLessonInLessonPage(lesson_obj, default_media_types, urls){
 
     // reference info
     var reference_html = ``;
-    var media_process_url = urls['view_media_reference'].substring(1, urls['view_media_reference'].lastIndexOf(':'));
+    var media_process_url = urls['view_media_reference'].substring(0, urls['view_media_reference'].lastIndexOf(':'));
 
     if( lesson_obj['media']['num_of_media'] > 0 ){
 
@@ -912,8 +979,8 @@ function generateLessonInLessonPage(lesson_obj, default_media_types, urls){
     }
 
     // url
-    var view_lesson_process_url = urls['view_lesson'].substring(1, urls['view_lesson'].lastIndexOf(':')) + id;
-    var edit_lesson_process_url = urls['edit_lesson'].substring(1, urls['edit_lesson'].lastIndexOf(':')) + id;
+    var view_lesson_process_url = urls['view_lesson'].substring(0, urls['view_lesson'].lastIndexOf(':')) + id;
+    var edit_lesson_process_url = urls['edit_lesson'].substring(0, urls['edit_lesson'].lastIndexOf(':')) + id;
 
     // control container, depending on user role
     var control_container_html = '';
@@ -935,7 +1002,7 @@ function generateLessonInLessonPage(lesson_obj, default_media_types, urls){
     `<div class="lesson" data-id="` + id + `">
           <div class="head">
             <div class="col-xs-10">
-              <h4 class="title"><a href="">` + title  + `</a></h4>
+              <h4 class="title"><a href="` + view_lesson_process_url + `">` + title  + `</a></h4>
               <div class="topics">
                 ` +
                 topic_html +

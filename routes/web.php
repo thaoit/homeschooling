@@ -34,6 +34,10 @@ Route::middleware('auth')->prefix('/lessons')->group(function(){
   Route::get('/edit/{id}', 'LessonController@edit');
 
   Route::get('/delete/{id}', 'LessonController@delete');
+
+  Route::get('/load-more-from-lesson', 'LessonController@loadMoreFromLesson');
+
+  Route::get('/load-more-from-resource', 'LessonController@loadMoreFromResource');
 });
 
 Route::prefix('/lessons')->group(function(){
