@@ -1,4 +1,4 @@
-h1, h2, h3, h4, h5{
+h1, h2, h3, h4, h5, h6{
   font-family: "Comic Sans MS", sans-serif;
   color: #697A10;
 }
@@ -140,6 +140,11 @@ footer{
   padding-right: 10px;
 }
 
+.small-blur-text{
+  font-size: 0.9em;
+  color: #ccc;
+}
+
 #outline-content .note-editor.note-frame{
   border: 1px solid #697A10;
 }
@@ -263,8 +268,18 @@ footer{
   right: 0;
 }
 
+.group-intro{
+  text-align: center;
+  overflow: auto;
+}
+
+.group-intro img{
+  height: 200px;
+  display: block;
+  margin: 100px auto 40px auto;
+}
+
 .group-container .info, .post-container{
-  background-color: #F0F4B9;
   padding: 15px;
   margin-bottom: 45px;
 }

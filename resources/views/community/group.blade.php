@@ -2,11 +2,25 @@
 
 @section('content')
 
-<div class="content-page">
-  <div class="container group-container">
-    <div class="info">
+<div class="content-page container">
+  <div class="group-intro">
+    <h3 style="margin-bottom: 45px">Who's your partners?</h3>
+    <h5>If you find it's hard for controlling your ways, why don't you try to find some partners?</h5>
+    <h5>Together doing something is maybe greater.</h5>
+    <h6 style="margin-top: 25px"><button type="button" style="text-decoration: underline" data-toggle="modal" data-target="#manage-lessons-modal">Manage your posts here</button></h6>
+    <div class="col-xs-12 col-sm-6">
+      <img src="{{ asset('img/magnifying glass.png') }}" alt="">
+      <h5><button id="search-ref-btn" type="button"><strong>Searching</strong></button></h5>
+    </div>
+    <div class="col-xs-12 col-sm-6">
+      <img src="{{ asset('img/hand speaker.png') }}" alt="">
+      <h5><button id="post-ref-btn" type="button"><strong>Posting</strong></button></h5>
+    </div>
+  </div>
+  <div class="group-container" style="margin-top: 100px">
+    <div class="info" style="display: none">
       <div class="head">
-        <h4>Wanna find some partners for yours and your children?</h4>
+        <h4>Wanna find some partners for you and your children?</h4>
       </div>
       <form class="content">
         <p>Children's age from
@@ -90,7 +104,16 @@
       @foreach( $not_own_posts as $post )
       <div class="post">
         <div class="head">
-          <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a></p>
+          <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a>
+            <span class="small-blur-text"> -
+            @if( date('Y') - date('Y', strtotime( $post->created_at )) > 0 )
+              {{ date('Y') - date('Y', strtotime( $post->created_at )) }} years ago
+            @elseif( date('m') - date('m', strtotime( $post->created_at )) > 0 )
+              {{ date('m') - date('m', strtotime( $post->created_at )) }} months ago
+            @else
+              {{ date('d') - date('d', strtotime( $post->created_at )) }} days ago
+            @endif
+          </p>
           <p>Wanna find partners for his/her children with some requirements</p>
         </div>
         <div class="content">
@@ -205,77 +228,100 @@
     </div>
     @endif
 
-    @if( count($own_posts) > 0)
-    <div class="post-container own-posts">
-      <div class="head">
-        <h4>Your posts here!</h4>
-      </div>
-      @foreach( $own_posts as $post )
-      <div class="post" data-id="{{ $post->id }}">
-        <div class="head">
-          <div class="col-xs-10">
-            <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a></p>
-            <p>Wanna find partners for his/her children with some requirements</p>
-          </div>
-          <div class="col-xs-2 delete-post-container">
-            <button type="button" class="delete-post" title="Delete this post" data-toggle="modal" data-target="#delete-confirmation">&times;</button>
-          </div>
-        </div>
-        <div class="content">
-          <div class="col-xs-12">
-            <p class="col-xs-4">Age</p>
-            <p class="col-xs-8">
-              @if($post->age_from == null && $post->age_to == null)
-                Any ages
-              @elseif($post->age_from == null)
-                <= {{ $post->age_to }} years old
-              @elseif($post->age_to == null)
-                >= {{ $post->age_from }} years old
-              @else
-                {{ $post->age_from }} - {{ $post->age_to }} years old
-              @endif
-            </p>
-          </div>
-          <div class="col-xs-12">
-            <p class="col-xs-4">Gender</p>
-            <p class="col-xs-8">{{ $post->gender }}</p>
-          </div>
-          <div class="col-xs-12">
-            <p class="col-xs-4">Favourite topics</p>
-            <p class="col-xs-8">
-              @if($post->favorite_topics == null)
-                Any topics
-              @else
-                {{ $post->favorite_topics }}
-              @endif
-            </p>
-          </div>
-          <div class="col-xs-12">
-            <p class="col-xs-4">Living in</p>
-            <p class="col-xs-8">
-              @if( $post->country == 'All' )
-                Anywhere
-              @elseif( $post->province == 'All' )
-                {{ $post->country }}
-              @else
-                {{ $post->province }}, {{ $post->country }}
-              @endif
-            </p>
-          </div>
+  </div>
 
-          @if( $post->other_info != null)
-          <div class="col-xs-12">
-            <p class="col-xs-4">Others info</p>
-            <p class="col-xs-8">{{ $post->other_info }}</p>
+  <div id="manage-lessons-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>Your posts</h4>
+        </div>
+        <div class="modal-body">
+          @if( count($own_posts) > 0)
+          <div class="post-container own-posts">
+            @foreach( $own_posts as $post )
+            <div class="post" data-id="{{ $post->id }}">
+              <div class="head">
+                <div class="col-xs-10">
+                  <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a>
+                  <!--<p>Wanna find partners for his/her children with some requirements</p>-->
+                    <span class="small-blur-text"> -
+                    @if( date('Y') - date('Y', strtotime( $post->created_at )) > 0 )
+                      {{ date('Y') - date('Y', strtotime( $post->created_at )) }} years ago
+                    @elseif( date('m') - date('m', strtotime( $post->created_at )) > 0 )
+                      {{ date('m') - date('m', strtotime( $post->created_at )) }} months ago
+                    @else
+                      {{ date('d') - date('d', strtotime( $post->created_at )) }} days ago
+                    @endif
+                    </span>
+                  </p>
+                </div>
+                <div class="col-xs-2 delete-post-container">
+                  <button type="button" class="delete-post" title="Delete this post" data-toggle="modal" data-target="#delete-confirmation">&times;</button>
+                </div>
+              </div>
+              <div class="content">
+                <div class="col-xs-12">
+                  <p class="col-xs-4">Age</p>
+                  <p class="col-xs-8">
+                    @if($post->age_from == null && $post->age_to == null)
+                      Any ages
+                    @elseif($post->age_from == null)
+                      <= {{ $post->age_to }} years old
+                    @elseif($post->age_to == null)
+                      >= {{ $post->age_from }} years old
+                    @else
+                      {{ $post->age_from }} - {{ $post->age_to }} years old
+                    @endif
+                  </p>
+                </div>
+                <div class="col-xs-12">
+                  <p class="col-xs-4">Gender</p>
+                  <p class="col-xs-8">{{ $post->gender }}</p>
+                </div>
+                <div class="col-xs-12">
+                  <p class="col-xs-4">Favourite topics</p>
+                  <p class="col-xs-8">
+                    @if($post->favorite_topics == null)
+                      Any topics
+                    @else
+                      {{ $post->favorite_topics }}
+                    @endif
+                  </p>
+                </div>
+                <div class="col-xs-12">
+                  <p class="col-xs-4">Living in</p>
+                  <p class="col-xs-8">
+                    @if( $post->country == 'All' )
+                      Anywhere
+                    @elseif( $post->province == 'All' )
+                      {{ $post->country }}
+                    @else
+                      {{ $post->province }}, {{ $post->country }}
+                    @endif
+                  </p>
+                </div>
+
+                @if( $post->other_info != null)
+                <div class="col-xs-12">
+                  <p class="col-xs-4">Others info</p>
+                  <p class="col-xs-8">{{ $post->other_info }}</p>
+                </div>
+                @endif
+              </div>
+            </div>
+            @endforeach
           </div>
           @endif
         </div>
+        <div class="modal-footer">
+          <button class="btn btn-default" type="button" name="cancel" data-dismiss="modal">Close</button>
+        </div>
       </div>
-      @endforeach
     </div>
-    @endif
+  </div>
 
-    <div id="delete-confirmation" class="modal fade" role="dialog">
+  <div id="delete-confirmation" class="modal fade" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content hint-chosen-panel">
         <div class="modal-header">
@@ -293,7 +339,7 @@
       </div>
     </div>
   </div>
-  </div>
+
 </div>
 
 @endsection
@@ -419,6 +465,8 @@
 
       $('.modal .delete-confirmation-btn').on('click', function(){
 
+          var post_id = $(this).parents('.modal').attr('data-post-id');
+          var url = '{{ action('PartnerPostController@delete') }}';
           var no_of_posts = $('.own-posts .post').length;
 
           if(no_of_posts == 1){
@@ -428,9 +476,6 @@
               var post_query = '.own-posts .post[data-id=' + post_id + ']';
               var post_element = $(post_query);
           }
-
-          var post_id = $(this).parents('.modal').attr('data-post-id');
-          var url = '{{ action('PartnerPostController@delete') }}';
 
           ajaxDeletePartnerPost(post_id, post_element, url);
       })
@@ -470,6 +515,39 @@
           }
       })
 
+      $('#search-ref-btn').on('click', function(){
+
+          var group_container = $('.group-container');
+          var nav = $('header nav');
+
+          // nav is fixed so sub its width
+          var target_scroll_pos = group_container.offset().top - nav.height();
+
+          $('html, body').animate({
+              scrollTop: target_scroll_pos
+          }, 500);
+
+          group_container.find('.info').show();
+          group_container.find('.search-btn').show();
+          group_container.find('.post-btn').hide();
+      })
+
+      $('#post-ref-btn').on('click', function(){
+
+          var group_container = $('.group-container');
+          var nav = $('header nav');
+
+          // nav is fixed so sub its width
+          var target_scroll_pos = group_container.offset().top - nav.height();
+
+          $('html, body').animate({
+              scrollTop: target_scroll_pos
+          }, 500);
+
+          group_container.find('.info').show();
+          group_container.find('.search-btn').hide();
+          group_container.find('.post-btn').show();
+      })
   });
 
 </script>
