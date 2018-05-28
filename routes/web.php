@@ -38,6 +38,8 @@ Route::middleware('auth')->prefix('/lessons')->group(function(){
   Route::get('/load-more-from-lesson', 'LessonController@loadMoreFromLesson');
 
   Route::get('/load-more-from-resource', 'LessonController@loadMoreFromResource');
+
+  Route::get('/load-more-lessons', 'LessonController@loadMoreLessons');
 });
 
 Route::prefix('/lessons')->group(function(){
@@ -49,8 +51,6 @@ Route::prefix('/lessons')->group(function(){
   Route::get('/filter-lessons-by-name', 'LessonController@filterLessonsByName');
 
   Route::get('/search-in-lesson', 'LessonController@searchNameInLesson');
-
-  Route::get('/search-in-resource', 'LessonController@searchNameInResource');
 
   Route::get('/love-lesson', 'LessonController@loveLesson');
 
@@ -75,6 +75,8 @@ Route::middleware('auth')->prefix('/tests')->group(function(){
 Route::prefix('/resources')->group(function(){
 
   Route::get('/', 'LessonController@resources');
+
+  Route::get('/search-in-resource', 'LessonController@searchNameInResource');
 });
 
 Route::middleware('auth')->prefix('/groups')->group(function(){

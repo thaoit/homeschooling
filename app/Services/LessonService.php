@@ -138,10 +138,6 @@ class LessonService{
                                    ->offset($offset)
                                    ->limit($limit);
 
-        if( $limit != null ){
-            $lesson_id_array = $lesson_id_array->limit( $limit );
-        }
-
         $lesson_id_array = $lesson_id_array->pluck('id');
 
         $lesson = LessonService::getAllRelatingArrayOfLessons($lesson_id_array, $request_user_id);
@@ -153,15 +149,24 @@ class LessonService{
     // with role admin: access all,
     // role parent: access only his/her own lessons
     // children: access only his/her parent's lessons in publish status
-    public static function getAllBelongsToTopicsAndNameHintsByUserRequest($topics, $name, $user_id){
+    public static function getAllBelongsToTopicsAndNameHintsByUserRequest($topics, $name, $user_id, $offset, $limit){
 
         $role = UserService::getRole($user_id);
         $filter_lesson_ids = array();
 
-        $query =  DB::table('lesson_topics')
-                    ->join('lessons', 'lesson_topics.lesson_id', '=', 'lessons.id')
-                    ->join('topics', 'lesson_topics.topic_id', '=', 'topics.id');
+        if( $topics != null ){
 
+            $query =  DB::table('lesson_topics')
+                        ->join('lessons', 'lesson_topics.lesson_id', '=', 'lessons.id')
+                        ->join('topics', 'lesson_topics.topic_id', '=', 'topics.id')
+                        ->whereIn('topics.name', $topics);
+        }
+        else{
+
+            $query = DB::table('lessons');
+        }
+
+        // set role
         switch ($role) {
 
           case Config::get('constants.role.parent'):
@@ -190,10 +195,12 @@ class LessonService{
         if($query != null){
 
           $filter_lesson_ids = $query->where('title', 'like', "%$name%")
-                              ->whereIn('topics.name', $topics)
                               ->groupBy('lessons.id')
                               ->orderByRaw('count(*) desc')
                               ->orderBy('lessons.no_of_love', 'desc')
+                              ->orderBy('lessons.created_at', 'desc')
+                              ->offset($offset)
+                              ->limit($limit)
                               ->pluck('lessons.id');
         }
 
@@ -204,14 +211,23 @@ class LessonService{
 
     // get all publish lessons, and
     // not depending on user or user's role
-    public static function getAllBelongsToTopicsAndNameHintsInResource($topics, $name, $request_user_id){
+    public static function getAllBelongsToTopicsAndNameHintsInResource($topics, $name, $request_user_id, $offset, $limit){
 
         $filter_lesson_ids = array();
 
-        $query =  DB::table('lesson_topics')
-                    ->join('lessons', 'lesson_topics.lesson_id', '=', 'lessons.id')
-                    ->join('topics', 'lesson_topics.topic_id', '=', 'topics.id')
-                    ->where('lessons.status', Config::get('constants.lesson_status.publish'));
+        if($topics != null){
+
+            $query =  DB::table('lesson_topics')
+                        ->join('lessons', 'lesson_topics.lesson_id', '=', 'lessons.id')
+                        ->join('topics', 'lesson_topics.topic_id', '=', 'topics.id')
+                        ->where('lessons.status', Config::get('constants.lesson_status.publish'))
+                        ->whereIn('topics.name', $topics);
+        }
+        else{
+
+            $query =  DB::table('lessons')
+                        ->where('lessons.status', Config::get('constants.lesson_status.publish'));
+        }
 
         // get lessons have topics in the input and,
         // order by the largest number of topics in the $topics input and,
@@ -220,10 +236,12 @@ class LessonService{
         if($query != null){
 
           $filter_lesson_ids = $query->where('title', 'like', "%$name%")
-                              ->whereIn('topics.name', $topics)
                               ->groupBy('lessons.id')
                               ->orderByRaw('count(*) desc')
                               ->orderBy('lessons.no_of_love', 'desc')
+                              ->orderBy('lessons.created_at', 'desc')
+                              ->offset($offset)
+                              ->limit($limit)
                               ->pluck('lessons.id');
         }
 

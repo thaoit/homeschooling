@@ -109,12 +109,14 @@ class LessonController extends Controller
             $user_id = ( Auth::check() ) ? Auth::user()->id : null;
 
             // determine if request come from resource or not
-            if( isset( $input['is_getting_only_publish'] ) && $input['is_getting_only_publish'] ){
+            if( isset( $input['is_getting_only_publish'] ) && $input['is_getting_only_publish'] == "true" ){
 
                 $lessons = LessonService::getAllBelongsToTopicsAndNameHintsInResource(
                                               $input['topics'],
                                               $search_text,
-                                              $user_id
+                                              $user_id,
+                                              0,
+                                              Config::get('constants.max_loading_num')
                                           );
             }
             else{
@@ -122,7 +124,9 @@ class LessonController extends Controller
                 $lessons = LessonService::getAllBelongsToTopicsAndNameHintsByUserRequest(
                                               $input['topics'],
                                               $search_text,
-                                              $user_id
+                                              $user_id,
+                                              0,
+                                              Config::get('constants.max_loading_num')
                                           );
             }
         }
@@ -311,5 +315,43 @@ class LessonController extends Controller
           }
 
           return $lessons;
+    }
+
+    public function loadMoreLessons(Request $request){
+
+        $input = $request->all();
+        $lessons = array();
+
+        if( isset( $input['offset'] ) ){
+
+            $search_text = isset( $input['search_text'] ) ? $input['search_text'] : '';
+            $user_id = ( Auth::check() ) ? Auth::user()->id : null;
+            $offset = $input['offset'];
+            $topics = isset( $input['topics'] ) ? $input['topics'] : null;
+
+            // determine if request come from resource or not
+            if( isset( $input['is_getting_only_publish'] ) && $input['is_getting_only_publish'] == "true"){
+
+                $lessons = LessonService::getAllBelongsToTopicsAndNameHintsInResource(
+                                              $topics,
+                                              $search_text,
+                                              $user_id,
+                                              $offset,
+                                              Config::get('constants.max_loading_num')
+                                          );
+            }
+            else{
+
+                $lessons = LessonService::getAllBelongsToTopicsAndNameHintsByUserRequest(
+                                              $topics,
+                                              $search_text,
+                                              $user_id,
+                                              $offset,
+                                              Config::get('constants.max_loading_num')
+                                          );
+            }
+        }
+
+        return $lessons;
     }
 }

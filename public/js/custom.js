@@ -594,14 +594,17 @@ function ajaxClearFilterLessons(request_data, urls, elements){
 }
 
 // load more
-function ajaxLoadMoreFromLesson(request_data, urls, elements){
+function ajaxLoadMoreLessons(request_data, urls, elements){
 
     $.ajax({
 
         type: 'get',
         url: urls['load'],
         data:{
-          offset: request_data['offset']
+          offset: request_data['offset'],
+          topics: request_data['chosen_topic_values'],
+          search_text: request_data['search_text'],
+          is_getting_only_publish: request_data['is_from_resource']
         },
         beforeSend: function(){
 
@@ -627,6 +630,14 @@ function ajaxResetLessonsAfterFilter(lesson_objs, urls, elements, is_from_resour
         success: function(data){
 
             resetLessonElements(lesson_objs, data, urls, elements, is_from_resource);
+
+            if(lesson_objs.length > 0){
+                elements['more_lessons_button'].show();
+            }
+            else {
+                elements['more_lessons_button'].hide();
+            }
+
         },
         error: function(data){
             console.log(data);
@@ -674,6 +685,13 @@ function ajaxResetLessonsAfterClearingFilter(lesson_objs, urls, elements, is_fro
         success: function(data){
 
             resetLessonElements(lesson_objs, data, urls, elements, is_from_resource);
+
+            if(lesson_objs.length > 0){
+                elements['more_lessons_button'].show();
+            }
+            else {
+                elements['more_lessons_button'].hide();
+            }
         },
         error: function(data){
             console.log(data);
