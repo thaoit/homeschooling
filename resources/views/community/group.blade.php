@@ -17,20 +17,20 @@
       <h5><button id="post-ref-btn" type="button"><strong>Posting</strong></button></h5>
     </div>
   </div>
-  <div class="group-container" style="margin-top: 100px">
+  <div class="group-container">
     <div class="info" style="display: none">
       <div class="head">
         <h4>Wanna find some partners for you and your children?</h4>
       </div>
       <form class="content">
         <p>Children's age from
-          <input class="age-from" type="number" name="age_from" min="1" value="{{ isset($input['age_from']) ? $input['age_from'] : '' }}">
+          <input id="age-from" type="number" name="age_from" min="1" value="{{ isset($input['age_from']) ? $input['age_from'] : '' }}">
           to
-          <input class="age-to" type="number" name="age_to" min="1" value="{{ isset($input['age_to']) ? $input['age_to'] : '' }}">
+          <input id="age-to" type="number" name="age_to" min="1" value="{{ isset($input['age_to']) ? $input['age_to'] : '' }}">
           <div class="alert-container"></div>
         </p>
         <p>Gender
-          <select name="gender">
+          <select id="gender" name="gender">
             @foreach( Config::get('constants.gender') as $gender )
               @if( isset($input['gender']) && $input['gender'] == $gender )
                 <option value="{{ $gender }}" selected>{{ $gender }}</option>
@@ -83,8 +83,8 @@
         </p>
         <div>
           <p>Other info</p>
-            <textarea class="form-control other-info" rows="4" placeholder="Type some other requirements here" name="other_info">
-              @if( isset($input['other_info']) )
+            <textarea id="other-info" class="form-control" rows="4" placeholder="Type some other requirements here" name="other_info">
+              @if( isset($input['other_info']))
                 {{ $input['other_info'] }}
               @endif
             </textarea>
@@ -96,135 +96,83 @@
       </div>
     </div>
 
-    @if( count($not_own_posts) > 0)
-    <div class="post-container not-own-posts">
+    <div class="post-container">
+      @if( count($not_own_posts) > 0)
       <div class="head">
         <h4>Try to find some partners here!</h4>
       </div>
-      @foreach( $not_own_posts as $post )
-      <div class="post">
-        <div class="head">
-          <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a>
-            <span class="small-blur-text"> -
-            @if( date('Y') - date('Y', strtotime( $post->created_at )) > 0 )
-              {{ date('Y') - date('Y', strtotime( $post->created_at )) }} years ago
-            @elseif( date('m') - date('m', strtotime( $post->created_at )) > 0 )
-              {{ date('m') - date('m', strtotime( $post->created_at )) }} months ago
-            @else
-              {{ date('d') - date('d', strtotime( $post->created_at )) }} days ago
+      <div class="not-own-posts">
+        @foreach( $not_own_posts as $post )
+        <div class="post">
+          <div class="head">
+            <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a>
+              <span class="small-blur-text"> -
+              @if( date('Y') - date('Y', strtotime( $post->created_at )) > 0 )
+                {{ date('Y') - date('Y', strtotime( $post->created_at )) }} years ago
+              @elseif( date('m') - date('m', strtotime( $post->created_at )) > 0 )
+                {{ date('m') - date('m', strtotime( $post->created_at )) }} months ago
+              @else
+                {{ date('d') - date('d', strtotime( $post->created_at )) }} days ago
+              @endif
+            </p>
+            <p>Wanna find partners for his/her children with some requirements</p>
+          </div>
+          <div class="content">
+            <div class="col-xs-12">
+              <p class="col-xs-4">Age</p>
+              <p class="col-xs-8">
+                @if($post->age_from == null && $post->age_to == null)
+                  Any ages
+                @elseif($post->age_from == null)
+                  <= {{ $post->age_to }} years old
+                @elseif($post->age_to == null)
+                  >= {{ $post->age_from }} years old
+                @else
+                  {{ $post->age_from }} - {{ $post->age_to }} years old
+                @endif
+              </p>
+            </div>
+            <div class="col-xs-12">
+              <p class="col-xs-4">Gender</p>
+              <p class="col-xs-8">{{ $post->gender }}</p>
+            </div>
+            <div class="col-xs-12">
+              <p class="col-xs-4">Favourite topics</p>
+              <p class="col-xs-8">
+                @if($post->favorite_topics == null)
+                  Any topics
+                @else
+                  {{ $post->favorite_topics }}
+                @endif
+              </p>
+            </div>
+            <div class="col-xs-12">
+              <p class="col-xs-4">Living in</p>
+              <p class="col-xs-8">
+                @if( $post->country == 'All' )
+                  Anywhere
+                @elseif( $post->province == 'All' )
+                  {{ $post->country }}
+                @else
+                  {{ $post->province }}, {{ $post->country }}
+                @endif
+              </p>
+            </div>
+
+            @if( $post->other_info != null)
+            <div class="col-xs-12">
+              <p class="col-xs-4">Others info</p>
+              <p class="col-xs-8">{{ $post->other_info }}</p>
+            </div>
             @endif
-          </p>
-          <p>Wanna find partners for his/her children with some requirements</p>
+          </div>
         </div>
-        <div class="content">
-          <div class="col-xs-12">
-            <p class="col-xs-4">Age</p>
-            <p class="col-xs-8">
-              @if($post->age_from == null && $post->age_to == null)
-                Any ages
-              @elseif($post->age_from == null)
-                <= {{ $post->age_to }} years old
-              @elseif($post->age_to == null)
-                >= {{ $post->age_from }} years old
-              @else
-                {{ $post->age_from }} - {{ $post->age_to }} years old
-              @endif
-            </p>
-          </div>
-          <div class="col-xs-12">
-            <p class="col-xs-4">Gender</p>
-            <p class="col-xs-8">{{ $post->gender }}</p>
-          </div>
-          <div class="col-xs-12">
-            <p class="col-xs-4">Favourite topics</p>
-            <p class="col-xs-8">
-              @if($post->favorite_topics == null)
-                Any topics
-              @else
-                {{ $post->favorite_topics }}
-              @endif
-            </p>
-          </div>
-          <div class="col-xs-12">
-            <p class="col-xs-4">Living in</p>
-            <p class="col-xs-8">
-              @if( $post->country == 'All' )
-                Anywhere
-              @elseif( $post->province == 'All' )
-                {{ $post->country }}
-              @else
-                {{ $post->province }}, {{ $post->country }}
-              @endif
-            </p>
-          </div>
-
-          @if( $post->other_info != null)
-          <div class="col-xs-12">
-            <p class="col-xs-4">Others info</p>
-            <p class="col-xs-8">{{ $post->other_info }}</p>
-          </div>
-          @endif
-        </div>
+        @endforeach
       </div>
-      @endforeach
-      <!--<div class="col-xs-12 col-sm-6 col-md-3 post">
-        <div class="head">
-          <p>From. <a href="">Anna Leo</a></p>
-          <p>Wanna find partners for his/her 2 children with some requirements</p>
-        </div>
-        <div class="content">
-          <div class="col-xs-12">
-            <p class="col-xs-4">Age</p>
-            <p class="col-xs-8">5 - 10 years old</p>
-          </div>
-          <div class="col-xs-12">
-            <p class="col-xs-4">Gender</p>
-            <p class="col-xs-8">Girl</p>
-          </div>
-          <div class="col-xs-12">
-            <p class="col-xs-4">Favourite topics</p>
-            <p class="col-xs-8">Science, Music</p>
-          </div>
-          <div class="col-xs-12">
-            <p class="col-xs-4">Living in</p>
-            <p class="col-xs-8">US</p>
-          </div>
-          <div class="col-xs-12">
-            <p class="col-xs-4">Others</p>
-            <p class="col-xs-8">no</p>
-          </div>
-        </div>
-        </div>
-      </div>
-      <div class="col-xs-12 col-sm-6 col-md-3 post">
-        <div class="head">
-          <p>From. <a href="">Anna Leo</a></p>
-          <p>Wanna find partners for his/her 2 children with some requirements</p>
-        </div>
-        <div class="content">
-          <div class="col-xs-12">
-            <p class="col-xs-4">Age</p>
-            <p class="col-xs-8">5 - 10 years old</p>
-          </div>
-          <div class="col-xs-12">
-            <p class="col-xs-4">Gender</p>
-            <p class="col-xs-8">Girl</p>
-          </div>
-          <div class="col-xs-12">
-            <p class="col-xs-4">Favourite topics</p>
-            <p class="col-xs-8">Science, Music</p>
-          </div>
-          <div class="col-xs-12">
-            <p class="col-xs-4">Living in</p>
-            <p class="col-xs-8">US</p>
-          </div>
-          <div class="col-xs-12">
-            <p class="col-xs-4">Others</p>
-            <p class="col-xs-8">no</p>
-          </div>
-        </div>
-      </div>-->
+    </div>
 
+    <div class="text-center">
+      <button class="border-wrapper more-not-own-lesson-btn" type="button" name="">More</button>
     </div>
     @endif
 
@@ -237,82 +185,84 @@
           <h4>Your posts</h4>
         </div>
         <div class="modal-body">
-          @if( count($own_posts) > 0)
-          <div class="post-container own-posts">
-            @foreach( $own_posts as $post )
-            <div class="post" data-id="{{ $post->id }}">
-              <div class="head">
-                <div class="col-xs-10">
-                  <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a>
-                  <!--<p>Wanna find partners for his/her children with some requirements</p>-->
-                    <span class="small-blur-text"> -
-                    @if( date('Y') - date('Y', strtotime( $post->created_at )) > 0 )
-                      {{ date('Y') - date('Y', strtotime( $post->created_at )) }} years ago
-                    @elseif( date('m') - date('m', strtotime( $post->created_at )) > 0 )
-                      {{ date('m') - date('m', strtotime( $post->created_at )) }} months ago
-                    @else
-                      {{ date('d') - date('d', strtotime( $post->created_at )) }} days ago
-                    @endif
-                    </span>
-                  </p>
+          <div class="post-container">
+            @if( count($own_posts) > 0)
+            <div class="own-posts">
+              @foreach( $own_posts as $post )
+              <div class="post" data-id="{{ $post->id }}">
+                <div class="head">
+                  <div class="col-xs-10">
+                    <p>From. <a href="{{ action('UserController@profile', $post->user_name) }}">{{ $post->user_name }}</a>
+                    <!--<p>Wanna find partners for his/her children with some requirements</p>-->
+                      <span class="small-blur-text"> -
+                      @if( date('Y') - date('Y', strtotime( $post->created_at )) > 0 )
+                        {{ date('Y') - date('Y', strtotime( $post->created_at )) }} years ago
+                      @elseif( date('m') - date('m', strtotime( $post->created_at )) > 0 )
+                        {{ date('m') - date('m', strtotime( $post->created_at )) }} months ago
+                      @else
+                        {{ date('d') - date('d', strtotime( $post->created_at )) }} days ago
+                      @endif
+                      </span>
+                    </p>
+                  </div>
+                  <div class="col-xs-2 delete-post-container">
+                    <button type="button" class="delete-post" title="Delete this post" data-toggle="modal" data-target="#delete-confirmation">&times;</button>
+                  </div>
                 </div>
-                <div class="col-xs-2 delete-post-container">
-                  <button type="button" class="delete-post" title="Delete this post" data-toggle="modal" data-target="#delete-confirmation">&times;</button>
-                </div>
-              </div>
-              <div class="content">
-                <div class="col-xs-12">
-                  <p class="col-xs-4">Age</p>
-                  <p class="col-xs-8">
-                    @if($post->age_from == null && $post->age_to == null)
-                      Any ages
-                    @elseif($post->age_from == null)
-                      <= {{ $post->age_to }} years old
-                    @elseif($post->age_to == null)
-                      >= {{ $post->age_from }} years old
-                    @else
-                      {{ $post->age_from }} - {{ $post->age_to }} years old
-                    @endif
-                  </p>
-                </div>
-                <div class="col-xs-12">
-                  <p class="col-xs-4">Gender</p>
-                  <p class="col-xs-8">{{ $post->gender }}</p>
-                </div>
-                <div class="col-xs-12">
-                  <p class="col-xs-4">Favourite topics</p>
-                  <p class="col-xs-8">
-                    @if($post->favorite_topics == null)
-                      Any topics
-                    @else
-                      {{ $post->favorite_topics }}
-                    @endif
-                  </p>
-                </div>
-                <div class="col-xs-12">
-                  <p class="col-xs-4">Living in</p>
-                  <p class="col-xs-8">
-                    @if( $post->country == 'All' )
-                      Anywhere
-                    @elseif( $post->province == 'All' )
-                      {{ $post->country }}
-                    @else
-                      {{ $post->province }}, {{ $post->country }}
-                    @endif
-                  </p>
-                </div>
+                <div class="content">
+                  <div class="col-xs-12">
+                    <p class="col-xs-4">Age</p>
+                    <p class="col-xs-8">
+                      @if($post->age_from == null && $post->age_to == null)
+                        Any ages
+                      @elseif($post->age_from == null)
+                        <= {{ $post->age_to }} years old
+                      @elseif($post->age_to == null)
+                        >= {{ $post->age_from }} years old
+                      @else
+                        {{ $post->age_from }} - {{ $post->age_to }} years old
+                      @endif
+                    </p>
+                  </div>
+                  <div class="col-xs-12">
+                    <p class="col-xs-4">Gender</p>
+                    <p class="col-xs-8">{{ $post->gender }}</p>
+                  </div>
+                  <div class="col-xs-12">
+                    <p class="col-xs-4">Favourite topics</p>
+                    <p class="col-xs-8">
+                      @if($post->favorite_topics == null)
+                        Any topics
+                      @else
+                        {{ $post->favorite_topics }}
+                      @endif
+                    </p>
+                  </div>
+                  <div class="col-xs-12">
+                    <p class="col-xs-4">Living in</p>
+                    <p class="col-xs-8">
+                      @if( $post->country == 'All' )
+                        Anywhere
+                      @elseif( $post->province == 'All' )
+                        {{ $post->country }}
+                      @else
+                        {{ $post->province }}, {{ $post->country }}
+                      @endif
+                    </p>
+                  </div>
 
-                @if( $post->other_info != null)
-                <div class="col-xs-12">
-                  <p class="col-xs-4">Others info</p>
-                  <p class="col-xs-8">{{ $post->other_info }}</p>
+                  @if( $post->other_info != null)
+                  <div class="col-xs-12">
+                    <p class="col-xs-4">Others info</p>
+                    <p class="col-xs-8">{{ $post->other_info }}</p>
+                  </div>
+                  @endif
                 </div>
-                @endif
               </div>
+              @endforeach
             </div>
-            @endforeach
+            @endif
           </div>
-          @endif
         </div>
         <div class="modal-footer">
           <button class="btn btn-default" type="button" name="cancel" data-dismiss="modal">Close</button>
@@ -394,21 +344,18 @@
       $('.info .post-btn').on('click', function(){
 
           var info = $(this).parents('.info');
-          var checkInput = checkAges( info.find('.age-from'), info.find('.age-to'), info.find('.alert-container') );
+          var checkInput = checkAges( info.find('#age-from'), info.find('#age-to'), info.find('.alert-container') );
 
           if( checkInput ){
 
               var form = $(this).parents('.info').find('.content').serialize();
-              var other_info = '&other_info=' + $(this).parents('.info').find('.other-info').val();
-              var favorite_topic_elements = $('.favourite-topics .chosen-hint');
+              var other_info = '&other_info=' + $(this).parents('.info').find('#other-info').val();
+              var favorite_topic_elements = $('.favourite-topics .chosen-hint .name');
               var favorite_topics = '';
-
+              console.log(other_info);
               for(var i = 0; i < favorite_topic_elements.length; i++){
 
-                  var text = favorite_topic_elements[i].innerText;
-                  var close_text = favorite_topic_elements.eq(i).children('.close-chosen-hint')[0].innerText;
-
-                  favorite_topics += text.substr( 0, text.length - close_text.length );
+                  favorite_topics += favorite_topic_elements[i].innerText;
 
                   if(i < favorite_topic_elements.length - 1){
                       favorite_topics += ', ';
@@ -422,10 +369,10 @@
           }
       });
 
-      $('.info .search-btn').on('click', function(){
+      /*$('.info .search-btn').on('click', function(){
 
           var info = $(this).parents('.info');
-          var checkInput = checkAges( info.find('.age-from'), info.find('.age-to'), info.find('.alert-container') );
+          var checkInput = checkAges( info.find('#age_from'), info.find('#age_to'), info.find('.alert-container') );
 
           if( checkInput ){
 
@@ -449,9 +396,37 @@
 
               url = '{{ action('PartnerPostController@search') }}'
 
-              //ajaxPartnerSearch(form + other_info + favorite_topics, url);
               var query = form + other_info + favorite_topics;
               window.location.href = url + '?' + query;
+          }
+      });*/
+
+      $('.info .search-btn').on('click', function(){
+
+          var info = $(this).parents('.info');
+          var checkInput = checkAges( info.find('#age-from'), info.find('#age-to'), info.find('.alert-container') );
+
+          if( checkInput ){
+
+              var form = $(this).parents('.info').find('.content');
+              var favorite_topic_elements = form.find('.favourite-topics .chosen-hint .name');
+              var data = getSearchPostData(form, favorite_topic_elements);
+
+              // push other data
+              data['last_status'] = $(this)[0].innerText;
+
+              // elements
+              var elements = [];
+              elements['status_element'] = $(this);
+              elements['post_container'] = $('.post-container .not-own-posts');
+              elements['load_more_element'] = $('.group-container .more-not-own-lesson-btn');
+
+              // urls
+              var urls = [];
+              urls['search'] = '{{ action('PartnerPostController@search') }}';
+              urls['view_profile'] = '{{ action('UserController@profile', ':username') }}';
+
+              ajaxPartnerSearch(data, elements, urls);
           }
       });
 
@@ -547,6 +522,34 @@
           group_container.find('.info').show();
           group_container.find('.search-btn').hide();
           group_container.find('.post-btn').show();
+      })
+
+      // get more lessons
+      $('.more-not-own-lesson-btn').on('click', function(){
+
+          var form = $('.group-container .info .content');
+          var favorite_topic_elements = form.find('.favourite-topics .chosen-hint .name');
+          var post_container = $('.post-container .not-own-posts');
+
+          // data
+          var data = getSearchPostData(form, favorite_topic_elements);
+
+          // push other data
+          data['offset'] = post_container.find('.post').length;
+          data['last_status'] = $(this)[0].innerText;
+
+          // elements
+          var elements = [];
+          elements['post_container'] = post_container;
+          elements['status_element'] = $(this);
+
+          // urls
+          var urls = [];
+          urls['load'] = '{{ action('PartnerPostController@loadMoreNotOwnPosts') }}';
+          urls['view_profile'] = '{{ action('UserController@profile', ':username') }}';
+
+          // process
+          ajaxLoadMoreNotOwnPosts(data, elements, urls);
       })
   });
 

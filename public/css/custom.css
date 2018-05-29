@@ -279,7 +279,12 @@ footer{
   margin: 100px auto 40px auto;
 }
 
-.group-container .info, .post-container{
+.group-container{
+  margin-top: 100px;
+  margin-bottom: 50px;
+}
+
+.group-container .info{
   padding: 15px;
   margin-bottom: 45px;
 }

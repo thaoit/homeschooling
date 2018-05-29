@@ -60,7 +60,8 @@ return [
         'unlike_ownself' => "You're only allowed to Like lesson from others"
     ],
 
-    'max_loading_num' => 25
+    'max_loading_num' => 1,
+    'min_loading_num' => 1
 ];
 
  ?>

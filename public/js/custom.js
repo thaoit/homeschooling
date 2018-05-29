@@ -1176,6 +1176,223 @@ function ajaxDeletePartnerPost(post_id, post_element, process_url){
   });
 }
 
+function ajaxPartnerSearch(request_data, elements, process_url){
+  console.log(request_data);
+  $.ajax({
+
+      type: 'get',
+      url: process_url['search'],
+      data: request_data,
+      beforeSend: function(){
+
+          setProcessStatus( elements['status_element'][0], 'Searching...' );
+      },
+      success: function(data){
+
+          var html = generatePosts(data['not_own_posts'], process_url);
+
+          elements['post_container'].empty();
+          elements['post_container'].append(html);
+          elements['load_more_element'].show();
+      },
+      error: function(data){
+          console.log(data);
+      },
+      complete: function(){
+
+          setCompleteStatus( elements['status_element'][0], request_data['last_status'] );
+      }
+  });
+}
+
+function ajaxLoadMoreNotOwnPosts(request_data, elements, process_url){
+
+  $.ajax({
+
+    type: 'get',
+    url: process_url['load'],
+    data: request_data,
+    beforeSend: function(){
+
+        setProcessStatus( elements['status_element'][0], 'Loading...' );
+    },
+    success: function(data){
+
+        var posts = data['not_own_posts'];
+
+        if(posts.length > 0){
+
+            var html = generatePosts( data['not_own_posts'], process_url );
+
+            elements['post_container'].append(html);
+            elements['post_container'].show();
+        }
+        else{
+            elements['status_element'].hide();
+        }
+    },
+    error: function(data){
+        console.log(data);
+    },
+    complete: function(){
+
+        setCompleteStatus( elements['status_element'][0], request_data['last_status'] );
+    }
+  });
+}
+
+function generatePosts(posts, urls){
+
+    if(posts.length === 0){
+        return '';
+    }
+
+    var html = '';
+
+    for(var i = 0; i < posts.length; i++){
+        html += generatePost(posts[i], urls);
+    }
+
+    return html;
+}
+
+function generatePost(post, urls){
+
+    var html =  '<div class="post">' +
+                    generatePostHead(post, urls) +
+                    generatePostContent(post) +
+                '</div>';
+
+    return html;
+}
+
+function generatePostHead(post, urls){
+
+    var view_profile_url = urls['view_profile'].substring(0, urls['view_profile'].lastIndexOf(':')) + post['user_name'];
+
+    var current_date = new Date();
+    var post_date = new Date( post['created_at'] );
+    var year_gap = current_date.getFullYear() - post_date.getFullYear();
+    var month_gap = current_date.getMonth() - post_date.getMonth();
+    var day_gap = current_date.getDay() - post_date.getDay();
+    var time_ago = '';
+
+    if(year_gap > 0){
+        time_ago = year_gap + ' years ago';
+    }
+    else if(month_gap > 0){
+        time_ago = month_gap + ' months ago';
+    }
+    else{
+        time_ago = day_gap + ' days ago';
+    }
+
+    var html = `<div class="head">
+                  <p>From. <a href="` + view_profile_url + `">` + post['user_name'] + `</a>
+                    <span class="small-blur-text"> - ` + time_ago + `
+                  </p>
+                  <p>Wanna find partners for his/her children with some requirements</p>
+                </div>`;
+
+    return html;
+}
+
+function generatePostContent(post){
+
+    var html = `<div class="content">
+                  <div class="col-xs-12">
+                    <p class="col-xs-4">Age</p>
+                    <p class="col-xs-8">` +
+                        generatePostContentAge(post) +
+                    `</p>
+                  </div>
+                  <div class="col-xs-12">
+                    <p class="col-xs-4">Gender</p>
+                    <p class="col-xs-8">` + post['gender'] + `</p>
+                  </div>
+                  <div class="col-xs-12">
+                    <p class="col-xs-4">Favourite topics</p>
+                    <p class="col-xs-8">` +
+                        generatePostContentTopics(post) +
+                    `</p>
+                  </div>
+                  <div class="col-xs-12">
+                    <p class="col-xs-4">Living in</p>
+                    <p class="col-xs-8">` +
+                        generatePostContentAddress(post) +
+                    `</p>
+                  </div>` +
+                  generatePostContentOtherInfo(post) +
+                `</div>`;
+
+    return html;
+}
+
+function generatePostContentAge(post){
+
+    var ages;
+
+    if( post['age_from'] == null && post['age_to'] == null ){
+        ages = 'Any ages';
+    }
+    else if( post['age_from'] == null ){
+        ages = '<= ' + post['age_to'];
+    }
+    else if( post['age_to'] == null ){
+        ages = '>= ' + post['age_from'];
+    }
+    else{
+        ages = post['age_from'] + ' - ' + post['age_to'];
+    }
+
+    return ages;
+}
+
+function generatePostContentTopics(post){
+
+    var topics;
+
+    if(typeof post['favorite_topics'] === "undefined"){
+        topics = 'Any topics';
+    }
+    else{
+       topics = post['favorite_topics'];
+    }
+
+    return topics;
+}
+
+function generatePostContentAddress(post){
+
+    var address;
+
+    if( post['country'] == 'All' ){
+        address = 'Anywhere';
+    }
+    else if( post['province'] == 'All' ){
+        address = post['country'];
+    }
+    else{
+        address = post['province'] + ', ' + post['country'];
+    }
+
+    return address;
+}
+
+function generatePostContentOtherInfo(post){
+
+    if( post['other_info'] == null){
+        return '';
+    }
+
+    var html =`<div class="col-xs-12">
+                 <p class="col-xs-4">Others info</p>
+                 <p class="col-xs-8">` + post['other_info'] + `</p>
+               </div>`;
+
+    return html;
+}
+
 function ajaxAddChildProfile(request_data, elements, process_url){
 
     var last_status = elements['status-element'].innerText;
@@ -1429,4 +1646,33 @@ function checkAges(age_from_input, age_to_input, message_element){
         message_element.hide();
         return true;
     }
+}
+
+function getSearchPostData(form, favorite_topic_elements){
+
+    // data
+    var data = {};
+
+    // get array of form content
+    // when serializing, its form is A=some&B=some&C=some...
+    // so splitting into an array of content
+    var split_content = form.serialize().split('&');
+
+    for(var i = 0; i < split_content.length; i++){
+
+        var small_split_content = split_content[i].split('=');
+        data[ small_split_content[0] ] = small_split_content[1];
+    }
+
+    // get array of favorite topics
+    var favorite_topics = [];
+
+    for(var i = 0; i < favorite_topic_elements.length; i++){
+
+        favorite_topics.push( favorite_topic_elements[i].innerText );
+    }
+
+    data['favorite_topics'] = favorite_topics.toString();
+    console.log(data);
+    return data;
 }

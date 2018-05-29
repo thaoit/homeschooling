@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Config;
 use App\Services\PartnerPostService;
 use App\Services\CountryService;
 use Illuminate\Http\Request;
@@ -14,8 +15,8 @@ class PartnerPostController extends Controller
 
         $user_id = Auth::user()->id;
 
-        $own_posts = PartnerPostService::getAllByUser($user_id);
-        $not_own_posts = PartnerPostService::getAllNotByUser($user_id);
+        $own_posts = PartnerPostService::getAllByUser($user_id, 0, Config::get('constants.max_loading_num'));
+        $not_own_posts = PartnerPostService::getAllNotByUser($user_id, 0, Config::get('constants.min_loading_num'));
         $countries = CountryService::getAll();
 
         return view('community/group', compact('own_posts', 'not_own_posts', 'countries'));
@@ -58,17 +59,36 @@ class PartnerPostController extends Controller
     public function search(Request $request){
 
         $input = $request->input();
-        $topics = array();
-
-        if( $input['favorite_topics'] != null ){
-          $topics = explode(', ', $input['favorite_topics']);
-        }
 
         $user_id = Auth::user()->id;
-        $own_posts = PartnerPostService::searchPostByUser($user_id, $input);
-        $not_own_posts = PartnerPostService::searchPostNotByUser($user_id, $input);
-        $countries = CountryService::getAll();
 
-        return view('community/group', compact('own_posts', 'not_own_posts', 'input', 'topics', 'countries'));
+        $not_own_posts = PartnerPostService::searchPostNotByUser(
+                            $user_id,
+                            $input,
+                            0,
+                            Config::get('constants.max_loading_num')
+                          );
+
+        return [
+            'not_own_posts' => $not_own_posts
+        ];
+    }
+
+    public function loadMoreNotOwnPosts(Request $request){
+
+        $input = $request->input();
+
+        $user_id = Auth::user()->id;
+
+        $not_own_posts = PartnerPostService::searchPostNotByUser(
+                            $user_id,
+                            $input,
+                            $input['offset'],
+                            Config::get('constants.max_loading_num')
+                          );
+
+        return [
+            'not_own_posts' => $not_own_posts
+        ];
     }
 }

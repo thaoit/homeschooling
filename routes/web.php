@@ -35,10 +35,6 @@ Route::middleware('auth')->prefix('/lessons')->group(function(){
 
   Route::get('/delete/{id}', 'LessonController@delete');
 
-  Route::get('/load-more-from-lesson', 'LessonController@loadMoreFromLesson');
-
-  Route::get('/load-more-from-resource', 'LessonController@loadMoreFromResource');
-
   Route::get('/load-more-lessons', 'LessonController@loadMoreLessons');
 });
 
@@ -90,6 +86,8 @@ Route::middleware('auth')->prefix('/groups')->group(function(){
   Route::post('/delete-post', 'PartnerPostController@delete');
 
   Route::get('/get-provinces-by-country', 'ProvinceController@getAllByCountry');
+
+  Route::get('/load-more-not-own-posts', 'PartnerPostController@loadMoreNotOwnPosts');
 });
 
 Route::middleware('auth')->prefix('/profile')->group(function(){

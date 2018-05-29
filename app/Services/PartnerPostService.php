@@ -47,40 +47,46 @@ class PartnerPostService{
         return $post->user_id;
     }
 
-    public static function getAllNotByUser($user_id){
+    public static function getAllNotByUser($user_id, $offset, $limit){
 
         return DB::table('partner_posts')
                   ->join('users', 'partner_posts.user_id', '=', 'users.id')
                   ->where('users.id', '<>', $user_id)
                   ->select('partner_posts.*', 'users.id as user_id', 'users.username as user_name')
                   ->latest()
+                  ->offset($offset)
+                  ->limit($limit)
                   ->get();
     }
 
-    public static function getAllByUser($user_id){
+    public static function getAllByUser($user_id, $offset, $limit){
 
         return DB::table('partner_posts')
                   ->join('users', 'partner_posts.user_id', '=', 'users.id')
                   ->where('users.id', '=', $user_id)
                   ->select('partner_posts.*', 'users.id as user_id', 'users.username as user_name')
                   ->latest()
+                  ->offset($offset)
+                  ->limit($limit)
                   ->get();
     }
 
-    public static function searchPostNotByUser($user_id, $object){
+    public static function searchPostNotByUser($user_id, $object, $offset, $limit){
 
         $query = DB::table('partner_posts')
                     ->join('users', 'partner_posts.user_id', '=', 'users.id')
                     ->where('users.id', '<>', $user_id)
-                    ->select('partner_posts.*', 'users.id as user_id', 'users.username as user_name')
-                    ->latest();
+                    ->select('partner_posts.*', 'users.id as user_id', 'users.username as user_name');
 
         PartnerPostService::queryAge($query, $object['age_from'], $object['age_to']);
         PartnerPostService::queryGender($query, $object['gender']);
         PartnerPostService::queryFavoriteTopic($query, $object['favorite_topics']);
         PartnerPostService::queryAddress($query, $object['countries'], $object['provinces']);
 
-        return $query->get();
+        return $query->latest()
+                      ->offset($offset)
+                      ->limit($limit)
+                      ->get();
     }
 
     public static function searchPostByUser($user_id, $object){

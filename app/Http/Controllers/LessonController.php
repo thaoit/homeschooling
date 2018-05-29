@@ -281,42 +281,6 @@ class LessonController extends Controller
         ];
     }
 
-    public function loadMoreFromLesson(Request $request){
-
-        $input = $request->all();
-        $lessons = array();
-
-        if( isset($input['offset']) ){
-
-            $user_id = Auth::user()->id;
-            $lessons = LessonService::getAllByUserRequest(
-                            $user_id,
-                            $input['offset'],
-                            Config::get('constants.max_loading_num')
-                      );
-        }
-
-        return $lessons;
-    }
-
-    public function loadMoreFromResource(Request $request){
-
-          $input = $request->all();
-          $lessons = array();
-
-          if( isset($input['offset']) ){
-
-              $user_id = Auth::user()->id;
-              $lessons = LessonService::getAllInPublic(
-                              $user_id,
-                              $input['offset'],
-                              Config::get('constants.max_loading_num')
-                        );
-          }
-
-          return $lessons;
-    }
-
     public function loadMoreLessons(Request $request){
 
         $input = $request->all();
