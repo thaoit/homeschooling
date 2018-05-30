@@ -88,6 +88,8 @@ Route::middleware('auth')->prefix('/groups')->group(function(){
   Route::get('/get-provinces-by-country', 'ProvinceController@getAllByCountry');
 
   Route::get('/load-more-not-own-posts', 'PartnerPostController@loadMoreNotOwnPosts');
+
+  Route::get('/load-more-own-posts', 'PartnerPostController@loadMoreOwnPosts');
 });
 
 Route::middleware('auth')->prefix('/profile')->group(function(){

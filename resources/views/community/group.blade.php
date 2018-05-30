@@ -172,7 +172,7 @@
     </div>
 
     <div class="text-center">
-      <button class="border-wrapper more-not-own-lesson-btn" type="button" name="">More</button>
+      <button class="border-wrapper more-lesson-btn" type="button" name="">More</button>
     </div>
     @endif
 
@@ -262,6 +262,9 @@
               @endforeach
             </div>
             @endif
+          </div>
+          <div class="text-center">
+            <button class="border-wrapper more-lesson-btn" type="button" name="">More</button>
           </div>
         </div>
         <div class="modal-footer">
@@ -419,7 +422,7 @@
               var elements = [];
               elements['status_element'] = $(this);
               elements['post_container'] = $('.post-container .not-own-posts');
-              elements['load_more_element'] = $('.group-container .more-not-own-lesson-btn');
+              elements['load_more_element'] = $('.group-container .more-lesson-btn');
 
               // urls
               var urls = [];
@@ -524,8 +527,8 @@
           group_container.find('.post-btn').show();
       })
 
-      // get more lessons
-      $('.more-not-own-lesson-btn').on('click', function(){
+      // get more lessons which are not owned by current user
+      $('.group-container .more-lesson-btn').on('click', function(){
 
           var form = $('.group-container .info .content');
           var favorite_topic_elements = form.find('.favourite-topics .chosen-hint .name');
@@ -550,6 +553,31 @@
 
           // process
           ajaxLoadMoreNotOwnPosts(data, elements, urls);
+      })
+
+      // get more lessons which are owned by current user
+      $('#manage-lessons-modal .more-lesson-btn').on('click', function(){
+
+          var post_container = $('.post-container .own-posts');
+
+          // data
+          var data = {};
+
+          data['offset'] = post_container.find('.post').length;
+          data['last_status'] = $(this)[0].innerText;
+
+          // elements
+          var elements = [];
+          elements['post_container'] = post_container;
+          elements['status_element'] = $(this);
+
+          // urls
+          var urls = [];
+          urls['load'] = '{{ action('PartnerPostController@loadMoreOwnPosts') }}';
+          urls['view_profile'] = '{{ action('UserController@profile', ':username') }}';
+
+          // process
+          ajaxLoadMoreOwnPosts(data, elements, urls);
       })
   });
 

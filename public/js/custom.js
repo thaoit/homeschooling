@@ -1225,7 +1225,43 @@ function ajaxLoadMoreNotOwnPosts(request_data, elements, process_url){
             var html = generatePosts( data['not_own_posts'], process_url );
 
             elements['post_container'].append(html);
-            elements['post_container'].show();
+            elements['status_element'].show();
+        }
+        else{
+            elements['status_element'].hide();
+        }
+    },
+    error: function(data){
+        console.log(data);
+    },
+    complete: function(){
+
+        setCompleteStatus( elements['status_element'][0], request_data['last_status'] );
+    }
+  });
+}
+
+function ajaxLoadMoreOwnPosts(request_data, elements, process_url){
+
+  $.ajax({
+
+    type: 'get',
+    url: process_url['load'],
+    data: request_data,
+    beforeSend: function(){
+
+        setProcessStatus( elements['status_element'][0], 'Loading...' );
+    },
+    success: function(data){
+
+        var posts = data['own_posts'];
+
+        if(posts.length > 0){
+
+            var html = generatePosts( data['own_posts'], process_url );
+
+            elements['post_container'].append(html);
+            elements['status_element'].show();
         }
         else{
             elements['status_element'].hide();
@@ -1352,7 +1388,7 @@ function generatePostContentTopics(post){
 
     var topics;
 
-    if(typeof post['favorite_topics'] === "undefined"){
+    if(post['favorite_topics'] == null){
         topics = 'Any topics';
     }
     else{
@@ -1673,6 +1709,6 @@ function getSearchPostData(form, favorite_topic_elements){
     }
 
     data['favorite_topics'] = favorite_topics.toString();
-    console.log(data);
+
     return data;
 }

@@ -91,4 +91,24 @@ class PartnerPostController extends Controller
             'not_own_posts' => $not_own_posts
         ];
     }
+
+    public function loadMoreOwnPosts(Request $request){
+
+        $input = $request->input();
+        $user_id = Auth::user()->id;
+        $own_posts = array();
+
+        if( isset( $input['offset'] ) ){
+
+            $own_posts = PartnerPostService::getAllByUser(
+                            $user_id,
+                            $input['offset'],
+                            Config::get('constants.max_loading_num')
+                        );
+        }
+
+        return [
+            'own_posts' => $own_posts
+        ];
+    }
 }
