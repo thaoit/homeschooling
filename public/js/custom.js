@@ -756,142 +756,14 @@ function generateLessonInResources(lesson_obj, default_media_types, urls){
 
     // general info
     var id = lesson_obj['general']['id'];
-    var title = lesson_obj['general']['title'];
-    var no_of_love = lesson_obj['general']['no_of_love'];
-
-    // author
-    var author = lesson_obj['author']['username'];
-    var view_profile_process_url = urls['view_profile'].substring(0, urls['view_profile'].lastIndexOf(':')) + author;
-
-    var author_html = `<p>By <a href="` + view_profile_process_url + `">` + author + `</a></p>`;
-
-    // topic info
-    var topic_html = ``;
-
-    for( var i = 0; i < lesson_obj['topics'].length; i++ ){
-        topic_html += `<span>` + lesson_obj['topics'][i]['name']  +`</span>`;
-    }
-
-    // outline info
-    var outline_html = ``;
-    if( lesson_obj['outlines'].length > 0 ){
-
-        for( var i = 0; i < lesson_obj['outlines'].length; i++ ){
-
-            outline_html += `<li><span class="index">Step ` + (i + 1) + ` -</span>` +
-                                lesson_obj['outlines'][i]['name'] +
-                            `</li>`;
-        }
-
-        outline_html = `<div>
-                          <p>Outlines</p>
-                          <ul class="outlines">` +
-                              outline_html +
-                          `</ul>
-                        </div>`;
-    }
-
-    // reference info
-    var reference_html = ``;
-    var media_process_url = urls['view_media_reference'].substring(0, urls['view_media_reference'].lastIndexOf(':'));
-
-    if( lesson_obj['media']['num_of_media'] > 0 ){
-
-        for( var i = 0; i < default_media_types.length; i++ ){
-
-          var type = default_media_types[i];
-
-          for( var j = 0; j < lesson_obj['media']['types'][type].length; j++ ){
-
-              reference_html += `<li class="col-xs-12 col-sm-4 col-md-3">`;
-
-              switch ( type ) {
-                case 'Image':
-                  reference_html += `<span class="glyphicon glyphicon-picture"></span>`;
-                  break;
-                case 'Video':
-                  reference_html += `<span class="glyphicon glyphicon-film"></span>`;
-                  break;
-                case 'Document':
-                  reference_html += `<span class="glyphicon glyphicon-file"></span>`;
-                  break;
-                default:
-                  reference_html += `<span class="glyphicon glyphicon-question-sign"></span>`;
-              }
-
-              var media = lesson_obj['media']['types'][type][j];
-
-              if( media['name'] == null ){
-
-                  reference_html += `<a target="_blank" href="` + media['url'] + `">` +
-                                        media['origin_name'] +
-                                    `</a>`;
-              }
-              else{
-
-                  reference_html += `<a target="_blank" href="` + media_process_url + media['name'] + `">` +
-                                        media['origin_name'] +
-                                    `</a>`;
-              }
-
-              reference_html += `</li>`;
-          }
-        }
-
-        reference_html = `<div>
-                            <p>References</p>
-                            <ul class="references">` +
-                                reference_html +
-                            `</ul>
-                          </div>`;
-    }
-
-    // like button
-    var like_button;
-
-    if( lesson_obj['favorite_lesson_ids'].indexOf(id) >= 0 ){
-
-        like_button = `<button class="like-btn" type="button" name="" title="Remove this from my favourite lessons">
-                          <span class="glyphicon glyphicon-heart"></span>
-                       </button>`;
-    }
-    else{
-
-        like_button = `<button class="like-btn" type="button" name="" title="Like if this is useful!">
-                          <span class="glyphicon glyphicon-heart-empty"></span>
-                       </button>`;
-    }
-
-    // url
-    var view_lesson_process_url = urls['view_lesson'].substring(0, urls['view_lesson'].lastIndexOf(':')) + id;
 
     // combine all
     var html =
-    `<div class="lesson" data-id="` + id + `">
-          <div class="head">
-            <div class="col-xs-12 col-sm-9">
-              <h4 class="title"><a href="` + view_lesson_process_url + `">` + title  + `</a></h4>` +
-              author_html +
-              `<div class="topics">
-                ` +
-                topic_html +
-                `
-              </div>
-            </div>
-            <div class="col-xs-12 col-sm-3">
-              <h4 class="likes">
-                <span class="number">` + no_of_love + `</span>` +
-                like_button +
-              `</h4>
-            </div>
-            <div class="clearfix"></div>
-          </div>
-          <div class="alert-container"></div>
-          <div class="content">` +
-                outline_html +
-                reference_html +
-          `</div>
-        </div>`;
+    `<div class="lesson" data-id="` + id + `">` +
+          generateLessonHeadInResources(lesson_obj, urls) +
+          `<div class="alert-container"></div>` +
+          generateLessonContent(lesson_obj, default_media_types, urls) +
+    `</div>`;
 
       return html;
 }
@@ -912,18 +784,145 @@ function generateLessonInLessonPage(lesson_obj, default_media_types, urls){
 
     // general info
     var id = lesson_obj['general']['id'];
-    var title = lesson_obj['general']['title'];
-    var no_of_love = lesson_obj['general']['no_of_love'];
 
-    // topic info
-    var topic_html = ``;
+    // combine all
+    var html =
+        `<div class="lesson" data-id="` + id + `">` +
+          generateLessonHeadInLesson(lesson_obj, urls) +
+          generateLessonContent(lesson_obj, default_media_types, urls) +
+        `</div>`;
 
-    for( var i = 0; i < lesson_obj['topics'].length; i++ ){
-        topic_html += `<span>` + lesson_obj['topics'][i]['name']  +`</span>`;
+      return html;
+}
+
+function generateLessonHeadInLesson(lesson_obj, urls){
+
+    var html = `<div class="head">
+                  <div class="col-xs-10">` +
+                    generateLessonHeadTitle(lesson_obj, urls) +
+                    generateLessonHeadTopics(lesson_obj, urls) +
+                  `</div>` +
+                  generateLessonHeadControls(lesson_obj, urls) +
+                  `<div class="clearfix"></div>
+                </div>`;
+
+    return html;
+}
+
+function generateLessonHeadInResources(lesson_obj, urls){
+
+    var html = `<div class="head">
+                  <div class="col-xs-12 col-sm-9">` +
+                    generateLessonHeadTitle(lesson_obj, urls) +
+                    generateLessonHeadAuthor(lesson_obj, urls) +
+                    generateLessonHeadTopics(lesson_obj, urls) +
+                  `</div>` +
+                  generateLessonHeadLike(lesson_obj, urls) +
+                  `<div class="clearfix"></div>
+                </div>`;
+
+    return html;
+}
+
+function generateLessonHeadTitle(lesson_obj, urls){
+
+    var permalink = lesson_obj['general']['permalink'];
+    var view_lesson_process_url = urls['view_lesson'].substring(0, urls['view_lesson'].lastIndexOf(':')) + permalink;
+
+    var html =  `<h4 class="title"><a href="` + view_lesson_process_url + `">` +
+                    lesson_obj['general']['title'] +
+                `</a></h4>`;
+
+    return html;
+}
+
+function generateLessonHeadTopics(lesson_obj, urls){
+
+    var topics = '';
+
+    for(var i = 0; i < lesson_obj['topics'].length; i++){
+        topics += `<span>` + lesson_obj['topics'][i]['name'] + `</span>`;
     }
 
-    // outline info
+    var html = `<div class="topics">` +
+                  topics +
+                `</div>`;
+
+    return html;
+}
+
+function generateLessonHeadAuthor(lesson_obj, urls){
+
+    var author = lesson_obj['author']['username'];
+    var view_profile_process_url = urls['view_profile'].substring(0, urls['view_profile'].lastIndexOf(':')) + author;
+
+    var html = `<p>By <a href="` + view_profile_process_url + `">` +
+                  author +
+                `</a></p>`;
+
+    return html;
+}
+
+function generateLessonHeadControls(lesson_obj, urls){
+
+    var permalink = lesson_obj['general']['permalink'];
+    var edit_lesson_process_url = urls['edit_lesson'].substring(0, urls['edit_lesson'].lastIndexOf(':')) + permalink;
+
+    var html = `<div class="col-xs-2 control-container">
+                  <button type="button">
+                    <a href="` + edit_lesson_process_url + `"  title="Edit this lesson"><span class="glyphicon glyphicon-pencil"></span></a>
+                  </button>
+                  <button class="delete-btn" type="button" data-toggle="modal" data-target="#delete-confirmation" title="Delete this lesson">
+                    &times;
+                  </button>
+                </div>`;
+
+    return html;
+}
+
+function generateLessonHeadLike(lesson_obj, urls){
+
+    var like_button;
+    var id = lesson_obj['general']['id'];
+    var no_of_love = lesson_obj['general']['no_of_love'];
+
+    if( lesson_obj['favorite_lesson_ids'].indexOf(id) >= 0 ){
+
+        like_button = `<button class="like-btn" type="button" name="" title="Remove this from my favourite lessons">
+                          <span class="glyphicon glyphicon-heart"></span>
+                       </button>`;
+    }
+    else{
+
+        like_button = `<button class="like-btn" type="button" name="" title="Like if this is useful!">
+                          <span class="glyphicon glyphicon-heart-empty"></span>
+                       </button>`;
+    }
+
+    html = `<div class="col-xs-12 col-sm-3">
+              <h4 class="likes">
+                <span class="number">` + no_of_love + `</span>` +
+                like_button +
+              `</h4>
+            </div>`;
+
+    return html;
+}
+
+function generateLessonContent(lesson_obj, default_media_types, urls){
+
+    var html = `<div class="content">` +
+                    generateLessonContentOutline(lesson_obj) +
+                    generateLessonContentReference(lesson_obj, default_media_types, urls) +
+              `</div>`;
+
+    return html;
+}
+
+function generateLessonContentOutline(lesson_obj){
+
     var outline_html = ``;
+
     if( lesson_obj['outlines'].length > 0 ){
 
         for( var i = 0; i < lesson_obj['outlines'].length; i++ ){
@@ -941,7 +940,11 @@ function generateLessonInLessonPage(lesson_obj, default_media_types, urls){
                         </div>`;
     }
 
-    // reference info
+    return outline_html;
+}
+
+function generateLessonContentReference(lesson_obj, default_media_types, urls){
+
     var reference_html = ``;
     var media_process_url = urls['view_media_reference'].substring(0, urls['view_media_reference'].lastIndexOf(':'));
 
@@ -996,47 +999,7 @@ function generateLessonInLessonPage(lesson_obj, default_media_types, urls){
                           </div>`;
     }
 
-    // url
-    var view_lesson_process_url = urls['view_lesson'].substring(0, urls['view_lesson'].lastIndexOf(':')) + id;
-    var edit_lesson_process_url = urls['edit_lesson'].substring(0, urls['edit_lesson'].lastIndexOf(':')) + id;
-
-    // control container, depending on user role
-    var control_container_html = '';
-
-    if( lesson_obj['is_control'] ){
-
-        control_container_html = `<div class="col-xs-2 control-container">
-                                    <button type="button">
-                                      <a href="` + edit_lesson_process_url + `" title="Edit this lesson"><span class="glyphicon glyphicon-pencil"></span></a>
-                                    </button>
-                                    <button class="delete-btn" type="button" data-toggle="modal" data-target="#delete-confirmation" title="Delete this lesson">
-                                      &times;
-                                    </button>
-                                  </div>`;
-    }
-
-    // combine all
-    var html =
-    `<div class="lesson" data-id="` + id + `">
-          <div class="head">
-            <div class="col-xs-10">
-              <h4 class="title"><a href="` + view_lesson_process_url + `">` + title  + `</a></h4>
-              <div class="topics">
-                ` +
-                topic_html +
-                `
-              </div>
-            </div>` +
-            control_container_html +
-            `<div class="clearfix"></div>
-          </div>
-          <div class="content">` +
-                outline_html +
-                reference_html +
-          `</div>
-        </div>`;
-
-      return html;
+    return reference_html;
 }
 
 function showWaitingFilter(filter_button, filter_clear_button){

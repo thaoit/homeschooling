@@ -13,6 +13,7 @@ class Lesson extends Model
       'intro',
       'status',
       'no_of_love',
+      'permalink',
       'author_id'
     ];
 

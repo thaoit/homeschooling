@@ -32,6 +32,7 @@ class LessonService{
         $lesson->intro = $object['intro'];
         $lesson->author_id = $object['author_id'];
         $lesson->status = ($object['is_publish'] == 'true') ? Config::get('constants.lesson_status.publish'): Config::get('constants.lesson_status.draft');
+        $lesson->permalink = LessonService::generatePermalinkFrom( $object['title'] );
 
         // save and return id
         $lesson->save();
@@ -50,7 +51,8 @@ class LessonService{
             $lesson->intro = $object['intro'];
             $lesson->author_id = $object['author_id'];
             $lesson->status = ($object['is_publish'] == 'true') ? Config::get('constants.lesson_status.publish'): Config::get('constants.lesson_status.draft');
-
+            $lesson->permalink = LessonService::generatePermalinkFrom( $object['title'] );
+            
             $lesson->save();
             $success = true;
         }
@@ -74,6 +76,20 @@ class LessonService{
 
         // delete lesson
         $lesson->delete();
+    }
+
+    public static function generatePermalinkFrom($title){
+
+        $lesson = Lesson::where('title', $title)->get();
+        $number = count($lesson);
+
+        $permalink = str_replace(' ', '-', strtolower($title));
+
+        if($number > 0){
+            $permalink = $permalink."-$number";
+        }
+
+        return $permalink;
     }
 
     public static function getLessonQueryByUserRequest($user_id){
@@ -250,9 +266,16 @@ class LessonService{
         return $filter_lessons;
     }
 
-    public static function getById($lesson_id){
+    public static function getLessonIDByPermalink($permalink){
 
-        return Lesson::find($lesson_id);
+        $array_id = Lesson::where('permalink', $permalink)->pluck('id');
+
+        if( count($array_id) == 0 ){
+            return null;
+        }
+        else{
+            return $array_id[0];
+        }
     }
 
     public static function getAuthorId($lesson_id){

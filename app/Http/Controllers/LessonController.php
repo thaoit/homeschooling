@@ -23,11 +23,20 @@ class LessonController extends Controller
         return view('lesson/index', compact('lessons', 'topics'));
     }
 
-    public function view($id){
+    public function view($permalink){
 
-        $lesson = LessonService::getAllRelatingLesson($id);
+        $id = LessonService::getLessonIDByPermalink($permalink);
 
-        return view('lesson/view', compact('lesson'));
+        if( $id == null){
+
+            return redirect()->action('HomeController@index');
+        }
+        else{
+
+            $lesson = LessonService::getAllRelatingLesson($id);
+
+            return view('lesson/view', compact('lesson'));
+        }
     }
 
     public function create(){
@@ -35,12 +44,12 @@ class LessonController extends Controller
         return view('lesson/create');
     }
 
-    public function edit($id){
+    public function edit($permalink){
 
         $user_id = Auth::user()->id;
-        $author_id = LessonService::getAuthorId($id);
+        $id = LessonService::getLessonIDByPermalink($permalink);
 
-        if( $user_id != $author_id ){
+        if($id == null || $user_id != LessonService::getAuthorId($id)){
 
             return redirect()->action('HomeController@index');
         }

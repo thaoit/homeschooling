@@ -31,7 +31,7 @@ Route::middleware('auth')->prefix('/lessons')->group(function(){
 
   Route::post('/save-all-relating', 'GeneralController@saveAllRelatingLesson');
 
-  Route::get('/edit/{id}', 'LessonController@edit');
+  Route::get('/edit/{permalink}', 'LessonController@edit');
 
   Route::get('/delete/{id}', 'LessonController@delete');
 
@@ -40,7 +40,7 @@ Route::middleware('auth')->prefix('/lessons')->group(function(){
 
 Route::prefix('/lessons')->group(function(){
 
-  Route::get('/view/{id}', 'LessonController@view');
+  Route::get('/view/{permalink}', 'LessonController@view');
 
   Route::get('/filter-lessons-by-topics', 'LessonController@filterLessonsByTopics');
 

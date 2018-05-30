@@ -55,7 +55,7 @@
       <div class="head">
 
         <div class="col-xs-12 col-sm-9">
-          <h4 class="title"><a href="{{ action('LessonController@view', $lesson['general']->id) }}">{{ $lesson['general']->title }}</a></h4>
+          <h4 class="title"><a href="{{ action('LessonController@view', $lesson['general']->permalink) }}">{{ $lesson['general']->title }}</a></h4>
           <p>By <a href="{{ action('UserController@profile', $lesson['author']->username) }}">{{ $lesson['author']->username }}</a></p>
           <div class="topics">
             @foreach($lesson['topics'] as $topic)

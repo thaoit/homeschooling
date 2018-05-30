@@ -20,6 +20,7 @@ class CreateLessonsTable extends Migration
             $table->string('status', 50);
             $table->bigInteger('no_of_love')->default(0);
             $table->bigInteger('author_id')->unsigned();
+            $table->string('permalink');
             $table->timestamps();
 
             $table->foreign('author_id')->references('id')->on('users');

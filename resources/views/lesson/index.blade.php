@@ -7,6 +7,8 @@
   <div class="container">
 
   <h3 class="text-center">Your journal</h3>
+
+  @if( count($lessons) > 0 )
   <div class="col-xs-12 form-group">
     <!--<form action="" method="get" class="col-xs-12 col-sm-10 search-container">
       <div class="input-group">
@@ -518,7 +520,7 @@
     <div class="lesson" data-id="{{ $lesson['general']->id }}">
       <div class="head">
         <div class="col-xs-10">
-          <h4 class="title"><a href="{{ action('LessonController@view', $lesson['general']->id) }}">{{ $lesson['general']->title }}</a></h4>
+          <h4 class="title"><a href="{{ action('LessonController@view', $lesson['general']->permalink) }}">{{ $lesson['general']->title }}</a></h4>
           <div class="topics">
             @foreach($lesson['topics'] as $topic)
             <span>{{ $topic->name }}</span>
@@ -528,7 +530,7 @@
         @if( Auth::user()->role != Config::get('constants.role.child') )
         <div class="col-xs-2 control-container">
           <button type="button">
-            <a href="{{ action('LessonController@edit', $lesson['general']->id) }}"  title="Edit this lesson"><span class="glyphicon glyphicon-pencil"></span></a>
+            <a href="{{ action('LessonController@edit', $lesson['general']->permalink) }}"  title="Edit this lesson"><span class="glyphicon glyphicon-pencil"></span></a>
           </button>
           <button class="delete-btn" type="button" data-toggle="modal" data-target="#delete-confirmation" title="Delete this lesson">
             &times;
@@ -596,6 +598,14 @@
   <div class="text-center">
     <button class="border-wrapper more-lesson-btn" type="button" name="">More</button>
   </div>
+  @else
+  <div class="text-center" style="margin-top: 50px">
+    <h5>Start your journal with first lesson here</h5>
+    <button type="button" name="creating_lesson" title="Create new lesson" class="btn">
+      <a href="{{ action('LessonController@create') }}"><span class="glyphicon glyphicon-plus"></span></a>
+    </button>
+  </div>
+  @endif
 
   <div id="delete-confirmation" class="modal fade" role="dialog">
     <div class="modal-dialog">

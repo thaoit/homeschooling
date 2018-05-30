@@ -185,8 +185,8 @@
           <h4>Your posts</h4>
         </div>
         <div class="modal-body">
+          @if( count($own_posts) > 0)
           <div class="post-container">
-            @if( count($own_posts) > 0)
             <div class="own-posts">
               @foreach( $own_posts as $post )
               <div class="post" data-id="{{ $post->id }}">
@@ -261,11 +261,15 @@
               </div>
               @endforeach
             </div>
-            @endif
           </div>
           <div class="text-center">
             <button class="border-wrapper more-lesson-btn" type="button" name="">More</button>
           </div>
+          @else
+          <div class="text-center">
+            <p>There aren't any posts here</p>
+          </div>
+          @endif
         </div>
         <div class="modal-footer">
           <button class="btn btn-default" type="button" name="cancel" data-dismiss="modal">Close</button>
