@@ -27,41 +27,14 @@ return [
         'publish'   => 'Publish'
     ],
 
-    'countries' => [
-        'all'       =>  [
-                          'name' => 'All',
-                          'provinces' => [
-                            'all' => 'All'
-                          ]
-                        ],
-        'vietnam'   =>  [
-                          'name' => 'Vietnam',
-                          'provinces' => [
-                              'hanoi' => 'Hanoi',
-                              'danang' => 'Danang',
-                              'hochiminh' => 'Ho Chi Minh city'
-                          ]
-                        ],
-        'us'         => [
-                          'name' => 'US',
-                          'provinces' => [
-                              'washington' => 'WaShington D.C',
-                              'california' => 'California'
-                          ]
-                        ],
-         'japan'      => [
-                            'name' => 'Japan'
-                          ]
-    ],
-
     'messages' => [
         'authentication' => 'You need to login to do action',
         'like_ownself' => "You're only allowed to Like lesson from others",
         'unlike_ownself' => "You're only allowed to Like lesson from others"
     ],
 
-    'max_loading_num' => 1,
-    'min_loading_num' => 1
+    'max_loading_num' => 15,
+    'min_loading_num' => 5
 ];
 
  ?>
