@@ -107,11 +107,12 @@
             </div>
           @endforeach
 
-          <div class="slide">
+          <!--Test slide-->
+          <!--<div class="slide">
             <div class="tests">
               <a href="#">Try a test before moving on</a>
             </div>
-          </div>
+          </div>-->
         </div>
       </div>
     </div>

@@ -185,7 +185,8 @@ $(document).ready(function(){
 
                 if( first_item.length > 0 ){
 
-                    var top_move = containers.eq(i).position().top - first_item.outerHeight(true);
+                    //var top_move = containers.eq(i).position().top - first_item.outerHeight(true);
+                    var top_move = -first_item.outerHeight(true);
                     containers.eq(i).addClass('slide-updown-transition');
                     containers.eq(i).css('top', top_move);
                 }

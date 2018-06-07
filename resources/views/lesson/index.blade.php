@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="content-page">
-  <div class="container">
+  <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
 
   <h3 class="text-center">Your journal</h3>
 

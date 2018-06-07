@@ -66,20 +66,20 @@
           <span class="glyphicon glyphicon-plus"></span>
         </button>
       </div>
-      <div class="form-group border-wrapper test-container">
+      <!--<div class="form-group border-wrapper test-container">
         <p>Attached Tests</p>
-        <div class="content">
+        <div class="content">-->
           <!--<li>Test discovery about the Earth
             <span class="from"> - My resource</span>
           </li>
           <li>How do animals sleep in the winter? What is a greate question!
             <span class="from"> - Community</span>
           </li>-->
-        </div>
+        <!--</div>
         <button class="test-modal-btn" type="button" name="" title="Add tests" data-toggle="modal" data-target="#test-modal">
           <span class="glyphicon glyphicon-plus"></span>
         </button>
-      </div>
+      </div>-->
     </div>
 
     <div class="col-xs-12 col-md-9">
@@ -153,7 +153,7 @@
   </div>
 
   <!-- Test Modal -->
-  <div id="test-modal" class="modal fade test-modal" role="dialog">
+  <!--<div id="test-modal" class="modal fade test-modal" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -185,7 +185,7 @@
           </div>
           <div class="tests-chosen-container">
             <h4>Your chosen</h4>
-            <ul class="tests">
+            <ul class="tests">-->
               <!--<li>
                 <p class="col-xs-12 col-sm-8">Test discovery about the Earth</p>
                 <select class="col-xs-6 col-sm-3" name="position" title="Choose position for this test in the lesson">
@@ -210,7 +210,7 @@
                   <span class="glyphicon glyphicon-remove"></span>
                 </button>
               </li>-->
-            </ul>
+            <!--</ul>
           </div>
         </div>
         <div class="modal-footer">
@@ -220,7 +220,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div>-->
 
   <!-- Delete confirmation -->
   <div id="confirmation-modal" class="modal fade confirmation-modal" role="dialog">
