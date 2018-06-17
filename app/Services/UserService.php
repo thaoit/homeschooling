@@ -146,4 +146,12 @@ class UserService{
 
         return $child_users;
     }
+
+    public static function getAge($birthday){
+
+        if($birthday == null)
+          return null;
+
+        return date('Y') - date('Y', strtotime($birthday));
+    }
 }

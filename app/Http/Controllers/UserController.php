@@ -6,6 +6,7 @@ use Config;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -19,6 +20,7 @@ class UserController extends Controller
         }
 
         $user = $user->first();
+        $child_users = UserService::getChildFromParent($user->id);
 
         switch ($user->role) {
 
@@ -47,7 +49,9 @@ class UserController extends Controller
         }
         else{
 
-            $child = UserService::storeChildByParent($input, 1)->toArray();
+            $parent_id = Auth::user()->id;
+            $child = UserService::storeChildByParent($input, $parent_id)->toArray();
+            $child['age'] = UserService::getAge($child['birthday']);
 
             return [
                 'success' => $child

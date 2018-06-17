@@ -1416,7 +1416,7 @@ function ajaxAddChildProfile(request_data, elements, process_url){
             else if(typeof data['success'] !== "undefined"){
 
                 var html = generateChildInfo(data['success']);
-                elements['child-profile-container'].append(html);
+                elements['sub-profile-container'].append(html);
                 elements['modal'].modal('hide');
             }
         },
@@ -1456,7 +1456,7 @@ function ajaxDeleteProfile(request_data, elements, process_url){
             else{
 
                 elements['modal'].modal('hide');
-                elements['child-profile'].remove();
+                elements['sub-profile'].remove();
             }
         },
         error: function(data){
@@ -1594,14 +1594,14 @@ function generateErrorInfo(errors){
 
 }
 
-function generateChildInfo(obj){
+function generateChildInfo(obj, age){
 
-    return `<tr class="child-profile" data-user-id="` + obj['id'] + `">
+    return `<tr class="sub-profile" data-user-id="` + obj['id'] + `">
                   <td>` + obj['name'] + `</td>
                   <td>` + obj['gender'] + `</td>
-                  <td>` + obj['birthday'] + `</td>
+                  <td>` + obj['age'] + `</td>
                   <td style="text-align: right">
-                    <button class="delete-child" type="button" data-toggle="modal" data-target="#delete-confirmation">
+                    <button class="delete-sub" type="button" data-toggle="modal" data-target=".delete-confirmation">
                       <span class="glyphicon glyphicon-remove" title="Delete"></span>
                     </button>
                   </td>

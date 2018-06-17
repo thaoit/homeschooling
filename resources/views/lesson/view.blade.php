@@ -15,7 +15,7 @@
     <div class="title slide">
       <h3 class="no_steps">{{ count( $lesson['outlines'] ) }} Steps</h3>
       <h3 class="prefix">to</h3>
-      <h3 class="name">{{ $lesson['general']->title }}</h3>
+      <h3 class="name col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">{{ $lesson['general']->title }}</h3>
       <h5 style="margin-top: 150px"> By. {{ $lesson['author']->username }}</h5>
     </div>
 
@@ -209,5 +209,8 @@
 @section('scripts')
 
 <script src="{{ asset('js/effect.js') }}"></script>
+<script>
+  $('.slide-container .slide img').css('width', '100%');
+</script>
 
 @endsection

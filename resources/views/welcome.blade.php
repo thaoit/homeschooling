@@ -33,7 +33,7 @@
         <div class="col-xs-3 col-sm-4 main-lesson-boundary slide-updown-container">
           <div class="slide-updown sub-lesson-boundary" style="right: 0">
             @for( $i = 0; $i < $divider; $i++ )
-              <p class="slide-item"><a href="{{ action('LessonController@view', $lessons[$i]['general']->id) }}">{{ $lessons[$i]['general']->title }}</a></p>
+              <p class="slide-item"><a href="{{ action('LessonController@view', $lessons[$i]['general']->permalink) }}">{{ $lessons[$i]['general']->title }}</a></p>
             @endfor
             <!--<p class="slide-item"><a href="">1. Discovery about the Earth</a></p>
             <p class="slide-item"><a href="">2. Moon night</a></p>-->
@@ -59,9 +59,9 @@
     </div>
     <div class="intro">
       <h4>Homy Community</h4>
-      <p>Homeschooling is a progressive movement around the country and the world, in which parents choose to educate their children at home instead of sending them to a traditional public or private school.</p>
-      <p>The homeschooling movement began growing in the 1970s, when some popular authors and researchers, such as John Holt and Dorothy and Raymond Moore, started writing about educational reform. They suggested homeschooling as an alternative educational option.</p>
-      <p>According to the National Home Education Research Institute, there are now more than two million children being homeschooled in the U.S., with the percentage rapidly increasing by 7 percent to 15 percent each year. Homeschooling is legal in all 50 states and in many foreign countries.</p>
+      <p>Our aim is creating a space for all parents who are educating the child by form of Homeschooling or considering the new learning way for the child.</p>
+      <p>We all know education is not easy, especially when we want that responsibility is done by ourselves. Maybe because we, who are the ones that understand our child most, know the public school is not the most suitable for our child growth.</p>
+      <p>If sometimes you get stuck in finding the way for educating well, please try to visit our Homy Community, get inspiration from lessons of other parents, and maybe after that, you can become an author sharing belief for your child, for others, and for yourself.</p>
     </div>
   </div>
 </div>
@@ -71,6 +71,11 @@
 @section('styles')
 
 <style>
+
+  .welcome-background{
+      background-image: url('img/slating lines background.png');
+      background-size: contain;
+  }
 
   #recommend-lesson-container .title{
     margin-bottom: 25px;
@@ -88,6 +93,7 @@
   }
 
   #welcome .intro-container .intro{
+    text-align: justify;
     margin-bottom: 50px;
   }
 

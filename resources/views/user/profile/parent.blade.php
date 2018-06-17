@@ -51,7 +51,7 @@
           </div>
           @endif
         </form>
-        @if( count($child_users) > 0 )
+
         <div class="table-responsive sub-profile-container">
           <label>Children</label>
           <table class="table">
@@ -81,7 +81,7 @@
             </tbody>
           </table>
         </div>
-        @endif
+
       </div>
       <div class="alert-container">
 

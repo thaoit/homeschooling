@@ -24,7 +24,9 @@
               <li class="nav-item dropdown">
                   <a href="{{ action('LessonController@index') }}">Lessons</a>
                   <a href="{{ action('LessonController@resources') }}">Resources</a>
+                  @if( Auth::user()->role != Config::get('constants.role.child') )
                   <a href="{{ action('PartnerPostController@index') }}">Groups</a>
+                  @endif
                   <a id="user-navbar-dropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                       {{ Auth::user()->username }} <span class="caret"></span>
                   </a>

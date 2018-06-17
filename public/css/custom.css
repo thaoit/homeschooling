@@ -216,13 +216,14 @@ footer{
 
 .slide-container{
   position: relative;
-  max-height: 1000px;
+  /*max-height: 1000px;*/
   overflow: hidden;
 }
 
 .slide-container .slide{
   position: absolute;
   width: 100%;
+  padding: 15px;
 }
 
 .slide-container .slide p{

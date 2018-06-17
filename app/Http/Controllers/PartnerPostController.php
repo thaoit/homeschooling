@@ -13,6 +13,10 @@ class PartnerPostController extends Controller
     //
     public function index(){
 
+        if( Auth::user()->role == Config::get('constants.role.child') ){
+            return redirect()->action('HomeController@index');
+        }
+
         $user_id = Auth::user()->id;
 
         $own_posts = PartnerPostService::getAllByUser($user_id, 0, Config::get('constants.max_loading_num'));
